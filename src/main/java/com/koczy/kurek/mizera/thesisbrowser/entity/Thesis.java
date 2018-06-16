@@ -2,13 +2,13 @@ package com.koczy.kurek.mizera.thesisbrowser.entity;
 
 public class Thesis {
     private long id;
-    private String topic;
+    private String title;
     private String author;
     private String link;
 
-    public Thesis(long id, String topic, String author, String link) {
+    public Thesis(long id, String title, String author, String link) {
         this.id = id;
-        this.topic = topic;
+        this.title = title;
         this.author = author;
         this.link = link;
     }
@@ -21,12 +21,12 @@ public class Thesis {
         this.id = id;
     }
 
-    public String getTopic() {
-        return topic;
+    public String getTitle() {
+        return title;
     }
 
-    public void setTopic(String topic) {
-        this.topic = topic;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getAuthor() {
