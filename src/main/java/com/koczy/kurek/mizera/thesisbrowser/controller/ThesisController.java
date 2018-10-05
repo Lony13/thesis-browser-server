@@ -1,6 +1,7 @@
 package com.koczy.kurek.mizera.thesisbrowser.controller;
 
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
+import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import com.koczy.kurek.mizera.thesisbrowser.service.IThesisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,17 +27,12 @@ public class ThesisController {
         return new ResponseEntity<>(theses, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/api/theses/author", method = RequestMethod.GET)
-    public ResponseEntity<List<Thesis>> getThesisByAuthor(@RequestParam String author) {
-        List<Thesis> theses = thesisService.getThesesByAuthor(author);
+    @RequestMapping(value = "/api/theses/search", method = RequestMethod.GET)
+    public ResponseEntity<List<Thesis>> searchTheses(@RequestBody(required = false) ThesisFilters thesisFilters) {
+        List<Thesis> theses = thesisService.searchTheses(thesisFilters);
         return new ResponseEntity<>(theses, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/api/theses/title", method = RequestMethod.GET)
-    public ResponseEntity<List<Thesis>> getThesisByTitle(@RequestParam String title) {
-        List<Thesis> theses = thesisService.getThesesByTitle(title);
-        return new ResponseEntity<>(theses, HttpStatus.OK);
-    }
 }
 
 

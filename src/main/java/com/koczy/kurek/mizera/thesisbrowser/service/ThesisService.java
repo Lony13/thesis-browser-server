@@ -1,6 +1,7 @@
 package com.koczy.kurek.mizera.thesisbrowser.service;
 
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
+import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,16 +19,9 @@ public class ThesisService implements IThesisService {
     }
 
     @Override
-    public List<Thesis> getThesesByAuthor(String author) {
+    public List<Thesis> searchTheses(ThesisFilters thesisFilters) {
         prepareTheses();
-        theses.removeIf(thesis -> !thesis.getAuthor().toLowerCase().contains(author.toLowerCase()));
-        return theses;
-    }
-
-    @Override
-    public List<Thesis> getThesesByTitle(String title) {
-        prepareTheses();
-        theses.removeIf(thesis -> !thesis.getTitle().toLowerCase().contains(title.toLowerCase()));
+        theses.removeIf(thesis -> !thesis.getAuthor().toLowerCase().contains(thesisFilters.getAuthor().toLowerCase()));
         return theses;
     }
 
