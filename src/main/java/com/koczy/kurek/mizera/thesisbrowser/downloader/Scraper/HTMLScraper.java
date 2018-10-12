@@ -9,13 +9,16 @@ import java.util.ArrayList;
 
 public interface HTMLScraper {
 
+    String MOZILLA = "Mozilla/5.0";
+    String PDF = "pdf";
+
     default String findDownloadPdfLink(String url) throws IOException {
-        Document doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get();
+        Document doc = Jsoup.connect(url).userAgent(MOZILLA).get();
 
         for (Element link : doc.select("a[href]")) {
             String downloadPdfLink = link.attr("abs:href");
             String urlText = link.text();
-            if(urlText.toLowerCase().contains("pdf") || downloadPdfLink.toLowerCase().contains("pdf")){
+            if(urlText.toLowerCase().contains(PDF) || downloadPdfLink.toLowerCase().contains(PDF)){
                 return downloadPdfLink;
             }
         }

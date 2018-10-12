@@ -3,12 +3,17 @@ package com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+@Component
 public class DblpScraper implements HTMLScraper {
+
+    public DblpScraper() {
+    }
 
     @Override
     public String findUrlToPdf(String pdfName) throws IOException {
@@ -31,7 +36,7 @@ public class DblpScraper implements HTMLScraper {
         return new ArrayList<>();
     }
 
-    private static String simplifyString(String string){
+    private String simplifyString(String string){
         return string.replaceAll("[ :/*?|\"<>.]", "").toLowerCase();
     }
 }

@@ -4,64 +4,89 @@ import com.koczy.kurek.mizera.thesisbrowser.downloader.Parser.PdfParser;
 import com.koczy.kurek.mizera.thesisbrowser.downloader.PdfDownloader;
 import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.DblpScraper;
 import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.GoogleScraper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class DownloadService implements IDownloadService {
 
+    private static final Logger logger = Logger.getLogger(DownloadService.class.getName());
+
+    private static final String DEFAULT_THESIS = "Multiwinner Voting: A New Challenge for Social Choice Theory";
+    private static final String REGEX = "[ :/*?|\"<>.]";
+    private static final String REPLACEMENT = "_";
+    private static final String TXT = ".txt";
+    private static final String PDF = ".pdf";
+
+    private DblpScraper dblpScraper;
+    private GoogleScraper googleScraper;
+    private PdfDownloader pdfDownloader;
+    private PdfParser pdfParser;
+
+    @Autowired
+    public DownloadService(DblpScraper dblpScraper,
+                           GoogleScraper googleScraper,
+                           PdfDownloader pdfDownloader,
+                           PdfParser pdfParser) {
+        this.dblpScraper = dblpScraper;
+        this.googleScraper = googleScraper;
+        this.pdfDownloader = pdfDownloader;
+        this.pdfParser = pdfParser;
+    }
+
     @Override
     public ResponseEntity downloadTheses() {
         String searchText = getSearchText();
-        searchText = searchText.isEmpty() ?
-                "Multiwinner Voting: A New Challenge for Social Choice Theory" : searchText;
-        //"Distance rationalization of voting rules" : searchText;
-
-        String filename = searchText.replaceAll("[ :/*?|\"<>.]", "_");
-
+        searchText = StringUtils.isEmpty(searchText) ? DEFAULT_THESIS : searchText;
+        String filename = searchText.replaceAll(REGEX, REPLACEMENT);
 
         String url = null;
-        DblpScraper dblpScraper = new DblpScraper();
-        GoogleScraper googleScraper = new GoogleScraper();
-
-        String link = null;
+        String link;
         try {
             link = dblpScraper.findUrlToPdf(searchText);
-            if(link != null){
+
+            if(!StringUtils.isEmpty(link)){
                 url = dblpScraper.findDownloadPdfLink(link);
-            } else{
+            } else {
                 link = googleScraper.findUrlToPdf(searchText);
-                if(link != null){
+                if(!StringUtils.isEmpty(link)){
                     url = googleScraper.findDownloadPdfLink(link);
                 }
             }
-            if(url != null){
-            InputStream in = PdfDownloader.getPdfStream(url);
-            PdfParser.parseToTxt(in, filename + ".txt");
-            in = PdfDownloader.getPdfStream(url);
-            PdfDownloader.downloadPdf(in, filename + ".pdf");
+
+            if(!StringUtils.isEmpty(url)) {
+                InputStream in = pdfDownloader.getPdfStream(url);
+                pdfParser.parseToTxt(in, filename + TXT);
+                in = pdfDownloader.getPdfStream(url);
+                pdfDownloader.downloadPdf(in, filename + PDF);
             } else {
-                System.out.println("PDF not found");
+                logger.info("PDF not found");
+                return new ResponseEntity(HttpStatus.NOT_FOUND);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, e.toString());
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    private static String getSearchText() {
+    private String getSearchText() {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         try {
             return br.readLine();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, e.toString());
         }
         return null;
     }

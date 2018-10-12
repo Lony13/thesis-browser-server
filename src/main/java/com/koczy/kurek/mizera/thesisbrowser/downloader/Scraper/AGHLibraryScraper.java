@@ -5,15 +5,19 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+@Component
 public class AGHLibraryScraper implements HTMLScraper{
 
     private HTTPRequest httpRequest;
 
+    @Autowired
     public AGHLibraryScraper() {
         this.httpRequest = new HTTPRequest();
     }
@@ -27,7 +31,7 @@ public class AGHLibraryScraper implements HTMLScraper{
     public ArrayList<String> getListOfPublicationsByName(String firstName, String lastName) throws IOException {
         String url = createUrl(firstName, lastName);
 
-        Document doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get();
+        Document doc = Jsoup.connect(url).userAgent(MOZILLA).get();
         int pageNumber = getNumberOfPages(doc);
 
         ArrayList<String> publications = new ArrayList<>();

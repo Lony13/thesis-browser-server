@@ -2,6 +2,7 @@ package com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -9,7 +10,11 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+@Component
 public class GoogleScraper implements HTMLScraper{
+
+    public GoogleScraper() {
+    }
 
     @Override
     public String findDownloadPdfLink(String url) {
