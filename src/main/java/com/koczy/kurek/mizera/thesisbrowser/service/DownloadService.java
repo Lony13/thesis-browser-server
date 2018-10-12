@@ -27,7 +27,6 @@ public class DownloadService implements IDownloadService {
 
     private static final Logger logger = Logger.getLogger(DownloadService.class.getName());
 
-    private static final String DEFAULT_THESIS = "Multiwinner Voting: A New Challenge for Social Choice Theory";
     private static final String REGEX = "[ :/*?|\"<>.]";
     private static final String REPLACEMENT = "_";
     private static final String TXT = ".txt";
@@ -54,39 +53,41 @@ public class DownloadService implements IDownloadService {
 
     @Override
     public ResponseEntity downloadTheses(ThesisFilters thesisFilters) {
-        String searchText = getSearchText();
-        searchText = StringUtils.isEmpty(searchText) ? DEFAULT_THESIS : searchText;
-        String filename = searchText.replaceAll(REGEX, REPLACEMENT);
-
-        String url = null;
-        String link;
-        try {
-            link = dblpScraper.findUrlToPdf(searchText);
-
-            if(!StringUtils.isEmpty(link)){
-                url = dblpScraper.findDownloadPdfLink(link);
-            } else {
-                link = googleScraper.findUrlToPdf(searchText);
-                if(!StringUtils.isEmpty(link)){
-                    url = googleScraper.findDownloadPdfLink(link);
-                }
-            }
-
-            if(!StringUtils.isEmpty(url)) {
-                InputStream in = pdfDownloader.getPdfStream(url);
-                pdfParser.parseToTxt(in, filename + TXT);
-                in = pdfDownloader.getPdfStream(url);
-                pdfDownloader.downloadPdf(in, filename + PDF);
-            } else {
-                logger.info("PDF not found");
-                return new ResponseEntity(HttpStatus.NOT_FOUND);
+        String firstName = thesisFilters.getAuthor().split(" ")[0];
+        String lastName = thesisFilters.getAuthor().split(" ")[1];
+        Set<Thesis> theses = new HashSet<>();
+        try{
+            if(StringUtils.isEmpty(thesisFilters.getTitle())){
+                theses.addAll(findAllThesesFromAuthor(firstName, lastName));
+            }else{
+                theses.add(findThesisByAuthorNameAndTitle(firstName, lastName, thesisFilters.getTitle()));
             }
         } catch (IOException e) {
             logger.log(Level.WARNING, e.toString());
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+        for (Thesis thesis : theses) {
+            if(!StringUtils.isEmpty(thesis.getLink())){
+                downloadThesis(thesis);
+                parseThesisToTxt(thesis);
+            } else {
+                logger.info("PDF not found");
+            }
+        }
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    private void downloadThesis(Thesis thesis){
+        String filename = thesis.getTitle().replaceAll(REGEX, REPLACEMENT);
+        InputStream in = pdfDownloader.getPdfStream(thesis.getLink());
+        pdfDownloader.downloadPdf(in, filename + PDF);
+    }
+
+    private void parseThesisToTxt(Thesis thesis){
+        String filename = thesis.getTitle().replaceAll(REGEX, REPLACEMENT);
+        InputStream in = pdfDownloader.getPdfStream(thesis.getLink());
+        pdfParser.parseToTxt(in, filename + TXT);
     }
 
     private Thesis findThesisByAuthorNameAndTitle(String firstName, String lastName, String thesisTitle) throws IOException {
@@ -95,16 +96,16 @@ public class DownloadService implements IDownloadService {
 
         String link = null;
         String url = dblpScraper.findUrlToPdf(thesisTitle);
-        if(url != null){
+        if(!StringUtils.isEmpty(url)){
             link = dblpScraper.findDownloadPdfLink(url);
         } else{
             url = googleScraper.findUrlToPdf(searchTextWithName);
-            if(url != null){
+            if(!StringUtils.isEmpty(url)){
                 link = googleScraper.findDownloadPdfLink(url);
             }
         }
 
-        if(link != null){
+        if(!StringUtils.isEmpty(link)){
             return new Thesis(thesisTitle, authorName, link);
         } else {
             return null;
