@@ -20,7 +20,7 @@ public class GoogleScraper implements HTMLScraper{
     public String findDownloadPdfLink(String url) {
         String parsedDownloadPdfLink = null;
         try {
-            Elements webSitesLinks = Jsoup.connect(url).userAgent("Mozilla/5.0").
+            Elements webSitesLinks = Jsoup.connect(url).userAgent(MOZILLA).
                     get().select(".g>.r>a");
 
             if (webSitesLinks.isEmpty()) {
