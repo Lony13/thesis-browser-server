@@ -24,25 +24,22 @@ public class PdfParser {
     }
 
     public void parseToTxt(InputStream inputstream, String txtName) {
-        OutputStream out = null;
-        try {
-            out = new FileOutputStream(SAVE_DIRECTORY + txtName);
-        } catch (FileNotFoundException e) {
-            logger.log(Level.WARNING, e.toString());
-        }
-
+        OutputStream out = getFileOutputStream(txtName);
         BodyContentHandler handler = new BodyContentHandler(out);
         Metadata metadata = new Metadata();
         ParseContext pcontext = new ParseContext();
 
         parseDocument(inputstream, handler, metadata, pcontext);
+        closeStreams(inputstream, out);
+    }
 
+    private OutputStream getFileOutputStream(String txtName) {
         try {
-            inputstream.close();
-            out.close();
-        } catch (IOException e) {
+            return new FileOutputStream(SAVE_DIRECTORY + txtName);
+        } catch (FileNotFoundException e) {
             logger.log(Level.WARNING, e.toString());
         }
+        return null;
     }
 
     private void parseDocument(InputStream inputstream, BodyContentHandler handler, Metadata metadata, ParseContext pcontext) {
@@ -50,6 +47,15 @@ public class PdfParser {
         try {
             pdfparser.parse(inputstream, handler, metadata, pcontext);
         } catch (IOException | SAXException | TikaException e) {
+            logger.log(Level.WARNING, e.toString());
+        }
+    }
+
+    private void closeStreams(InputStream inputstream, OutputStream out) {
+        try {
+            inputstream.close();
+            out.close();
+        } catch (IOException e) {
             logger.log(Level.WARNING, e.toString());
         }
     }

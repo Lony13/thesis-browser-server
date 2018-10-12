@@ -13,6 +13,8 @@ import java.util.ArrayList;
 @Component
 public class GoogleScraper implements HTMLScraper{
 
+    private static final String GOOGLE_SEARCH_URL = "https://google.com/search?q=filetype%3Apdf+";
+
     public GoogleScraper() {
     }
 
@@ -30,7 +32,7 @@ public class GoogleScraper implements HTMLScraper{
             String downloadPdfLink = webSitesLinks.get(0).absUrl("href");
             try {
                 parsedDownloadPdfLink = URLDecoder.decode(downloadPdfLink.substring(downloadPdfLink.indexOf('=') +
-                        1, downloadPdfLink.indexOf('&')), "UTF-8");
+                        1, downloadPdfLink.indexOf('&')), UTF_8);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -49,13 +51,11 @@ public class GoogleScraper implements HTMLScraper{
 
     @Override
     public String findUrlToPdf(String pdfName) throws IOException {
-        String encoding = "UTF-8";
-        return "https://google.com/search?q=filetype%3Apdf+"
-                + URLEncoder.encode(pdfName, encoding);
+        return GOOGLE_SEARCH_URL + URLEncoder.encode(pdfName, UTF_8);
     }
 
     @Override
-    public ArrayList<String> getListOfPublicationsByName(String firstName, String lastName) throws IOException {
+    public ArrayList<String> getListOfPublicationsByName(String firstName, String lastName) {
         return new ArrayList<>();
     }
 }

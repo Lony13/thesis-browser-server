@@ -12,13 +12,16 @@ import java.util.ArrayList;
 @Component
 public class DblpScraper implements HTMLScraper {
 
+    private static final String DBLP_UNI_URL = "https://dblp.uni-trier.de/search?q=";
+    private static final String REGEX = "[ :/*?|\"<>.]";
+
     public DblpScraper() {
     }
 
     @Override
     public String findUrlToPdf(String pdfName) throws IOException {
-        Document doc = Jsoup.connect("https://dblp.uni-trier.de/search?q="
-                + URLEncoder.encode(pdfName, "UTF-8")).userAgent("Mozilla/5.0").get();
+        Document doc = Jsoup.connect(DBLP_UNI_URL
+                + URLEncoder.encode(pdfName, UTF_8)).userAgent(MOZILLA).get();
 
         for (Element element : doc.select("li.entry")){
             String articleName = element.select(" .title").first().text();
@@ -37,6 +40,6 @@ public class DblpScraper implements HTMLScraper {
     }
 
     private String simplifyString(String string){
-        return string.replaceAll("[ :/*?|\"<>.]", "").toLowerCase();
+        return string.replaceAll(REGEX, "").toLowerCase();
     }
 }

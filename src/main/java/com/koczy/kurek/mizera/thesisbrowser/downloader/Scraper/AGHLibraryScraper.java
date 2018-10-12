@@ -15,6 +15,8 @@ import java.util.ArrayList;
 @Component
 public class AGHLibraryScraper implements HTMLScraper{
 
+    private static final String BPP_AGH_URL = "https://bpp.agh.edu.pl/wyszukiwanie/?fA=";
+
     private HTTPRequest httpRequest;
 
     @Autowired
@@ -23,7 +25,7 @@ public class AGHLibraryScraper implements HTMLScraper{
     }
 
     @Override
-    public String findUrlToPdf(String pdfName) throws IOException {
+    public String findUrlToPdf(String pdfName) {
         return null;
     }
 
@@ -36,7 +38,7 @@ public class AGHLibraryScraper implements HTMLScraper{
 
         ArrayList<String> publications = new ArrayList<>();
 
-        for(int i=1; i<=pageNumber; i++){
+        for(int i = 1; i <= pageNumber; i++){
             InputStream input = httpRequest.getInputStreamFromPostRequest(url, pageUrlParameters(i));
             String pageHTML = httpRequest.getPageContentFromInputStream(input);
             input.close();
@@ -57,16 +59,16 @@ public class AGHLibraryScraper implements HTMLScraper{
     }
 
     private String createUrl(String firstName, String lastName){
-        return "https://bpp.agh.edu.pl/wyszukiwanie/?fA="+firstName+"+"+lastName;
+        return BPP_AGH_URL + firstName + "+" + lastName;
     }
 
     private int getNumberOfPages(Document doc){
         Elements e = doc.select(".pagination [title=\"pozycje od-do\"] [type=\"submit\"]");
-        return e.size()==0 ? 1 : e.size()/2;
+        return e.size() == 0 ? 1 : e.size()/2;
     }
 
     private String pageUrlParameters(int pageNumber){
-        return "idform=2&vt=p&lastPage="+pageNumber+"&cur_fOrd=srtAA&page%5B"+pageNumber+"%5D="+pageNumber;
+        return "idform=2&vt=p&lastPage=" + pageNumber + "&cur_fOrd=srtAA&page%5B" + pageNumber + "%5D=" + pageNumber;
     }
 
 

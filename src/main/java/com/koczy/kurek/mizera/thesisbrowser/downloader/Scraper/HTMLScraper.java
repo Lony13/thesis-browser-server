@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public interface HTMLScraper {
 
     String MOZILLA = "Mozilla/5.0";
+    String UTF_8 = "UTF-8";
     String PDF = "pdf";
 
     default String findDownloadPdfLink(String url) throws IOException {

@@ -39,9 +39,7 @@ public class HTTPRequest {
     public String getPageContentFromInputStream(InputStream inputStream){
         StringBuilder content = null;
 
-        try (BufferedReader in = new BufferedReader(
-                new InputStreamReader(inputStream))) {
-
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(inputStream))) {
             String line;
             content = new StringBuilder();
 
