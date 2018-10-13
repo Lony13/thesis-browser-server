@@ -31,6 +31,7 @@ public class PdfParser {
 
         parseDocument(inputstream, handler, metadata, pcontext);
         closeStreams(inputstream, out);
+        logger.info("File parsed");
     }
 
     private OutputStream getFileOutputStream(String txtName) {
