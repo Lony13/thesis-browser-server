@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Component
 public class AGHLibraryScraper implements HTMLScraper{
@@ -26,14 +27,23 @@ public class AGHLibraryScraper implements HTMLScraper{
 
     @Override
     public String findUrlToPdf(String pdfName) {
+        //TODO
         return null;
     }
 
     @Override
-    public ArrayList<String> getListOfPublicationsByName(String firstName, String lastName) throws IOException {
+    public ArrayList<String> getListOfPublicationsByName(String firstName, String lastName){
         String url = createUrl(firstName, lastName);
 
-        Document doc = Jsoup.connect(url).userAgent(MOZILLA).get();
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(url).userAgent(MOZILLA).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(Objects.isNull(doc))
+            return new ArrayList<>();
+
         int pageNumber = getNumberOfPages(doc);
 
         ArrayList<String> publications = new ArrayList<>();
@@ -41,11 +51,13 @@ public class AGHLibraryScraper implements HTMLScraper{
         for(int i = 1; i <= pageNumber; i++){
             InputStream input = httpRequest.getInputStreamFromPostRequest(url, pageUrlParameters(i));
             String pageHTML = httpRequest.getPageContentFromInputStream(input);
-            input.close();
-
+            try {
+                input.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             publications.addAll(publicationListFromOnePage(pageHTML));
         }
-
         return publications;
     }
 

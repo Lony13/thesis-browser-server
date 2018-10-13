@@ -30,28 +30,27 @@ public class GoogleScraper implements HTMLScraper{
             }
 
             String downloadPdfLink = webSitesLinks.get(0).absUrl("href");
-            try {
-                parsedDownloadPdfLink = URLDecoder.decode(downloadPdfLink.substring(downloadPdfLink.indexOf('=') +
+            parsedDownloadPdfLink = URLDecoder.decode(downloadPdfLink.substring(downloadPdfLink.indexOf('=') +
                         1, downloadPdfLink.indexOf('&')), UTF_8);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
 
             if (!parsedDownloadPdfLink.startsWith("http")) {
                 return null;
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return parsedDownloadPdfLink;
     }
 
 
     @Override
-    public String findUrlToPdf(String pdfName) throws IOException {
-        return GOOGLE_SEARCH_URL + URLEncoder.encode(pdfName, UTF_8);
+    public String findUrlToPdf(String pdfName){
+        try {
+            return GOOGLE_SEARCH_URL + URLEncoder.encode(pdfName, UTF_8);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

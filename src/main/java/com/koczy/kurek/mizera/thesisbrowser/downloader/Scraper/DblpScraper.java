@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Component
 public class DblpScraper implements HTMLScraper {
@@ -19,12 +20,21 @@ public class DblpScraper implements HTMLScraper {
     }
 
     @Override
-    public String findUrlToPdf(String pdfName) throws IOException {
-        Document doc = Jsoup.connect(DBLP_UNI_URL
-                + URLEncoder.encode(pdfName, UTF_8)).userAgent(MOZILLA).get();
+    public String findUrlToPdf(String pdfName){
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(DBLP_UNI_URL
+                    + URLEncoder.encode(pdfName, UTF_8)).userAgent(MOZILLA).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(Objects.isNull(doc))
+            return null;
 
         for (Element element : doc.select("li.entry")){
             String articleName = element.select(" .title").first().text();
+            if(Objects.isNull(articleName))
+                return null;
 
             if(simplifyString(articleName).equals(simplifyString(pdfName))){
                 Element link = element.select(" .publ .head > a").first();
@@ -35,7 +45,7 @@ public class DblpScraper implements HTMLScraper {
     }
 
     @Override
-    public ArrayList<String> getListOfPublicationsByName(String firstName, String lastName) throws IOException {
+    public ArrayList<String> getListOfPublicationsByName(String firstName, String lastName){
         return new ArrayList<>();
     }
 

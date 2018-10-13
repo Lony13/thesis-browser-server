@@ -6,6 +6,7 @@ import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public interface HTMLScraper {
 
@@ -13,8 +14,15 @@ public interface HTMLScraper {
     String UTF_8 = "UTF-8";
     String PDF = "pdf";
 
-    default String findDownloadPdfLink(String url) throws IOException {
-        Document doc = Jsoup.connect(url).userAgent(MOZILLA).get();
+    default String findDownloadPdfLink(String url){
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(url).userAgent(MOZILLA).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(Objects.isNull(doc))
+            return null;
 
         for (Element link : doc.select("a[href]")) {
             String downloadPdfLink = link.attr("abs:href");
@@ -26,7 +34,7 @@ public interface HTMLScraper {
         return null;
     }
 
-    String findUrlToPdf(String pdfName) throws IOException;
+    String findUrlToPdf(String pdfName);
 
-    ArrayList<String> getListOfPublicationsByName(String firstName, String lastName) throws IOException;
+    ArrayList<String> getListOfPublicationsByName(String firstName, String lastName);
 }

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,15 +57,10 @@ public class DownloadService implements IDownloadService {
         String firstName = thesisFilters.getAuthor().split(" ")[0];
         String lastName = thesisFilters.getAuthor().split(" ")[1];
         Set<Thesis> theses = new HashSet<>();
-        try{
-            if(StringUtils.isEmpty(thesisFilters.getTitle())){
-                theses.addAll(findAllThesesFromAuthor(firstName, lastName));
-            }else{
-                theses.add(findThesisByAuthorNameAndTitle(firstName, lastName, thesisFilters.getTitle()));
-            }
-        } catch (IOException e) {
-            logger.log(Level.WARNING, e.toString());
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        if(StringUtils.isEmpty(thesisFilters.getTitle())){
+            theses.addAll(findAllThesesFromAuthor(firstName, lastName));
+        }else{
+            theses.add(findThesisByAuthorNameAndTitle(firstName, lastName, thesisFilters.getTitle()));
         }
 
         for (Thesis thesis : theses) {
@@ -75,7 +71,7 @@ public class DownloadService implements IDownloadService {
                 logger.info("PDF not found");
             }
         }
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>("Downloading finished", HttpStatus.OK);
     }
 
     private void downloadThesis(Thesis thesis){
@@ -90,7 +86,7 @@ public class DownloadService implements IDownloadService {
         pdfParser.parseToTxt(in, filename + TXT);
     }
 
-    private Thesis findThesisByAuthorNameAndTitle(String firstName, String lastName, String thesisTitle) throws IOException {
+    private Thesis findThesisByAuthorNameAndTitle(String firstName, String lastName, String thesisTitle){
         String authorName = firstName + " " + lastName;
         String searchTextWithName = authorName + " " + thesisTitle;
 
@@ -98,28 +94,24 @@ public class DownloadService implements IDownloadService {
         String url = dblpScraper.findUrlToPdf(thesisTitle);
         if(!StringUtils.isEmpty(url)){
             link = dblpScraper.findDownloadPdfLink(url);
-        } else{
+        } else {
             url = googleScraper.findUrlToPdf(searchTextWithName);
             if(!StringUtils.isEmpty(url)){
                 link = googleScraper.findDownloadPdfLink(url);
             }
         }
 
-        if(!StringUtils.isEmpty(link)){
-            return new Thesis(thesisTitle, authorName, link);
-        } else {
-            return null;
-        }
+        return !StringUtils.isEmpty(link) ? new Thesis(thesisTitle, authorName, link) : null;
     }
 
 
-    private Set<Thesis> findAllThesesFromAuthor(String firstName, String lastName) throws IOException {
+    private Set<Thesis> findAllThesesFromAuthor(String firstName, String lastName){
         Set<String> publicationsSet = new HashSet<>(aghLibraryScraper.getListOfPublicationsByName(firstName, lastName));
 
         Set<Thesis> theses = new HashSet<>();
         for(String thesisTitle : publicationsSet){
             Thesis thesis = findThesisByAuthorNameAndTitle(firstName, lastName, thesisTitle);
-            if(thesis != null){
+            if(Objects.nonNull(thesis)){
                 theses.add(thesis);
             }
         }
@@ -127,9 +119,8 @@ public class DownloadService implements IDownloadService {
     }
 
     private String getSearchText() {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         try {
-            return br.readLine();
+            return new BufferedReader(new InputStreamReader(System.in)).readLine();
         } catch (IOException e) {
             logger.log(Level.WARNING, e.toString());
         }

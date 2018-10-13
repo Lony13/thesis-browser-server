@@ -18,7 +18,7 @@ public class DownloadController {
     }
 
     @RequestMapping(value = "/api/theses/download", method = RequestMethod.POST)
-    public ResponseEntity downloadTheses(@RequestBody(required = false) ThesisFilters thesisFilters) {
+    public ResponseEntity downloadTheses(@RequestBody ThesisFilters thesisFilters) {
         return downloadService.downloadTheses(thesisFilters);
     }
 }

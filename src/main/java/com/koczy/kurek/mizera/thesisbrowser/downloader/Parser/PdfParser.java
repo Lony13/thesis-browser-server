@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 
 import java.io.*;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,25 +19,29 @@ public class PdfParser {
 
     private static final Logger logger = Logger.getLogger(DownloadService.class.getName());
 
-    private static final String SAVE_DIRECTORY = "parsedPDF/";
+    private static final String TXT_SAVE_DIRECTORY = "parsedPDF/";
 
     public PdfParser() {
     }
 
     public void parseToTxt(InputStream inputstream, String txtName) {
         OutputStream out = getFileOutputStream(txtName);
-        BodyContentHandler handler = new BodyContentHandler(out);
-        Metadata metadata = new Metadata();
-        ParseContext pcontext = new ParseContext();
+        if(Objects.nonNull(out)){
+            BodyContentHandler handler = new BodyContentHandler(out);
+            Metadata metadata = new Metadata();
+            ParseContext pcontext = new ParseContext();
 
-        parseDocument(inputstream, handler, metadata, pcontext);
-        closeStreams(inputstream, out);
-        logger.info("File parsed");
+            parseDocument(inputstream, handler, metadata, pcontext);
+            closeStreams(inputstream, out);
+            logger.info("File parsed");
+        } else {
+            logger.log(Level.WARNING, "Couldn't parse file to txt");
+        }
     }
 
     private OutputStream getFileOutputStream(String txtName) {
         try {
-            return new FileOutputStream(SAVE_DIRECTORY + txtName);
+            return new FileOutputStream(TXT_SAVE_DIRECTORY + txtName);
         } catch (FileNotFoundException e) {
             logger.log(Level.WARNING, e.toString());
         }
