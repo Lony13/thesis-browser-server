@@ -13,6 +13,12 @@ public class Thesis {
         this.link = link;
     }
 
+    public Thesis(String title, String author, String link) {
+        this.title = title;
+        this.author = author;
+        this.link = link;
+    }
+
     public long getId() {
         return id;
     }
