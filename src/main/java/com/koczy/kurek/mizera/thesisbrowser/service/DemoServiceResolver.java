@@ -18,4 +18,12 @@ public abstract class DemoServiceResolver<T> {
             return implementation;
         }
     }
+
+    protected T resolveService(String role){
+        if ("ROLE_DEMO".equals(role)) {
+            return demoImplementation;
+        } else {
+            return implementation;
+        }
+    }
 }

@@ -27,8 +27,8 @@ public class ThesisController extends DemoServiceResolver<IThesisService> {
     }
 
     @RequestMapping(value = "/api/theses", method = RequestMethod.GET)
-    public ResponseEntity<List<Thesis>> getThesis(HttpServletRequest request) {
-        List<Thesis> theses = resolveService(request).getTheses();
+    public ResponseEntity<List<Thesis>> getThesis(@RequestParam String role, HttpServletRequest request) {
+        List<Thesis> theses = resolveService(role).getTheses();
         return new ResponseEntity<>(theses, HttpStatus.OK);
     }
 
