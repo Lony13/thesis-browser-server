@@ -16,14 +16,9 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 public class ThesisController extends DemoServiceResolver<IThesisService> {
 
-    private IThesisService thesisService;
-    private IThesisService thesisDemoService;
-
     @Autowired
     public ThesisController(IThesisService thesisService, IThesisService thesisDemoService) {
         super(thesisService, thesisDemoService);
-        this.thesisService = thesisService;
-        this.thesisDemoService = thesisDemoService;
     }
 
     @RequestMapping(value = "/api/theses", method = RequestMethod.GET)
