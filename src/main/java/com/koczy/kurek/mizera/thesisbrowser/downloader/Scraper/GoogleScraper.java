@@ -22,7 +22,7 @@ public class GoogleScraper implements HTMLScraper{
     public String findDownloadPdfLink(String url) {
         String parsedDownloadPdfLink = null;
         try {
-            Elements webSitesLinks = Jsoup.connect(url).userAgent(MOZILLA).
+            Elements webSitesLinks = Jsoup.connect(url).userAgent(MOZILLA).timeout(30*1000).
                     get().select(".g>.r>a");
 
             if (webSitesLinks.isEmpty()) {

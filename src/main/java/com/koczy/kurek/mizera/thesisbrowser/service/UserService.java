@@ -19,7 +19,7 @@ public class UserService implements UserDetailsService, IUserService {
 
     private ArrayList<User> users = new ArrayList<User>(){{
         add(new User(1, "user1", "$2a$04$Ye7/lJoJin6.m9sOJZ9ujeTgHEVM4VXgI2Ingpsnf9gXyXEXf/IlW", 3456, 33, new HashSet<Role>(){{add(new Role(4, "ADMIN", "Admin role"));}}));
-        add(new User(2, "user2", "$2a$04$StghL1FYVyZLdi8/DIkAF./2rz61uiYPI3.MaAph5hUq03XKeflyW", 7823, 23,new HashSet<Role>(){{add(new Role(4, "USER", "User role"));}}));
+        add(new User(2, "user2", "$2a$04$StghL1FYVyZLdi8/DIkAF./2rz61uiYPI3.MaAph5hUq03XKeflyW", 7823, 23, new HashSet<Role>(){{add(new Role(4, "USER", "User role"));}}));
         add(new User(3, "user3", "$2a$04$Lk4zqXHrHd82w5/tiMy8ru9RpAXhvFfmHOuqTmFPWQcUhBD8SSJ6W", 4234, 45, null));
     }};
 

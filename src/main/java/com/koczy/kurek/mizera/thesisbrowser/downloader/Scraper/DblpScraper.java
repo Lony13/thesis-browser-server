@@ -24,7 +24,7 @@ public class DblpScraper implements HTMLScraper {
         Document doc = null;
         try {
             doc = Jsoup.connect(DBLP_UNI_URL
-                    + URLEncoder.encode(pdfName, UTF_8)).userAgent(MOZILLA).get();
+                    + URLEncoder.encode(pdfName, UTF_8)).userAgent(MOZILLA).timeout(30*1000).get();
         } catch (IOException e) {
             e.printStackTrace();
         }

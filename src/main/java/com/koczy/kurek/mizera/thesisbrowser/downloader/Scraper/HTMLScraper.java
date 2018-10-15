@@ -17,7 +17,7 @@ public interface HTMLScraper {
     default String findDownloadPdfLink(String url){
         Document doc = null;
         try {
-            doc = Jsoup.connect(url).userAgent(MOZILLA).get();
+            doc = Jsoup.connect(url).userAgent(MOZILLA).timeout(30*1000).get();
         } catch (IOException e) {
             e.printStackTrace();
         }
