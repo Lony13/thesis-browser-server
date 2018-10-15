@@ -28,8 +28,9 @@ public class ThesisController extends DemoServiceResolver<IThesisService> {
     }
 
     @RequestMapping(value = "/api/theses/search", method = RequestMethod.GET)
-    public ResponseEntity<List<Thesis>> searchTheses(@RequestBody(required = false) ThesisFilters thesisFilters) {
-        List<Thesis> theses = thesisService.searchTheses(thesisFilters);
+    public ResponseEntity<List<Thesis>> searchTheses(@RequestBody(required = false) ThesisFilters thesisFilters,
+                                                     @RequestParam String role) {
+        List<Thesis> theses = resolveService(role).searchTheses(thesisFilters);
         return new ResponseEntity<>(theses, HttpStatus.OK);
     }
 
