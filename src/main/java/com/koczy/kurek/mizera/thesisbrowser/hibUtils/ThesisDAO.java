@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ThesisDAO {
@@ -29,7 +30,7 @@ public class ThesisDAO {
                 Hibernate.initialize(thesis.getAuthors());
             }
         } catch (NullPointerException e) {
-            logger.info("NullPointerException in thesisFilers. Returning empty list." );
+            logger.log(Level.SEVERE, "NullPointerException in thesisFilers. Returning empty list." + e.toString());
             e.printStackTrace();
             thesisList = new ArrayList<>();
         }
