@@ -3,8 +3,6 @@ package com.koczy.kurek.mizera.thesisbrowser.controller;
 import com.koczy.kurek.mizera.thesisbrowser.config.TokenProvider;
 import com.koczy.kurek.mizera.thesisbrowser.model.AuthToken;
 import com.koczy.kurek.mizera.thesisbrowser.model.LoginUser;
-import com.koczy.kurek.mizera.thesisbrowser.entity.User;
-import com.koczy.kurek.mizera.thesisbrowser.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,8 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.TOKEN_PREFIX;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -26,9 +22,6 @@ public class AuthenticationController {
 
     @Autowired
     private TokenProvider jwtTokenUtil;
-
-    @Autowired
-    private UserService userService;
 
     @RequestMapping(value = "/generate-token", method = RequestMethod.POST)
     public ResponseEntity<?> register(@RequestBody LoginUser loginUser) throws AuthenticationException {

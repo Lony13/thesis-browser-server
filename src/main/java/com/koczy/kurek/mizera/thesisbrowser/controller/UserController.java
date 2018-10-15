@@ -2,9 +2,8 @@ package com.koczy.kurek.mizera.thesisbrowser.controller;
 
 import com.koczy.kurek.mizera.thesisbrowser.entity.User;
 import com.koczy.kurek.mizera.thesisbrowser.model.UserDto;
-import com.koczy.kurek.mizera.thesisbrowser.service.UserService;
+import com.koczy.kurek.mizera.thesisbrowser.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,27 +14,24 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private IUserService IUserService;
 
-    //@Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value="/users", method = RequestMethod.GET)
     public List<User> listUser(){
-        return userService.findAll();
+        return IUserService.findAll();
     }
 
-    //@Secured("ROLE_USER")
     @PreAuthorize("hasRole('USER')")
-    ////@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
     public User getOne(@PathVariable(value = "id") Long id){
-        return userService.findById(id);
+        return IUserService.findById(id);
     }
 
 
     @RequestMapping(value="/signup", method = RequestMethod.POST)
     public User saveUser(@RequestBody UserDto user){
-        return userService.save(user);
+        return IUserService.save(user);
     }
 
 
