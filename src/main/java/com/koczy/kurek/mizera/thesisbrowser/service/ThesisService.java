@@ -3,6 +3,7 @@ package com.koczy.kurek.mizera.thesisbrowser.service;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.hibUtils.HibernateUtil;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
@@ -22,9 +23,18 @@ public class ThesisService implements IThesisService {
     public List<Thesis> searchTheses(ThesisFilters thesisFilters) {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
+
         String sqlQuery = createQuery(thesisFilters);
         List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).list();
-        return Collections.emptyList();
+        for(Thesis thesis : thesisList){
+            Hibernate.initialize(thesis.getRelatedTheses());
+            Hibernate.initialize(thesis.getKeyWords());
+            Hibernate.initialize(thesis.getAuthors());
+        }
+
+        session.close();
+
+        return thesisList;
     }
 
     private String createQuery(ThesisFilters filters) {
@@ -34,6 +44,7 @@ public class ThesisService implements IThesisService {
             query = query.concat("title LIKE '%" + filters.getTitle() + "%'");
         }
         //TODO add rest filters
+
         return query;
     }
 

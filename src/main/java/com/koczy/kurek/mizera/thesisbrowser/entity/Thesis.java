@@ -1,5 +1,6 @@
 package com.koczy.kurek.mizera.thesisbrowser.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
 import com.sun.istack.internal.NotNull;
 
@@ -21,17 +22,19 @@ public class Thesis {
     private String pathToTXT;
     private Date publicationDate;
 
+    @JsonIgnore
     @ElementCollection
     @CollectionTable(name = "relatedTheses", joinColumns = @JoinColumn(name = "thesisId"))
     @Column(name = "relatedTheses")
     private List<String> relatedTheses = new ArrayList<>();
 
+    @JsonIgnore
     @ElementCollection
     @CollectionTable(name = "keyWords", joinColumns = @JoinColumn(name = "thesisId"))
     @Column(name = "keyWords")
     private Set<String> keyWords = new HashSet<>();
 
-
+    @JsonIgnore
     @ManyToMany(mappedBy = "theses")
     private Set<Author> authors = new HashSet<>();
 
