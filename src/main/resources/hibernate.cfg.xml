@@ -15,7 +15,7 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="show_sql">true</property>
 
-        <mapping class="com.koczy.kurek.mizera.thesisbrowser.entity.Author"/>
+        <mapping class="com.koczy.kurek.mizera.thesisbrowser.entity.Author1"/>
         <mapping class="com.koczy.kurek.mizera.thesisbrowser.entity.Thesis"/>
 
     </session-factory>
