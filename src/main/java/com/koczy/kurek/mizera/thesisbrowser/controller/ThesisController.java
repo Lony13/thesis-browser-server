@@ -4,6 +4,8 @@ import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import com.koczy.kurek.mizera.thesisbrowser.service.DemoServiceResolver;
 import com.koczy.kurek.mizera.thesisbrowser.service.IThesisService;
+import com.koczy.kurek.mizera.thesisbrowser.service.ThesisDemoService;
+import com.koczy.kurek.mizera.thesisbrowser.service.ThesisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +19,7 @@ import java.util.List;
 public class ThesisController extends DemoServiceResolver<IThesisService> {
 
     @Autowired
-    public ThesisController(IThesisService thesisService, IThesisService thesisDemoService) {
+    public ThesisController(ThesisService thesisService, ThesisDemoService thesisDemoService) {
         super(thesisService, thesisDemoService);
     }
 
