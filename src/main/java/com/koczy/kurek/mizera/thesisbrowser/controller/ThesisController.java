@@ -1,6 +1,7 @@
 package com.koczy.kurek.mizera.thesisbrowser.controller;
 
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
+import com.koczy.kurek.mizera.thesisbrowser.entity.ThesisDetails;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import com.koczy.kurek.mizera.thesisbrowser.service.DemoServiceResolver;
 import com.koczy.kurek.mizera.thesisbrowser.service.IThesisService;
@@ -27,6 +28,13 @@ public class ThesisController extends DemoServiceResolver<IThesisService> {
     public ResponseEntity<List<Thesis>> getThesis(@RequestParam String role, HttpServletRequest request) {
         List<Thesis> theses = resolveService(role).getTheses();
         return new ResponseEntity<>(theses, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/theses/details/{id}", method = RequestMethod.GET)
+    public ResponseEntity<ThesisDetails> getThesisDetails(@PathVariable(value = "id") Long id,
+                                                          @RequestParam String role, HttpServletRequest request) {
+        ThesisDetails thesisDetails = resolveService(role).getThesisDetails(id);
+        return new ResponseEntity<>(thesisDetails, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/api/theses/search", method = RequestMethod.GET)
