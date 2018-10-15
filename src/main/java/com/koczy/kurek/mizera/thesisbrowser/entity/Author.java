@@ -10,15 +10,6 @@ import java.util.Set;
 
 @Entity
 public class Author {
-    //author is on the owning side
-    @JsonIgnore
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "author_thesis", // name of link table
-            joinColumns = {@JoinColumn(name = "authorId")},
-            inverseJoinColumns = {@JoinColumn(name = "thesisId")}
-    )
-    Set<Thesis> theses = new HashSet<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +22,15 @@ public class Author {
     private Date birthDate;
     private String academicTitle;
     private String university;
+
+    @JsonIgnore
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "author_thesis", // name of link table
+            joinColumns = {@JoinColumn(name = "authorId")},
+            inverseJoinColumns = {@JoinColumn(name = "thesisId")}
+    )
+    Set<Thesis> theses = new HashSet<>();
 
     public Author() {
     }

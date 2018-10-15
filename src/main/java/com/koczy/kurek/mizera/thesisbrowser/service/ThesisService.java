@@ -2,6 +2,7 @@ package com.koczy.kurek.mizera.thesisbrowser.service;
 
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.hibUtils.HibernateUtil;
+import com.koczy.kurek.mizera.thesisbrowser.hibUtils.ThesisDAO;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -21,31 +22,6 @@ public class ThesisService implements IThesisService {
 
     @Override
     public List<Thesis> searchTheses(ThesisFilters thesisFilters) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-
-        String sqlQuery = createQuery(thesisFilters);
-        List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).list();
-        for(Thesis thesis : thesisList){
-            Hibernate.initialize(thesis.getRelatedTheses());
-            Hibernate.initialize(thesis.getKeyWords());
-            Hibernate.initialize(thesis.getAuthors());
-        }
-
-        session.close();
-
-        return thesisList;
+        return ThesisDAO.searchTheses(thesisFilters);
     }
-
-    private String createQuery(ThesisFilters filters) {
-        String query = "SELECT * FROM thesis WHERE ";
-
-        if (filters.getTitle() != null) {
-            query = query.concat("title LIKE '%" + filters.getTitle() + "%'");
-        }
-        //TODO add rest filters
-
-        return query;
-    }
-
 }
