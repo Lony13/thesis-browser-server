@@ -26,7 +26,7 @@ public class Author {
     @JsonIgnore
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinTable(
-            name = "author_thesis", // name of link table
+            name = "author_thesis",
             joinColumns = {@JoinColumn(name = "authorId")},
             inverseJoinColumns = {@JoinColumn(name = "thesisId")}
     )

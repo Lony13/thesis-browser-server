@@ -8,9 +8,11 @@ import org.hibernate.SessionFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class ThesisDAO {
 
+    private static final Logger logger = Logger.getLogger(ThesisDAO.class.getName());
 
     public static List<Thesis> searchTheses(ThesisFilters thesisFilters) {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -26,7 +28,9 @@ public class ThesisDAO {
                 Hibernate.initialize(thesis.getKeyWords());
                 Hibernate.initialize(thesis.getAuthors());
             }
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
+            logger.info("NullPointerException in thesisFilers. Returning empty list." );
+            e.printStackTrace();
             thesisList = new ArrayList<>();
         }
 
@@ -38,8 +42,8 @@ public class ThesisDAO {
     private static String createQuery(ThesisFilters filters) {
         String query = "SELECT * FROM thesis WHERE ";
 
-        if (filters.getTitle() != null) {
-            query = query.concat("title LIKE '%" + filters.getTitle() + "%'");
+        if (filters.getTitle() != null && !filters.getTitle().isEmpty()) {
+            query = query.concat("title LIKE '%" + filters.getTitle() + "%'" );
         }
         //TODO add rest filters
 
