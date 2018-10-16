@@ -23,6 +23,6 @@ public class ThesisService implements IThesisService {
 
     @Override
     public ThesisDetails getThesisDetails(Long id) {
-        return null;
+        return new ThesisDetails();
     }
 }

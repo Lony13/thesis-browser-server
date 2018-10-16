@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 
-@Service(value = "userService")
+@Service
 public class UserService implements UserDetailsService, IUserService {
 
     private ArrayList<User> users = new ArrayList<User>(){{
@@ -22,6 +22,13 @@ public class UserService implements UserDetailsService, IUserService {
         add(new User(2, "user2", "$2a$04$StghL1FYVyZLdi8/DIkAF./2rz61uiYPI3.MaAph5hUq03XKeflyW", 7823, 23, new HashSet<Role>(){{add(new Role(4, "USER", "User role"));}}));
         add(new User(3, "user3", "$2a$04$Lk4zqXHrHd82w5/tiMy8ru9RpAXhvFfmHOuqTmFPWQcUhBD8SSJ6W", 4234, 45, null));
     }};
+
+    private BCryptPasswordEncoder bcryptEncoder;
+
+    @Autowired
+    public UserService(BCryptPasswordEncoder bcryptEncoder){
+        this.bcryptEncoder = bcryptEncoder;
+    }
 
     public User findByUsername(String username) {
         for (User user : users) {
@@ -36,12 +43,9 @@ public class UserService implements UserDetailsService, IUserService {
         return newUser;
     }
 
-    @Autowired
-    private BCryptPasswordEncoder bcryptEncoder;
-
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = findByUsername(username);
-        if(user == null){
+        if(Objects.isNull(user)){
             throw new UsernameNotFoundException("Invalid username or password.");
         }
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), getAuthority(user));

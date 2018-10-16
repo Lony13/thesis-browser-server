@@ -14,6 +14,8 @@ public class ThesisDetails extends Thesis {
         this.cititationNo = cititationNo;
     }
 
+    public ThesisDetails(){}
+
     public long getCititationNo() {
         return cititationNo;
     }

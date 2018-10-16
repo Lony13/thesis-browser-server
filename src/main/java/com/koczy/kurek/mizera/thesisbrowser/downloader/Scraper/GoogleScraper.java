@@ -10,6 +10,8 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.SCRAPER_TIMEOUT;
+
 @Component
 public class GoogleScraper implements HTMLScraper{
 
@@ -22,7 +24,7 @@ public class GoogleScraper implements HTMLScraper{
     public String findDownloadPdfLink(String url) {
         String parsedDownloadPdfLink = null;
         try {
-            Elements webSitesLinks = Jsoup.connect(url).userAgent(MOZILLA).timeout(30*1000).
+            Elements webSitesLinks = Jsoup.connect(url).userAgent(MOZILLA).timeout(SCRAPER_TIMEOUT).
                     get().select(".g>.r>a");
 
             if (webSitesLinks.isEmpty()) {

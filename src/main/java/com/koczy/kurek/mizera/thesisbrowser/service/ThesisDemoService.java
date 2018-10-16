@@ -45,6 +45,6 @@ public class ThesisDemoService implements IThesisService {
             if(thesisDetails.getId() == id)
                 return thesisDetails;
         }
-        return null;
+        return new ThesisDetails();
     }
 }

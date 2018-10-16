@@ -10,6 +10,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.SCRAPER_TIMEOUT;
+
 @Component
 public class DblpScraper implements HTMLScraper {
 
@@ -24,7 +26,7 @@ public class DblpScraper implements HTMLScraper {
         Document doc = null;
         try {
             doc = Jsoup.connect(DBLP_UNI_URL
-                    + URLEncoder.encode(pdfName, UTF_8)).userAgent(MOZILLA).timeout(30*1000).get();
+                    + URLEncoder.encode(pdfName, UTF_8)).userAgent(MOZILLA).timeout(SCRAPER_TIMEOUT).get();
         } catch (IOException e) {
             e.printStackTrace();
         }

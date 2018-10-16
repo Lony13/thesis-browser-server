@@ -1,6 +1,5 @@
 package com.koczy.kurek.mizera.thesisbrowser.config;
 
-import com.koczy.kurek.mizera.thesisbrowser.entity.User;
 import io.jsonwebtoken.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -63,9 +62,8 @@ public class TokenProvider implements Serializable {
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
-        return (
-                username.equals(userDetails.getUsername())
-                        && !isTokenExpired(token));
+        return username.equals(userDetails.getUsername())
+                        && !isTokenExpired(token);
     }
 
     UsernamePasswordAuthenticationToken getAuthentication(final String token, final Authentication existingAuth, final UserDetails userDetails) {

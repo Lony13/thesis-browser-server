@@ -2,6 +2,10 @@ package com.koczy.kurek.mizera.thesisbrowser.entity;
 
 
 public class Role {
+    private long id;
+    private String name;
+    private String description;
+
     public Role(long id, String name, String description) {
         this.id = id;
         this.name = name;
@@ -9,12 +13,6 @@ public class Role {
     }
 
     public Role(){}
-
-    private long id;
-
-    private String name;
-
-    private String description;
 
     public long getId() {
         return id;

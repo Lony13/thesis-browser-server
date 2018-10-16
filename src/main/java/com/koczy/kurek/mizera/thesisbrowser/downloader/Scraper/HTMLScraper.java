@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.SCRAPER_TIMEOUT;
+
 public interface HTMLScraper {
 
     String MOZILLA = "Mozilla/5.0";
@@ -17,7 +19,7 @@ public interface HTMLScraper {
     default String findDownloadPdfLink(String url){
         Document doc = null;
         try {
-            doc = Jsoup.connect(url).userAgent(MOZILLA).timeout(30*1000).get();
+            doc = Jsoup.connect(url).userAgent(MOZILLA).timeout(SCRAPER_TIMEOUT).get();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -3,6 +3,7 @@ package com.koczy.kurek.mizera.thesisbrowser.controller;
 import com.koczy.kurek.mizera.thesisbrowser.config.TokenProvider;
 import com.koczy.kurek.mizera.thesisbrowser.model.AuthToken;
 import com.koczy.kurek.mizera.thesisbrowser.model.LoginUser;
+import com.koczy.kurek.mizera.thesisbrowser.service.IAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,23 +18,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/token")
 public class AuthenticationController {
 
-    @Autowired
     private AuthenticationManager authenticationManager;
+    private TokenProvider jwtTokenUtil;
+    private IAuthenticationService authenticationService;
 
     @Autowired
-    private TokenProvider jwtTokenUtil;
+    public AuthenticationController(AuthenticationManager authenticationManager,
+                                    TokenProvider jwtTokenUtil,
+                                    IAuthenticationService authenticationService) {
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.authenticationService = authenticationService;
+    }
+
 
     @RequestMapping(value = "/generate-token", method = RequestMethod.POST)
     public ResponseEntity<?> register(@RequestBody LoginUser loginUser) throws AuthenticationException {
-        final Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginUser.getUsername(),
-                        loginUser.getPassword()
-                )
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        final String token = jwtTokenUtil.generateToken(authentication);
-        return ResponseEntity.ok(new AuthToken(token));
+        return authenticationService.register(loginUser, jwtTokenUtil, authenticationManager);
     }
 
 }

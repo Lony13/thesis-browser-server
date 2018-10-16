@@ -13,8 +13,12 @@ import java.util.List;
 @RestController
 public class UserController {
 
-    @Autowired
     private IUserService IUserService;
+
+    @Autowired
+    public UserController(IUserService IUserService) {
+        this.IUserService = IUserService;
+    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value="/users", method = RequestMethod.GET)
@@ -33,7 +37,5 @@ public class UserController {
     public User saveUser(@RequestBody UserDto user){
         return IUserService.save(user);
     }
-
-
 
 }

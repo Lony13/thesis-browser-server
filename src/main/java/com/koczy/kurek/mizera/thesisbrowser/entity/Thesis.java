@@ -19,6 +19,8 @@ public class Thesis {
         this.link = link;
     }
 
+    public Thesis(){}
+
     public long getId() {
         return id;
     }
