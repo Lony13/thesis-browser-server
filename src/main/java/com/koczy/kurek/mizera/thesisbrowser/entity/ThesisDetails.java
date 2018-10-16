@@ -4,11 +4,6 @@ public class ThesisDetails extends Thesis {
 
     private long cititationNo;
 
-    public ThesisDetails(long id, String title, String author, String link, long cititationNo) {
-        super(id, title, author, link);
-        this.cititationNo = cititationNo;
-    }
-
     public ThesisDetails(String title, String author, String link, long cititationNo) {
         super(title, author, link);
         this.cititationNo = cititationNo;

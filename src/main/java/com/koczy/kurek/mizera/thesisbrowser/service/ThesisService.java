@@ -27,7 +27,7 @@ public class ThesisService implements IThesisService {
     }
 
     @Override
-    public ThesisDetails getThesisDetails(Long id) {
+    public ThesisDetails getThesisDetails(int id) {
         return new ThesisDetails();
     }
 }
