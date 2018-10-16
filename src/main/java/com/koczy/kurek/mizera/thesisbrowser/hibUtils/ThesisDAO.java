@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,8 +44,8 @@ public class ThesisDAO {
     private static String createQuery(ThesisFilters filters) {
         String query = "SELECT * FROM thesis WHERE ";
 
-        if (filters.getTitle() != null && !filters.getTitle().isEmpty()) {
-            query = query.concat("title LIKE '%" + filters.getTitle() + "%'" );
+        if (Objects.nonNull(filters.getTitle()) && !filters.getTitle().trim().isEmpty()) {
+            query = query.concat("title LIKE '%" + filters.getTitle() + "%'");
         }
         //TODO add rest filters
 
