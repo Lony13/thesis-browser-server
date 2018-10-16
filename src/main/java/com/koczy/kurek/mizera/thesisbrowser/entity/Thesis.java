@@ -1,14 +1,18 @@
 package com.koczy.kurek.mizera.thesisbrowser.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
 import com.sun.istack.internal.NotNull;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Entity
 public class Thesis {
+
+    private static final Logger logger = Logger.getLogger(Thesis.class.getName());
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer thesisId;
@@ -60,6 +64,7 @@ public class Thesis {
 
     //TODO remove; only for demo ThesisDemoService.searchTheses
     public String getAuthor(){
+        logger.log(Level.WARNING,"Thesis.getAuthor() is deprecated. Use this method for demo purpose only.");
         return Objects.requireNonNull(authors.stream().findFirst().orElse(null)).toString();
     }
 
