@@ -12,6 +12,6 @@ public interface IThesisService {
 
     List<Thesis> searchTheses(ThesisFilters thesisFilters);
 
-    ThesisDetails getThesisDetails(Long id);
+    ThesisDetails getThesisDetails(int id);
 
 }

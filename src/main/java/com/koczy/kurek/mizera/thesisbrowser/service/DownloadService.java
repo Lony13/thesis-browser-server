@@ -64,7 +64,7 @@ public class DownloadService implements IDownloadService {
         }
 
         for (Thesis thesis : theses) {
-            if(!StringUtils.isEmpty(thesis.getLink())){
+            if(!StringUtils.isEmpty(thesis.getLinkToPDF())){
                 downloadThesis(thesis);
                 parseThesisToTxt(thesis);
             } else {
@@ -76,13 +76,13 @@ public class DownloadService implements IDownloadService {
 
     private void downloadThesis(Thesis thesis){
         String filename = thesis.getTitle().replaceAll(REGEX, REPLACEMENT);
-        InputStream in = pdfDownloader.getPdfStream(thesis.getLink());
+        InputStream in = pdfDownloader.getPdfStream(thesis.getLinkToPDF());
         pdfDownloader.downloadPdf(in, filename + PDF);
     }
 
     private void parseThesisToTxt(Thesis thesis){
         String filename = thesis.getTitle().replaceAll(REGEX, REPLACEMENT);
-        InputStream in = pdfDownloader.getPdfStream(thesis.getLink());
+        InputStream in = pdfDownloader.getPdfStream(thesis.getLinkToPDF());
         pdfParser.parseToTxt(in, filename + TXT);
     }
 
@@ -100,7 +100,7 @@ public class DownloadService implements IDownloadService {
                 link = googleScraper.findDownloadPdfLink(url);
             }
         }
-
+        //TODO add author last and first name \ create proper Thesis
         return !StringUtils.isEmpty(link) ? new Thesis(thesisTitle, authorName, link) : null;
     }
 
