@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 @Entity
 public class Thesis {
 
@@ -51,20 +52,36 @@ public class Thesis {
         this.citationNo = citationNo;
         this.authors = authors;
     }
-    public Thesis(String title,String authorName, String link){
-        this.title=title;
-        this.linkToPDF=link;
+
+    public Thesis(String title, String authorName, String link) {
+        this.title = title;
+        this.linkToPDF = link;
         //TODO sort this out
-        authors.add(new Author(authorName,authorName));
+        authors.add(new Author(authorName));
     }
 
     public Thesis(String title) {
         this.title = title;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Author))
+            return false;
+
+        Thesis thesis = (Thesis) o;
+
+        if (thesisId != thesis.thesisId)
+            return false;
+        return title.equals(thesis.title);
+    }
+
+
     //TODO remove; only for demo ThesisDemoService.searchTheses
-    public String getAuthor(){
-        logger.log(Level.WARNING,"Thesis.getAuthor() is deprecated. Use this method for demo purpose only.");
+    public String getAuthor() {
+        logger.log(Level.WARNING, "Thesis.getAuthor() is deprecated. Use this method for demo purpose only.");
         return Objects.requireNonNull(authors.stream().findFirst().orElse(new Author())).toString();
     }
 
