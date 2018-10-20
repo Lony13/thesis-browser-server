@@ -28,7 +28,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('USER')")
     @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
-    public User getOne(@PathVariable(value = "id") Integer id){
+    public User getOne(@PathVariable(value = "id") Long id){
         return IUserService.findById(id);
     }
 
