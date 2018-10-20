@@ -31,10 +31,10 @@ public class ThesisDemoService implements IThesisService {
         add(new ThesisDetails("Properties of multiwinner voting rules.", "Piotr Faliszewski", "https://link.springer.com/content/pdf/10.1007%2Fs00355-017-1026-z.pdf", 0));
         add(new ThesisDetails("Semantic Text Indexing.", "Zbigniew Kaleta", "https://journals.agh.edu.pl/csci/article/view/148/810", 4));
         add(new ThesisDetails("Classic and Agent-Based Evolutionary Heuristics for Shape Optimization of Rotating Discs.", "Roman Dębski", "http://www.cai.sk/ojs/index.php/cai/article/view/2017_2_331/823\n", 15));
-        int i = 0;
-        for(ThesisDetails thesisDetails : thesesDetails) {
-            thesisDetails.setThesisId(i++);
-        }
+//        int i = 0;
+//        for(ThesisDetails thesisDetails : thesesDetails) {
+//            thesisDetails.setThesisId(i++);
+//        }
     }};
 
     @Override
