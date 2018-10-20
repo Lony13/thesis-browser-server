@@ -2,6 +2,7 @@ package com.koczy.kurek.mizera.thesisbrowser.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.internal.NotNull;
+import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 import java.util.*;
@@ -28,19 +29,19 @@ public class Thesis {
     private Date publicationDate;
 
     @JsonIgnore
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "relatedTheses", joinColumns = @JoinColumn(name = "thesisId"))
     @Column(name = "relatedTheses")
     private List<String> relatedTheses = new ArrayList<>();
 
     @JsonIgnore
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "keyWords", joinColumns = @JoinColumn(name = "thesisId"))
     @Column(name = "keyWords")
     private Set<String> keyWords = new HashSet<>();
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "theses")
+    @ManyToMany(mappedBy = "theses",fetch = FetchType.EAGER)
     private Set<Author> authors = new HashSet<>();
 
 

@@ -64,7 +64,7 @@ public class UserService implements UserDetailsService, IUserService {
     }
 
     @Override
-    public User findById(Long id) {
+    public User findById(Integer id) {
         for (User user : users) {
             if(user.getId() == id)
                 return user;
