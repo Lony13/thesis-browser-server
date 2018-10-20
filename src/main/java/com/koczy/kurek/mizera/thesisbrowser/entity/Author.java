@@ -11,18 +11,6 @@ import java.util.Set;
 @Entity
 public class Author {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer authorId;
-    @NotNull
-    private String firstName;
-    private String secondName;
-    @NotNull
-    private String lastName;
-    private Date birthDate;
-    private String academicTitle;
-    private String university;
-
     @JsonIgnore
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinTable(
@@ -31,22 +19,41 @@ public class Author {
             inverseJoinColumns = {@JoinColumn(name = "thesisId")}
     )
     Set<Thesis> theses = new HashSet<>();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer authorId;
+    @NotNull
+    private String name;
+    private Date birthDate;
+    private String academicTitle;
+    private String university;
 
     public Author() {
     }
 
-    public Author(String firstName, String secondName, String lastName, Date birthDate, String academicTitle, String university) {
-        this.firstName = firstName;
-        this.secondName = secondName;
-        this.lastName = lastName;
+    public Author(String name, Date birthDate, String academicTitle, String university) {
+        this.name = name;
         this.birthDate = birthDate;
         this.academicTitle = academicTitle;
         this.university = university;
     }
 
-    public Author(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public Author(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Author))
+            return false;
+
+        Author author = (Author) o;
+
+        if (authorId != author.authorId)
+            return false;
+        return name.equals(author.name);
     }
 
     public Integer getAuthorId() {
@@ -65,28 +72,12 @@ public class Author {
         this.theses = theses;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getSecondName() {
-        return secondName;
-    }
-
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Date getBirthDate() {

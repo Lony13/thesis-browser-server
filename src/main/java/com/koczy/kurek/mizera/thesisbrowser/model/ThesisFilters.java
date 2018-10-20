@@ -6,19 +6,19 @@ public class ThesisFilters {
 
     private String author;
     private String title;
-    private int positionFrom;
-    private int positionTo;
+    private Integer positionFrom;
+    private Integer positionTo;
     private String institution;
     private String keyWords;
-    private int quotationNumber;
+    private Integer quotationNumber;
     private Date dateFrom;
     private Date dateTo;
 
     public ThesisFilters() {
     }
 
-    public ThesisFilters(String author, String title, int positionFrom, int positionTo, String institution,
-                         String keyWords, int quotationNumber, Date dateFrom, Date dateTo) {
+    public ThesisFilters(String author, String title, Integer positionFrom, Integer positionTo, String institution,
+                         String keyWords, Integer quotationNumber, Date dateFrom, Date dateTo) {
         this.author = author;
         this.title = title;
         this.positionFrom = positionFrom;
@@ -46,19 +46,19 @@ public class ThesisFilters {
         this.title = title;
     }
 
-    public int getPositionFrom() {
+    public Integer getPositionFrom() {
         return positionFrom;
     }
 
-    public void setPositionFrom(int positionFrom) {
+    public void setPositionFrom(Integer positionFrom) {
         this.positionFrom = positionFrom;
     }
 
-    public int getPositionTo() {
+    public Integer getPositionTo() {
         return positionTo;
     }
 
-    public void setPositionTo(int positionTo) {
+    public void setPositionTo(Integer positionTo) {
         this.positionTo = positionTo;
     }
 
@@ -78,11 +78,11 @@ public class ThesisFilters {
         this.keyWords = keyWords;
     }
 
-    public int getQuotationNumber() {
+    public Integer getQuotationNumber() {
         return quotationNumber;
     }
 
-    public void setQuotationNumber(int quotationNumber) {
+    public void setQuotationNumber(Integer quotationNumber) {
         this.quotationNumber = quotationNumber;
     }
 
