@@ -40,9 +40,12 @@ public class ThesisDAO {
         }
 
         //filter with date
-        thesisList.removeIf(thesis -> thesis.getPublicationDate().after(thesisFilters.getDateTo())
-                || thesis.getPublicationDate().before(thesisFilters.getDateFrom()));
-
+        if(Objects.nonNull(thesisFilters.getDateFrom())){
+            thesisList.removeIf(thesis -> thesis.getPublicationDate().after(thesisFilters.getDateFrom()));
+        }
+        if(Objects.nonNull(thesisFilters.getDateTo())){
+            thesisList.removeIf(thesis -> thesis.getPublicationDate().after(thesisFilters.getDateTo()));
+        }
         session.close();
 
         return thesisList;
