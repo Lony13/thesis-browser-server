@@ -1,19 +1,22 @@
 package com.koczy.kurek.mizera.thesisbrowser.service;
 
+import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.entity.ThesisDetails;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ThesisDemoService implements IThesisService {
 
     private ArrayList<Thesis> theses = new ArrayList<Thesis>() {{
 
-        add(new Thesis("How hard is control in single-crossing elections?", "Piotr Faliszewski", "https://link.springer.com/content/pdf/10.1007%2Fs10458-016-9339-3.pdf"));
+        add(new Thesis("How hard is control in single-crossing elections?", new HashSet<Author>(){{add(new Author("Piotr Faliszewski"));add(new Author("Fiotr Paliszewski"));}}, "https://link.springer.com/content/pdf/10.1007%2Fs10458-016-9339-3.pdf"));
         add(new Thesis("Multiwinner Elections With Diversity Constraints", "Piotr Faliszewski", "https://www.aaai.org/ocs/index.php/AAAI/AAAI18/paper/view/16769/15777"));
         add(new Thesis("Properties of multiwinner voting rules.", "Piotr Faliszewski", "https://link.springer.com/content/pdf/10.1007%2Fs00355-017-1026-z.pdf"));
         add(new Thesis("Semantic Text Indexing.", "Zbigniew Kaleta", "https://journals.agh.edu.pl/csci/article/view/148/810"));

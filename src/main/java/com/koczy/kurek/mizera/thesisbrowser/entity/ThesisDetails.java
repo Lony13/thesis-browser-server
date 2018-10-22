@@ -1,5 +1,6 @@
 package com.koczy.kurek.mizera.thesisbrowser.entity;
 
+@Deprecated
 public class ThesisDetails extends Thesis {
 
     private long cititationNo;

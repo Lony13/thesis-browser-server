@@ -40,7 +40,7 @@ public class Thesis {
     @Column(name = "keyWords")
     private Set<String> keyWords = new HashSet<>();
 
-    @JsonIgnore
+    //@JsonIgnore
     @ManyToMany(mappedBy = "theses",fetch = FetchType.EAGER)
     private Set<Author> authors = new HashSet<>();
 
@@ -48,12 +48,13 @@ public class Thesis {
     public Thesis() {
     }
 
-    public Thesis(String title, Integer citationNo, Set<Author> authors) {
+    public Thesis(String title, Set<Author> authors, String linkToPDF) {
         this.title = title;
-        this.citationNo = citationNo;
+        this.linkToPDF = linkToPDF;
         this.authors = authors;
     }
 
+    @Deprecated
     public Thesis(String title, String authorName, String link) {
         this.title = title;
         this.linkToPDF = link;
