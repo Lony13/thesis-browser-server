@@ -8,13 +8,11 @@ public class BagOfWords {
     private ThesisDao thesisDao;
 
     private final int numDocs;
-    private final int numVocabs;
     private final int numWords;
 
-    public BagOfWords(int numVocabs) {
+    public BagOfWords() {
         this.thesisDao = new ThesisDao();
         this.numDocs   = thesisDao.getNumDocs();
-        this.numVocabs = numVocabs;
 
         int numWords = 0;
         for(int id=1; id<=numDocs; id++){
@@ -44,10 +42,6 @@ public class BagOfWords {
             }
         }
         return words;
-    }
-
-    public int getNumVocabs() {
-        return numVocabs;
     }
 
     public int getNumWords() {

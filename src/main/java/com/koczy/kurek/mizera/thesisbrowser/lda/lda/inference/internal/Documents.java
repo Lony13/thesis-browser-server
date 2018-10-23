@@ -35,7 +35,6 @@ class Documents {
         documents = new ArrayList<>();
         for (int d = 1; d <= lda.getBow().getNumDocs(); ++d) {
             List<Vocabulary> vocabList = getVocabularyList(d, lda.getBow(), lda.getVocabularies());
-            //Document doc = new Document(d, lda.getNumTopics(), lda.getBow(), lda.getVocabularies());
             Document doc = new Document(d, lda.getNumTopics(), vocabList);
             documents.add(doc);
         }
@@ -49,18 +48,18 @@ class Documents {
                                   .collect(Collectors.toList());
     }
 
-//    int getTopicID(int docID, int wordID) {
-//        return documents.get(docID - 1).getTopicID(wordID);
-//    }
-//
-//    void setTopicID(int docID, int wordID, int topicID) {
-//        documents.get(docID - 1).setTopicID(wordID, topicID);
-//    }
-//
-//    Vocabulary getVocab(int docID, int wordID) {
-//        return documents.get(docID - 1).getVocabulary(wordID);
-//    }
-//
+    int getTopicID(int docID, int wordID) {
+        return documents.get(docID - 1).getTopicID(wordID);
+    }
+
+    void setTopicID(int docID, int wordID, int topicID) {
+        documents.get(docID - 1).setTopicID(wordID, topicID);
+    }
+
+    Vocabulary getVocab(int docID, int wordID) {
+        return documents.get(docID - 1).getVocabulary(wordID);
+    }
+
 //    List<Vocabulary> getWords(int docID) {
 //        return documents.get(docID - 1).getWords();
 //    }
@@ -69,13 +68,13 @@ class Documents {
         return Collections.unmodifiableList(documents);
     }
     
-//    void incrementTopicCount(int docID, int topicID) {
-//        documents.get(docID - 1).incrementTopicCount(topicID);
-//    }
-//
-//    void decrementTopicCount(int docID, int topicID) {
-//        documents.get(docID - 1).decrementTopicCount(topicID);
-//    }
+    void incrementTopicCount(int docID, int topicID) {
+        documents.get(docID - 1).incrementTopicCount(topicID);
+    }
+
+    void decrementTopicCount(int docID, int topicID) {
+        documents.get(docID - 1).decrementTopicCount(topicID);
+    }
     
     int getTopicCount(int docID, int topicID) {
         return documents.get(docID - 1).getTopicCount(topicID);

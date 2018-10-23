@@ -7,6 +7,9 @@ public class Constants {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
     public static final String AUTHORITIES_KEY = "scopes";
+
     public static final long LDA_SEED = 100L;
     public static final int LDA_NUM_ITERATION = 10;
+    public static final String LDA_VOCAB_PATH = "src/main/resources/vocab.kos.txt";
+    public static final int LDA_NUM_TOPICS = 10;
 }

@@ -30,12 +30,7 @@ public class Dataset {
     @Autowired
     public Dataset(@Value("${lda.vocabs}") String vocabsFileName){
         vocabs = new Vocabularies(vocabsFileName);
-        bow = new BagOfWords(vocabs.size());
-    }
-    
-    public Dataset(BagOfWords bow) {
-        this.bow = bow;
-        this.vocabs = null;
+        bow = new BagOfWords();
     }
     
     public BagOfWords getBow() {
@@ -46,21 +41,13 @@ public class Dataset {
         return bow.getNumDocs();
     }
 
-//    public int getDocLength(int docID) {
-//        return bow.getDocLength(docID);
-//    }
-
     public List<Integer> getWords(int docID) {
         return bow.getWords(docID);
     }
 
     public int getNumVocabs() {
-        return bow.getNumVocabs();
+        return vocabs.size();
     }
-
-//    public int getNumNNZ() {
-//        return bow.getNumNNZ();
-//    }
 
     public int getNumWords() {
         return bow.getNumWords();

@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
+import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.LDA_NUM_TOPICS;
+
 
 @Service
 public class LdaService implements ILdaService{
@@ -17,12 +19,11 @@ public class LdaService implements ILdaService{
     @Override
     public ResponseEntity run() {
         Dataset dataset = new Dataset("src/main/resources/vocab.kos.txt");
-        final int numTopics = 10;
-        LDA lda = new LDA(0.1, 0.1, numTopics, dataset);
+        LDA lda = new LDA(0.1, 0.1, LDA_NUM_TOPICS, dataset);
         lda.run();
         System.out.println(lda.computePerplexity(dataset));
 
-        for (int t = 0; t < numTopics; ++t) {
+        for (int t = 0; t < LDA_NUM_TOPICS; ++t) {
             List<Pair<String, Double>> highRankVocabs = lda.getVocabsSortedByPhi(t);
             System.out.print("t" + t + ": ");
             for (int i = 0; i < 5; ++i) {

@@ -34,7 +34,7 @@ class Topics {
         
         topics = new ArrayList<>();
         for (int t = 0; t < lda.getNumTopics(); ++t) {
-            topics.add(new Topic(t, lda.getBow().getNumVocabs()));
+            topics.add(new Topic(t, lda.getVocabularies().size()));
         }
     }
     

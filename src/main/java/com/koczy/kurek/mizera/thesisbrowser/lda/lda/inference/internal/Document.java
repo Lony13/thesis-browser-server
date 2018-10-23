@@ -16,35 +16,16 @@
 
 package com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal;
 
-import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWords;
-import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.ThesisDao;
-import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Vocabularies;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Vocabulary;
 
 import java.util.List;
-import java.util.Map;
 
 public class Document {
     private final int id;
     private TopicCounter topicCount;
     private TopicAssignment assignment;
-    private ThesisDao thesisDao;
-    private BagOfWords bow;
-    private Vocabularies vocabularies;
-    private int numWords;
-
     private Words words;
 
-//    Document(int id, int numTopics, BagOfWords bow, Vocabularies vocabularies) {
-//        if (id <= 0 || numTopics <= 0) throw new IllegalArgumentException();
-//        this.id = id;
-//        this.topicCount = new TopicCounter(numTopics);
-//        this.assignment = new TopicAssignment();
-//        this.thesisDao = new ThesisDao();
-//        this.bow = bow;
-//        this.vocabularies = vocabularies;
-//        this.numWords = countDocLenght();
-//    }
 
     Document(int id, int numTopics, List<Vocabulary> words) {
         if (id <= 0 || numTopics <= 0) throw new IllegalArgumentException();
@@ -52,8 +33,6 @@ public class Document {
         this.topicCount = new TopicCounter(numTopics);
         this.words = new Words(words);
         this.assignment = new TopicAssignment();
-
-        //this.thesisDao = new ThesisDao();
     }
 
     int id() {
@@ -67,20 +46,6 @@ public class Document {
     int getDocLength() {
         return words.getNumWords();
     }
-
-    private int countDocLenght(){
-        Map<Integer, Integer> bow = thesisDao.getThesisBow(this.id);
-        int numWords = 0;
-        for (Map.Entry<Integer, Integer> entry : bow.entrySet())
-        {
-            numWords += entry.getValue();
-        }
-        return numWords;
-    }
-
-//    int getDocLength() {
-//        return this.numWords;
-//    }
     
     void incrementTopicCount(int topicID) {
         topicCount.incrementTopicCount(topicID);
@@ -108,17 +73,6 @@ public class Document {
     Vocabulary getVocabulary(int wordID) {
         return words.get(wordID);
     }
-
-//    Vocabulary getVocabulary(int wordID) {
-//        return bow.getWords(this.id).stream()
-//                .map(id -> vocabularies.get(id))
-//                .collect(Collectors.toList())
-//                .get(wordID);
-//    }
-
-//    List<Vocabulary> getWords() {
-//        return words.getWords();
-//    }
     
     double getTheta(int topicID, double alpha, double sumAlpha) {
         if (topicID < 0 || alpha <= 0.0 || sumAlpha <= 0.0) {

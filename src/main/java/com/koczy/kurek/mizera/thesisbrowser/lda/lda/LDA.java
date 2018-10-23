@@ -20,12 +20,9 @@ import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWords;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Dataset;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Vocabularies;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.Inference;
-import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.InferenceFactory;
-import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.InferenceMethod;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal.CollapsedGibbsSampler;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.io.IOException;
 import java.util.List;
 
 public class LDA {
@@ -40,7 +37,6 @@ public class LDA {
      * @param beta topic-vocab hyperparameter
      * @param numTopics the number of topics
      * @param dataset dataset
-     * @param method inference method
      */
     public LDA(final double alpha, final double beta, final int numTopics,
         final Dataset dataset) {
