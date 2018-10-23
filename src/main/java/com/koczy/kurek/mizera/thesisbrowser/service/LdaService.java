@@ -3,27 +3,30 @@ package com.koczy.kurek.mizera.thesisbrowser.service;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Dataset;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.LDA;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
-import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.LDA_NUM_TOPICS;
-
-
 @Service
 public class LdaService implements ILdaService{
 
-    public LdaService(){}
+    private Dataset dataset;
+    private LDA lda;
+
+    @Autowired
+    public LdaService(Dataset dataset, LDA lda){
+        this.dataset = dataset;
+        this.lda = lda;
+    }
 
     @Override
     public ResponseEntity run() {
-        Dataset dataset = new Dataset("src/main/resources/vocab.kos.txt");
-        LDA lda = new LDA(0.1, 0.1, LDA_NUM_TOPICS, dataset);
-        lda.run();
-        System.out.println(lda.computePerplexity(dataset));
+        this.lda.run();
+        System.out.println(this.lda.computePerplexity(this.dataset));
 
-        for (int t = 0; t < LDA_NUM_TOPICS; ++t) {
+        for (int t = 0; t < lda.getNumTopics(); ++t) {
             List<Pair<String, Double>> highRankVocabs = lda.getVocabsSortedByPhi(t);
             System.out.print("t" + t + ": ");
             for (int i = 0; i < 5; ++i) {

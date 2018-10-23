@@ -1,17 +1,22 @@
 package com.koczy.kurek.mizera.thesisbrowser.lda.dataset;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class BagOfWords {
     private ThesisDao thesisDao;
 
     private final int numDocs;
     private final int numWords;
 
-    public BagOfWords() {
-        this.thesisDao = new ThesisDao();
+    @Autowired
+    public BagOfWords(ThesisDao thesisDao) {
+        this.thesisDao = thesisDao;
         this.numDocs   = thesisDao.getNumDocs();
 
         int numWords = 0;

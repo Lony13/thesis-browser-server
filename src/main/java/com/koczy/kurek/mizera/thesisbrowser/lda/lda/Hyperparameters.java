@@ -16,16 +16,22 @@
 
 package com.koczy.kurek.mizera.thesisbrowser.lda.lda;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
 class Hyperparameters {
     private Alpha alpha;
     private Beta beta;
-    
+
     Hyperparameters(double alpha, double beta, int numTopics, int numVocabs) {
         this.alpha = new Alpha(alpha, numTopics);
         this.beta  = new Beta(beta, numVocabs);
     }
-    
-    Hyperparameters(double alpha, double beta, int numTopics) {
+
+    @Autowired
+    Hyperparameters(@Value("${lda.alpha}") double alpha, @Value("${lda.beta}") double beta, @Value("${lda.numTopics}") int numTopics) {
         this.alpha = new Alpha(alpha, numTopics);
         this.beta  = new Beta(beta);
     }

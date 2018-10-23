@@ -22,6 +22,7 @@ import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.Inference;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.distribution.EnumeratedIntegerDistribution;
 import org.apache.commons.math3.distribution.IntegerDistribution;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -38,8 +39,9 @@ public class CollapsedGibbsSampler implements Inference {
     private Documents documents;
     private boolean ready;
 
+    @Autowired
     public CollapsedGibbsSampler() {
-        ready = false;
+        this.ready = false;
     }
     
     @Override

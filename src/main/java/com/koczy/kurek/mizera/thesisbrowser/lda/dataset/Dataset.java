@@ -28,9 +28,9 @@ public class Dataset {
     private Vocabularies vocabs;
 
     @Autowired
-    public Dataset(@Value("${lda.vocabs}") String vocabsFileName){
-        vocabs = new Vocabularies(vocabsFileName);
-        bow = new BagOfWords();
+    public Dataset(Vocabularies vocabs, BagOfWords bow){
+        this.vocabs = vocabs;
+        this.bow = bow;
     }
     
     public BagOfWords getBow() {

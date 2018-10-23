@@ -1,5 +1,6 @@
 package com.koczy.kurek.mizera.thesisbrowser.lda.dataset;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.FileInputStream;
@@ -11,10 +12,13 @@ import java.util.Map;
 @Repository
 public class ThesisDao {
 
+    private BagOfWordsConverter bagOfWordsConverter;
+
     private List<Map<Integer, Integer>> bow = new ArrayList<Map<Integer, Integer>>();
 
-    public ThesisDao(){
-        BagOfWordsConverter bagOfWordsConverter = new BagOfWordsConverter("src/main/resources/vocab.kos.txt");
+    @Autowired
+    public ThesisDao(BagOfWordsConverter bagOfWordsConverter){
+        this.bagOfWordsConverter = bagOfWordsConverter;
         FileInputStream fileInputStream = null;
         try {
             for(int i=0; i<1; i++){

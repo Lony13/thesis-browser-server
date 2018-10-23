@@ -16,6 +16,10 @@
 
 package com.koczy.kurek.mizera.thesisbrowser.lda.dataset;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,12 +28,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class Vocabularies {
     private List<Vocabulary> vocabs;
-    
-    public Vocabularies(String filePath) {
-        if (filePath == null) throw new NullPointerException();
 
+    @Autowired
+    public Vocabularies(@Value("${lda.vocabs}") String filePath) {
         try {
             Path vocabFilePath = Paths.get(filePath);
             List<String> lines = Files.readAllLines(vocabFilePath);

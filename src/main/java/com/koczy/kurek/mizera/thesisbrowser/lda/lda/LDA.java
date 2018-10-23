@@ -20,11 +20,14 @@ import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWords;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Dataset;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Vocabularies;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.Inference;
-import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal.CollapsedGibbsSampler;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class LDA {
     private Hyperparameters hyperparameters;
     private final int numTopics;
@@ -32,18 +35,12 @@ public class LDA {
     private final Inference inference;
     private boolean trained;
 
-    /**
-     * @param alpha doc-topic hyperparameter
-     * @param beta topic-vocab hyperparameter
-     * @param numTopics the number of topics
-     * @param dataset dataset
-     */
-    public LDA(final double alpha, final double beta, final int numTopics,
-        final Dataset dataset) {
-        this.hyperparameters = new Hyperparameters(alpha, beta, numTopics);
+    @Autowired
+    public LDA(Inference inference, Dataset dataset, Hyperparameters hyperparameters, @Value("${lda.numTopics}") int numTopics) {
+        this.hyperparameters = hyperparameters;
         this.numTopics       = numTopics;
         this.dataset         = dataset;
-        this.inference       = new CollapsedGibbsSampler();
+        this.inference       = inference;
         this.trained         = false;
     }
 
