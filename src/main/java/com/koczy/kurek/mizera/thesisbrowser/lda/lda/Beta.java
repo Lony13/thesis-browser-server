@@ -16,11 +16,16 @@
 
 package com.koczy.kurek.mizera.thesisbrowser.lda.lda;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Component
 class Beta {
     private List<Double> betas;
     
@@ -32,8 +37,9 @@ class Beta {
                            .limit(numVocabs)
                            .collect(Collectors.toList());
     }
-    
-    Beta(double beta) {
+
+    @Autowired
+    Beta(@Value("${lda.beta}") double beta) {
         if (beta <= 0.0) {
             throw new IllegalArgumentException();
         }

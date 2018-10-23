@@ -59,10 +59,6 @@ class Documents {
     Vocabulary getVocab(int docID, int wordID) {
         return documents.get(docID - 1).getVocabulary(wordID);
     }
-
-//    List<Vocabulary> getWords(int docID) {
-//        return documents.get(docID - 1).getWords();
-//    }
     
     List<Document> getDocuments() {
         return Collections.unmodifiableList(documents);

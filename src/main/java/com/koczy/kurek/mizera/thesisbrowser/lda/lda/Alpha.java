@@ -16,14 +16,20 @@
 
 package com.koczy.kurek.mizera.thesisbrowser.lda.lda;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Component
 class Alpha {
     private List<Double> alphas;
-    
-    Alpha(double alpha, int numTopics) {
+
+    @Autowired
+    Alpha(@Value("${lda.alpha}") double alpha, @Value("${lda.numTopics}") int numTopics) {
         if (alpha <= 0.0 || numTopics <= 0) {
             throw new IllegalArgumentException();
         }

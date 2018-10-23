@@ -19,6 +19,7 @@ package com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Vocabulary;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.LDA;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.Inference;
+import com.koczy.kurek.mizera.thesisbrowser.service.DownloadService;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.distribution.EnumeratedIntegerDistribution;
 import org.apache.commons.math3.distribution.IntegerDistribution;
@@ -27,6 +28,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.LDA_NUM_ITERATION;
@@ -34,6 +37,8 @@ import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.LDA_SEED;
 
 @Component
 public class CollapsedGibbsSampler implements Inference {
+    private static final Logger logger = Logger.getLogger(DownloadService.class.getName());
+
     private LDA lda;
     private Topics topics;
     private Documents documents;
@@ -46,10 +51,8 @@ public class CollapsedGibbsSampler implements Inference {
     
     @Override
     public void setUp(LDA lda) {
-        if (lda == null) throw new NullPointerException();
-
         this.lda = lda;
-        
+
         initialize(this.lda);
         initializeTopicAssignment(LDA_SEED);
 
@@ -73,14 +76,11 @@ public class CollapsedGibbsSampler implements Inference {
         }
 
         for (int i = 1; i <= LDA_NUM_ITERATION; ++i) {
-            System.out.println("Iteraion " + i + ".");
+            logger.log(Level.INFO, "Iteration: " + i);
             runSampling();
         }
     }
 
-    /**
-     * Run collapsed Gibbs sampling [Griffiths and Steyvers 2004].
-     */
     void runSampling() {
         for (Document d : documents.getDocuments()) {
             for (int w = 0; w < d.getDocLength(); ++w) {
@@ -102,15 +102,7 @@ public class CollapsedGibbsSampler implements Inference {
             }
         }
     }
-    
-    /**
-     * Get the full conditional distribution over topics.
-     * docID and vocabID are passed to this distribution for parameters.
-     * @param numTopics
-     * @param docID
-     * @param vocabID
-     * @return the integer distribution over topics
-     */
+
     IntegerDistribution getFullConditionalDistribution(final int numTopics, final int docID, final int vocabID) {
         int[]    topics        = IntStream.range(0, numTopics).toArray();
         double[] probabilities = Arrays.stream(topics)
@@ -119,20 +111,10 @@ public class CollapsedGibbsSampler implements Inference {
         return new EnumeratedIntegerDistribution(topics, probabilities); 
     }
 
-    /**
-     * Initialize the topic assignment.
-     * @param seed the seed of a pseudo random number generator
-     */
     void initializeTopicAssignment(final long seed) {
         documents.initializeTopicAssignment(topics, seed);
     }
 
-    /**
-     * Get the count of topicID assigned to docID. 
-     * @param docID
-     * @param topicID
-     * @return the count of topicID assigned to docID
-     */
     int getDTCount(final int docID, final int topicID) {
         if (!ready) throw new IllegalStateException();
         if (docID <= 0 || lda.getBow().getNumDocs() < docID
@@ -142,12 +124,6 @@ public class CollapsedGibbsSampler implements Inference {
         return documents.getTopicCount(docID, topicID);
     }
 
-    /**
-     * Get the count of vocabID assigned to topicID.
-     * @param topicID
-     * @param vocabID
-     * @return the count of vocabID assigned to topicID
-     */
     int getTVCount(final int topicID, final int vocabID) {
         if (!ready) throw new IllegalStateException();
         if (topicID < 0 || lda.getNumTopics() <= topicID || vocabID <= 0) {
@@ -156,14 +132,7 @@ public class CollapsedGibbsSampler implements Inference {
         final Topic topic = topics.get(topicID);
         return topic.getVocabCount(vocabID);
     }
-    
-    /**
-     * Get the sum of counts of vocabs assigned to topicID.
-     * This is the sum of topic-vocab count over vocabs. 
-     * @param topicID
-     * @return the sum of counts of vocabs assigned to topicID
-     * @throws IllegalArgumentException topicID < 0 || #topic <= topicID
-     */
+
     int getTSumCount(final int topicID) {
         if (topicID < 0 || lda.getNumTopics() <= topicID) {
             throw new IllegalArgumentException();
