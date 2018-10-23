@@ -9,19 +9,23 @@ import java.util.Map;
 
 @Component
 public class BagOfWords {
-    private ThesisDao thesisDao;
+    private ThesisBowManager thesisBowManager;
 
-    private final int numDocs;
-    private final int numWords;
+    private int numDocs;
+    private int numWords;
 
     @Autowired
-    public BagOfWords(ThesisDao thesisDao) {
-        this.thesisDao = thesisDao;
-        this.numDocs   = thesisDao.getNumDocs();
+    public BagOfWords(ThesisBowManager thesisBowManager) {
+        this.thesisBowManager = thesisBowManager;
+    }
+
+    public void setupBow(){
+        thesisBowManager.setupBowManager();
+        this.numDocs   = thesisBowManager.getNumDocs();
 
         int numWords = 0;
         for(int id=1; id<=numDocs; id++){
-            Map<Integer, Integer> thesisBow = thesisDao.getThesisBow(id);
+            Map<Integer, Integer> thesisBow = thesisBowManager.getThesisBow(id);
             for (Map.Entry<Integer, Integer> entry : thesisBow.entrySet()){
                 numWords += entry.getValue();
             }
@@ -37,7 +41,7 @@ public class BagOfWords {
         if (docID <= 0 || getNumDocs() < docID) {
             throw new IllegalArgumentException();
         }
-        Map<Integer, Integer> thesisBow = thesisDao.getThesisBow(docID);
+        Map<Integer, Integer> thesisBow = thesisBowManager.getThesisBow(docID);
 
         List<Integer> words = new ArrayList<>();
 

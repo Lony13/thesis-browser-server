@@ -2,21 +2,66 @@ package com.koczy.kurek.mizera.thesisbrowser.hibUtils;
 
 import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
+import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWordsConverter;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+@Repository
 public class ThesisDAO {
 
     private static final Logger logger = Logger.getLogger(ThesisDAO.class.getName());
+
+    //DEMO
+    private BagOfWordsConverter bagOfWordsConverter;
+    //DEMO
+    private List<Map<Integer, Integer>> bow = new ArrayList<Map<Integer, Integer>>();
+
+    //DEMO
+    @Autowired
+    public ThesisDAO(BagOfWordsConverter bagOfWordsConverter){
+        this.bagOfWordsConverter = bagOfWordsConverter;
+        FileInputStream fileInputStream = null;
+        try {
+            for(int i=0; i<1; i++){
+                fileInputStream = new FileInputStream("parsedPDF/Multiwinner_Voting__A_New_Challenge_for_Social_Choice_Theory.txt");
+                bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
+                fileInputStream = new FileInputStream("parsedPDF/Comparison_of_association_ratio_in_English_and_Polish_languages.txt");
+                bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
+                fileInputStream = new FileInputStream("parsedPDF/Predictive_planning_method_for_rescue_robots_in_buildings.txt");
+                bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //DEMO
+    public int getNumDocs(){
+        return bow.size();
+    }
+
+    //DEMO
+    public Map<Integer, Integer> getThesisBow(int id){
+        return bow.get(id);
+    }
+
+    //DEMO
+    public List<Integer> getThesisId(){
+        return new ArrayList<Integer>(){{add(0); add(1); add(2);}};
+    }
 
     //TODO add filter over position in authors list
     public static List<Thesis> searchTheses(ThesisFilters thesisFilters) {

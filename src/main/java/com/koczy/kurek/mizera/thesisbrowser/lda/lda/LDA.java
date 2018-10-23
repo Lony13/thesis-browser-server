@@ -61,6 +61,7 @@ public class LDA {
      * Run model inference.
      */
     public void run() {
+        dataset.getBow().setupBow();
         inference.setUp(this);
         inference.run();
         trained = true;
