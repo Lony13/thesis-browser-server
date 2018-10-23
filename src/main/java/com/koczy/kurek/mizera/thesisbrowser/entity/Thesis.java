@@ -2,6 +2,7 @@ package com.koczy.kurek.mizera.thesisbrowser.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.internal.NotNull;
+import lombok.AllArgsConstructor;
 import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
@@ -28,13 +29,13 @@ public class Thesis {
     private String pathToTXT;
     private Date publicationDate;
 
-    @JsonIgnore
+    //@JsonIgnore
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "relatedTheses", joinColumns = @JoinColumn(name = "thesisId"))
     @Column(name = "relatedTheses")
     private List<String> relatedTheses = new ArrayList<>();
 
-    @JsonIgnore
+    //@JsonIgnore
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "keyWords", joinColumns = @JoinColumn(name = "thesisId"))
     @Column(name = "keyWords")
@@ -52,6 +53,17 @@ public class Thesis {
         this.title = title;
         this.linkToPDF = linkToPDF;
         this.authors = authors;
+    }
+
+    public Thesis(String title, Set<Author> authors, String linkToPDF, Integer citationNo,
+                  Date publicationDate, List<String> relatedTheses, Set<String> keyWords) {
+        this.title = title;
+        this.linkToPDF = linkToPDF;
+        this.authors = authors;
+        this.citationNo = citationNo;
+        this.publicationDate = publicationDate;
+        this.relatedTheses = relatedTheses;
+        this.keyWords = keyWords;
     }
 
     @Deprecated

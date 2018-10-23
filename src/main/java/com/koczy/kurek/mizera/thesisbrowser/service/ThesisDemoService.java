@@ -6,26 +6,22 @@ import com.koczy.kurek.mizera.thesisbrowser.entity.ThesisDetails;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ThesisDemoService implements IThesisService {
 
     private ArrayList<Thesis> theses = new ArrayList<Thesis>() {{
 
-        add(new Thesis("How hard is control in single-crossing elections?", new HashSet<Author>(){{add(new Author("Piotr Faliszewski"));add(new Author("Fiotr Paliszewski"));}}, "https://link.springer.com/content/pdf/10.1007%2Fs10458-016-9339-3.pdf"));
+        add(new Thesis("How hard is control in single-crossing elections?",
+                new HashSet<Author>(){{add(new Author("Piotr Faliszewski"));add(new Author("Fiotr Paliszewski"));}},
+                "https://link.springer.com/content/pdf/10.1007%2Fs10458-016-9339-3.pdf", 6,
+                new Date(1540234014), new ArrayList<String>(){{add("WOSK");}},
+                new HashSet<String>(){{add("auto"); add("voting");}}));
         add(new Thesis("Multiwinner Elections With Diversity Constraints", "Piotr Faliszewski", "https://www.aaai.org/ocs/index.php/AAAI/AAAI18/paper/view/16769/15777"));
         add(new Thesis("Properties of multiwinner voting rules.", "Piotr Faliszewski", "https://link.springer.com/content/pdf/10.1007%2Fs00355-017-1026-z.pdf"));
         add(new Thesis("Semantic Text Indexing.", "Zbigniew Kaleta", "https://journals.agh.edu.pl/csci/article/view/148/810"));
         add(new Thesis("Classic and Agent-Based Evolutionary Heuristics for Shape Optimization of Rotating Discs.", "Roman Dębski", "http://www.cai.sk/ojs/index.php/cai/article/view/2017_2_331/823\n"));
-//        add(new Thesis(1, "How hard is control in single-crossing elections?", "Piotr Faliszewski", "https://link.springer.com/content/pdf/10.1007%2Fs10458-016-9339-3.pdf"));
-//        add(new Thesis(2, "Multiwinner Elections With Diversity Constraints", "Piotr Faliszewski", "https://www.aaai.org/ocs/index.php/AAAI/AAAI18/paper/view/16769/15777"));
-//        add(new Thesis(3, "Properties of multiwinner voting rules.", "Piotr Faliszewski", "https://link.springer.com/content/pdf/10.1007%2Fs00355-017-1026-z.pdf"));
-//        add(new Thesis(4, "Semantic Text Indexing.", "Zbigniew Kaleta", "https://journals.agh.edu.pl/csci/article/view/148/810"));
-//        add(new Thesis(5, "Classic and Agent-Based Evolutionary Heuristics for Shape Optimization of Rotating Discs.", "Roman Dębski", "http://www.cai.sk/ojs/index.php/cai/article/view/2017_2_331/823\n"));
     }};
 
     private ArrayList<ThesisDetails> thesesDetails = new ArrayList<ThesisDetails>(){{
@@ -34,10 +30,6 @@ public class ThesisDemoService implements IThesisService {
         add(new ThesisDetails("Properties of multiwinner voting rules.", "Piotr Faliszewski", "https://link.springer.com/content/pdf/10.1007%2Fs00355-017-1026-z.pdf", 0));
         add(new ThesisDetails("Semantic Text Indexing.", "Zbigniew Kaleta", "https://journals.agh.edu.pl/csci/article/view/148/810", 4));
         add(new ThesisDetails("Classic and Agent-Based Evolutionary Heuristics for Shape Optimization of Rotating Discs.", "Roman Dębski", "http://www.cai.sk/ojs/index.php/cai/article/view/2017_2_331/823\n", 15));
-//        int i = 0;
-//        for(ThesisDetails thesisDetails : thesesDetails) {
-//            thesisDetails.setThesisId(i++);
-//        }
     }};
 
     @Override
@@ -59,5 +51,10 @@ public class ThesisDemoService implements IThesisService {
                 return thesisDetails;
         }
         return new ThesisDetails();
+    }
+
+    @Override
+    public Thesis getThesis(int id) {
+        return theses.get(id);
     }
 }

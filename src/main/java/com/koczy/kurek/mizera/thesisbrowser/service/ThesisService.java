@@ -30,4 +30,9 @@ public class ThesisService implements IThesisService {
     public ThesisDetails getThesisDetails(int id) {
         return new ThesisDetails();
     }
+
+    @Override
+    public Thesis getThesis(int id) {
+        return new Thesis();
+    }
 }

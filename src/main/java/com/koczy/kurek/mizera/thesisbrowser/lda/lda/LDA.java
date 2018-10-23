@@ -22,7 +22,6 @@ import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Vocabularies;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.Inference;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.InferenceFactory;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.InferenceMethod;
-import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.InferenceProperties;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal.CollapsedGibbsSampler;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -34,7 +33,6 @@ public class LDA {
     private final int numTopics;
     private Dataset dataset;
     private final Inference inference;
-    private InferenceProperties properties;
     private boolean trained;
 
     /**
@@ -45,25 +43,12 @@ public class LDA {
      * @param method inference method
      */
     public LDA(final double alpha, final double beta, final int numTopics,
-            final Dataset dataset, InferenceMethod method) {
-        this(alpha, beta, numTopics, dataset, method, InferenceProperties.PROPERTIES_FILE_NAME);
-    }
-    
-    LDA(final double alpha, final double beta, final int numTopics,
-        final Dataset dataset, InferenceMethod method, String propertiesFilePath) {
+        final Dataset dataset) {
         this.hyperparameters = new Hyperparameters(alpha, beta, numTopics);
         this.numTopics       = numTopics;
         this.dataset         = dataset;
         this.inference       = new CollapsedGibbsSampler();
-        //this.inference       = InferenceFactory.getInstance(method);
-        this.properties      = new InferenceProperties();
         this.trained         = false;
-        
-        try {
-            this.properties.load(propertiesFilePath);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
     }
 
     /**
@@ -83,8 +68,7 @@ public class LDA {
      * Run model inference.
      */
     public void run() {
-        if (properties == null) inference.setUp(this);
-        else inference.setUp(this, properties);
+        inference.setUp(this);
         inference.run();
         trained = true;
     }

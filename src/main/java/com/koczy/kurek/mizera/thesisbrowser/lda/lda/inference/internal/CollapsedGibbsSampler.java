@@ -19,47 +19,27 @@ package com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Vocabulary;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.LDA;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.Inference;
-import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.InferenceProperties;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.distribution.EnumeratedIntegerDistribution;
 import org.apache.commons.math3.distribution.IntegerDistribution;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.LDA_NUM_ITERATION;
+import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.LDA_SEED;
+
+@Component
 public class CollapsedGibbsSampler implements Inference {
     private LDA lda;
     private Topics topics;
     private Documents documents;
-    private int numIteration;
-    
-    private static final long DEFAULT_SEED = 0L;
-    private static final int DEFAULT_NUM_ITERATION = 100;
-    
-    // ready for Gibbs sampling
     private boolean ready;
 
     public CollapsedGibbsSampler() {
         ready = false;
-    }
-
-    @Override
-    public void setUp(LDA lda, InferenceProperties properties) {
-        if (properties == null) {
-            setUp(lda);
-            return;
-        }
-        
-        this.lda = lda;
-        initialize(this.lda);
-        
-        final long seed = properties.seed() != null ? properties.seed() : DEFAULT_SEED;
-        initializeTopicAssignment(seed);
-        
-        this.numIteration
-            = properties.numIteration() != null ? properties.numIteration() : DEFAULT_NUM_ITERATION;
-        this.ready = true;
     }
     
     @Override
@@ -69,9 +49,8 @@ public class CollapsedGibbsSampler implements Inference {
         this.lda = lda;
         
         initialize(this.lda);
-        initializeTopicAssignment(DEFAULT_SEED);
-        
-        this.numIteration = DEFAULT_NUM_ITERATION;
+        initializeTopicAssignment(LDA_SEED);
+
         this.ready = true;
     }
     
@@ -85,21 +64,13 @@ public class CollapsedGibbsSampler implements Inference {
         return ready;
     }
 
-    public int getNumIteration() {
-        return numIteration;
-    }
-    
-    public void setNumIteration(final int numIteration) {
-        this.numIteration = numIteration;
-    }
-
     @Override
     public void run() {
         if (!ready) {
             throw new IllegalStateException("instance has not set up yet");
         }
 
-        for (int i = 1; i <= numIteration; ++i) {
+        for (int i = 1; i <= LDA_NUM_ITERATION; ++i) {
             System.out.println("Iteraion " + i + ".");
             runSampling();
         }

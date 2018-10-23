@@ -27,15 +27,7 @@ public interface Inference {
      * @param lda
      */
     public void setUp(LDA lda);
-    
-    /**
-     * Set up for inference.
-     * The configuration is read from properties class.
-     * @param lda
-     * @param properties
-     */
-    public void setUp(LDA lda, InferenceProperties properties);
-    
+
     /**
      * Run model inference.
      */

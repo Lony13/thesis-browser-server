@@ -30,10 +30,10 @@ public class ThesisController extends DemoServiceResolver<IThesisService> {
         return new ResponseEntity<>(theses, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/api/theses/details/{id}", method = RequestMethod.GET)
-    public ResponseEntity<ThesisDetails> getThesisDetails(@PathVariable(value = "id") int id,
+    @RequestMapping(value = "/api/theses/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Thesis> getThesisDetails(@PathVariable(value = "id") int id,
                                                           @RequestParam String role, HttpServletRequest request) {
-        return new ResponseEntity<>(resolveService(role).getThesisDetails(id), HttpStatus.OK);
+        return new ResponseEntity<>(resolveService(role).getThesis(id), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/api/theses/search", method = RequestMethod.GET)

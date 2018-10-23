@@ -17,7 +17,7 @@ public class ThesisDao {
         BagOfWordsConverter bagOfWordsConverter = new BagOfWordsConverter("src/main/resources/vocab.kos.txt");
         FileInputStream fileInputStream = null;
         try {
-            for(int i=0; i<100; i++){
+            for(int i=0; i<1; i++){
                 fileInputStream = new FileInputStream("parsedPDF/Multiwinner_Voting__A_New_Challenge_for_Social_Choice_Theory.txt");
                 bow.add(bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
                 fileInputStream = new FileInputStream("parsedPDF/Comparison_of_association_ratio_in_English_and_Polish_languages.txt");
