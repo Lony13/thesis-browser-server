@@ -6,6 +6,7 @@ import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.AGHLibraryScraper
 import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.DblpScraper;
 import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.GoogleScraper;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
+import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWordsConverter;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,11 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
@@ -38,18 +37,21 @@ public class DownloadService implements IDownloadService {
     private GoogleScraper googleScraper;
     private PdfDownloader pdfDownloader;
     private PdfParser pdfParser;
+    private BagOfWordsConverter bagOfWordsConverter;
 
     @Autowired
     public DownloadService(AGHLibraryScraper aghLibraryScraper,
                            DblpScraper dblpScraper,
                            GoogleScraper googleScraper,
                            PdfDownloader pdfDownloader,
-                           PdfParser pdfParser) {
+                           PdfParser pdfParser,
+                           BagOfWordsConverter bagOfWordsConverter) {
         this.aghLibraryScraper = aghLibraryScraper;
         this.dblpScraper = dblpScraper;
         this.googleScraper = googleScraper;
         this.pdfDownloader = pdfDownloader;
         this.pdfParser = pdfParser;
+        this.bagOfWordsConverter = bagOfWordsConverter;
     }
 
     @Override
@@ -67,11 +69,24 @@ public class DownloadService implements IDownloadService {
             if(!StringUtils.isEmpty(thesis.getLinkToPDF())){
                 downloadThesis(thesis);
                 parseThesisToTxt(thesis);
+                parseTxtToBow(thesis);
             } else {
                 logger.info("PDF not found");
             }
         }
         return new ResponseEntity<>("Downloading finished", HttpStatus.OK);
+    }
+
+    private void parseTxtToBow(Thesis thesis){
+        String filename = "parsedPDF/"+thesis.getTitle().replaceAll(REGEX, REPLACEMENT);
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(filename);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        Map<Integer, Integer> thesisBagOfWords = bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream);
+        //TODO add thesisBagOfWords to Thesis, save Thesis and Author to database
     }
 
     private void downloadThesis(Thesis thesis){
