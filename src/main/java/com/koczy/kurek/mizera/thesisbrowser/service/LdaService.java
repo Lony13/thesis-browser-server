@@ -35,6 +35,8 @@ public class LdaService implements ILdaService{
             System.out.println();
         }
 
+        lda.createSimilarityVectorForEveryThesis();
+
         return new ResponseEntity<>("LDA completed", HttpStatus.OK);
     }
 }

@@ -33,4 +33,8 @@ public class ThesisBowManager {
         return thesisDAO.getThesisBow(databaseThesisId.get(BowId-1));
     }
 
+    public void saveSimilarityVector(int bowID, double[] similarityVector){
+        thesisDAO.saveSimilarityVector(databaseThesisId.get(bowID-1), similarityVector);
+    }
+
 }

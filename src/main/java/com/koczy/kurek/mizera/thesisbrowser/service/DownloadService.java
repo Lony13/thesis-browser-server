@@ -78,26 +78,35 @@ public class DownloadService implements IDownloadService {
     }
 
     private void parseTxtToBow(Thesis thesis){
-        String filename = "parsedPDF/"+thesis.getTitle().replaceAll(REGEX, REPLACEMENT);
+        String filename = "parsedPDF/"+thesis.getTitle().replaceAll(REGEX, REPLACEMENT)+".txt";
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(filename);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        if(Objects.isNull(fileInputStream))
+            return;
         Map<Integer, Integer> thesisBagOfWords = bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream);
-        //TODO add thesisBagOfWords to Thesis, save Thesis and Author to database
+        for(Integer num : thesisBagOfWords.values()){
+            System.out.println(num);
+        }
+        //TODO add thesisBagOfWords to Thesis, save Thesis and Author to database at the end of downloadTheses
     }
 
     private void downloadThesis(Thesis thesis){
         String filename = thesis.getTitle().replaceAll(REGEX, REPLACEMENT);
         InputStream in = pdfDownloader.getPdfStream(thesis.getLinkToPDF());
+        if(Objects.isNull(in))
+            return;
         pdfDownloader.downloadPdf(in, filename + PDF);
     }
 
     private void parseThesisToTxt(Thesis thesis){
         String filename = thesis.getTitle().replaceAll(REGEX, REPLACEMENT);
         InputStream in = pdfDownloader.getPdfStream(thesis.getLinkToPDF());
+        if(Objects.isNull(in))
+            return;
         pdfParser.parseToTxt(in, filename + TXT);
     }
 

@@ -9,6 +9,7 @@ import java.util.Map;
 
 @Component
 public class BagOfWords {
+
     private ThesisBowManager thesisBowManager;
 
     private int numDocs;
@@ -17,6 +18,10 @@ public class BagOfWords {
     @Autowired
     public BagOfWords(ThesisBowManager thesisBowManager) {
         this.thesisBowManager = thesisBowManager;
+    }
+
+    public ThesisBowManager getThesisBowManager() {
+        return thesisBowManager;
     }
 
     public void setupBow(){

@@ -40,6 +40,8 @@ public class ThesisDAO {
                 bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
                 fileInputStream = new FileInputStream("parsedPDF/Comparison_of_association_ratio_in_English_and_Polish_languages.txt");
                 bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
+                fileInputStream = new FileInputStream("parsedPDF/Comparison_of_association_ratio_in_English_and_Polish_languages.txt");
+                bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
                 fileInputStream = new FileInputStream("parsedPDF/Predictive_planning_method_for_rescue_robots_in_buildings.txt");
                 bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
             }
@@ -49,18 +51,25 @@ public class ThesisDAO {
     }
 
     //DEMO
+    //TODO do
     public int getNumDocs(){
-        return bow.size();
+        return 3;
     }
 
     //DEMO
+    //TODO do
     public Map<Integer, Integer> getThesisBow(int id){
         return bow.get(id);
     }
 
     //DEMO
+    //TODO do
     public List<Integer> getThesisId(){
-        return new ArrayList<Integer>(){{add(0); add(1); add(2);}};
+        return new ArrayList<Integer>(){{add(0); add(1); add(3);}};
+    }
+
+    //TODO do
+    public void saveSimilarityVector(Integer integer, double[] similarityVector) {
     }
 
     //TODO add filter over position in authors list

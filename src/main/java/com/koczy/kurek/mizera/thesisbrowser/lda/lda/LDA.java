@@ -18,6 +18,7 @@ package com.koczy.kurek.mizera.thesisbrowser.lda.lda;
 
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWords;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Dataset;
+import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.ThesisBowManager;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Vocabularies;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.Inference;
 import org.apache.commons.lang3.tuple.Pair;
@@ -184,5 +185,12 @@ public class LDA {
             normB += Math.pow(vectorB[i], 2);
         }
         return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+    }
+
+    public void createSimilarityVectorForEveryThesis() {
+        ThesisBowManager thesisBowManager = dataset.getBow().getThesisBowManager();
+        for(int docID = 1; docID <= dataset.getBow().getNumDocs(); docID++){
+            thesisBowManager.saveSimilarityVector(docID, getTopicSimilarityVector(docID));
+        }
     }
 }
