@@ -78,7 +78,7 @@ public class DownloadService implements IDownloadService {
     }
 
     private void parseTxtToBow(Thesis thesis){
-        String filename = "parsedPDF/"+thesis.getTitle().replaceAll(REGEX, REPLACEMENT)+".txt";
+        String filename = "parsedPDF/"+thesis.getTitle().replaceAll(REGEX, REPLACEMENT)+TXT;
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(filename);

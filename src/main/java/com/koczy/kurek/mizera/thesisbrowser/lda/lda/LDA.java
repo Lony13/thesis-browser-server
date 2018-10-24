@@ -163,16 +163,23 @@ public class LDA {
         return Math.exp(-loglikelihood / testDataset.getNumWords());
     }
 
-    public double similarity(final int docID1, final int docID2){
-        return cosineSimilarity(getTopicSimilarityVector(docID1), getTopicSimilarityVector(docID2));
-    }
-
     public double[] getTopicSimilarityVector(final int docID){
         double[] topicSimilarityVec = new double[numTopics];
         for(int topicNum=0; topicNum<numTopics; topicNum++){
             topicSimilarityVec[topicNum] = getTheta(docID,topicNum);
         }
         return topicSimilarityVec;
+    }
+
+    public void createSimilarityVectorForEveryThesis() {
+        ThesisBowManager thesisBowManager = dataset.getBow().getThesisBowManager();
+        for(int docID = 1; docID <= dataset.getBow().getNumDocs(); docID++){
+            thesisBowManager.saveSimilarityVector(docID, getTopicSimilarityVector(docID));
+        }
+    }
+
+    public double similarity(final int docID1, final int docID2){
+        return cosineSimilarity(getTopicSimilarityVector(docID1), getTopicSimilarityVector(docID2));
     }
 
     private double cosineSimilarity(double[] vectorA, double[] vectorB) {
@@ -185,12 +192,5 @@ public class LDA {
             normB += Math.pow(vectorB[i], 2);
         }
         return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
-    }
-
-    public void createSimilarityVectorForEveryThesis() {
-        ThesisBowManager thesisBowManager = dataset.getBow().getThesisBowManager();
-        for(int docID = 1; docID <= dataset.getBow().getNumDocs(); docID++){
-            thesisBowManager.saveSimilarityVector(docID, getTopicSimilarityVector(docID));
-        }
     }
 }

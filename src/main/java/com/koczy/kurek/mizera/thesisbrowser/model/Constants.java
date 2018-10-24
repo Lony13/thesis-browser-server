@@ -10,4 +10,5 @@ public class Constants {
 
     public static final long LDA_SEED = 100L;
     public static final int LDA_NUM_ITERATION = 10;
+    public static final double SIMILARITY_THRESHOLD = 0.5;
 }

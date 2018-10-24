@@ -8,14 +8,12 @@ import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,6 +26,8 @@ public class ThesisDAO {
     private BagOfWordsConverter bagOfWordsConverter;
     //DEMO
     private List<Map<Integer, Integer>> bow = new ArrayList<Map<Integer, Integer>>();
+    //DEMO
+    private Map<Integer, double[]> similarityVectors = new HashMap<>();
 
     //DEMO
     @Autowired
@@ -44,6 +44,8 @@ public class ThesisDAO {
                 bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
                 fileInputStream = new FileInputStream("parsedPDF/Predictive_planning_method_for_rescue_robots_in_buildings.txt");
                 bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
+                fileInputStream = new FileInputStream("parsedPDF/Distance_rationalization_of_voting_rules.txt");
+                bow.add(bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -53,7 +55,7 @@ public class ThesisDAO {
     //DEMO
     //TODO do
     public int getNumDocs(){
-        return 3;
+        return 4;
     }
 
     //DEMO
@@ -65,11 +67,22 @@ public class ThesisDAO {
     //DEMO
     //TODO do
     public List<Integer> getThesisId(){
-        return new ArrayList<Integer>(){{add(0); add(1); add(3);}};
+        return new ArrayList<Integer>(){{add(0); add(1); add(3); add(4);}};
     }
 
     //TODO do
     public void saveSimilarityVector(Integer integer, double[] similarityVector) {
+        this.similarityVectors.put(integer, similarityVector);
+    }
+
+    //TODO do
+    public double[] getTopicSimilarityVector(int thesisID) {
+        return this.similarityVectors.get(thesisID);
+    }
+
+    //TODO do
+    public Thesis getThesis(int thesisId) {
+        return new Thesis();
     }
 
     //TODO add filter over position in authors list
