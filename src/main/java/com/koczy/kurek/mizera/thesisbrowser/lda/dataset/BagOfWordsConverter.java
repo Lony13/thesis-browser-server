@@ -11,6 +11,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.LDA_NUM_OF_WORDS_THRESHOLD;
+
 @Component
 public class BagOfWordsConverter {
 
@@ -42,14 +44,9 @@ public class BagOfWordsConverter {
                 }
             }
         }
-        for (Map.Entry<Integer, Integer> entry : bagOfWords.entrySet())
-        {
-            if(entry.getValue() <= 3)
-                ;
-        }
         for (Iterator<Map.Entry<Integer, Integer>> it = bagOfWords.entrySet().iterator(); it.hasNext();) {
             Integer value = it.next().getValue();
-            if (value <= 3) {
+            if (value <= LDA_NUM_OF_WORDS_THRESHOLD) {
                 it.remove();
             }
         }

@@ -13,7 +13,7 @@ public class ThesisBowManager {
 
     private ThesisDAO thesisDAO;
 
-    List<Integer> databaseThesisId = new ArrayList<>();
+    private List<Integer> databaseThesisId = new ArrayList<>();
 
     @Autowired
     public ThesisBowManager(ThesisDAO thesisDAO){

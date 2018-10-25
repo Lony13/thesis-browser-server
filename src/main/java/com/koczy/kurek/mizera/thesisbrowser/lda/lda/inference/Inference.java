@@ -22,31 +22,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.List;
 
 public interface Inference {
-    /**
-     * Set up for inference.
-     * @param lda
-     */
+
     public void setUp(LDA lda);
 
-    /**
-     * Run model inference.
-     */
     public void run();
-    
-    /**
-     * Get the value of doc-topic probability \theta_{docID, topicID}.
-     * @param docID
-     * @param topicID
-     * @return the value of doc-topic probability
-     */
+
     public double getTheta(final int docID, final int topicID);
-    
-    /**
-     * Get the value of topic-vocab probability \phi_{topicID, vocabID}.
-     * @param topicID
-     * @param vocabID
-     * @return the value of topic-vocab probability
-     */
+
     public double getPhi(final int topicID, final int vocabID);
 
     public List<Pair<String, Double>> getVocabsSortedByPhi(int topicID);

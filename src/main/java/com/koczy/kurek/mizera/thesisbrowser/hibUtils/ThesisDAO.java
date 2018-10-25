@@ -8,7 +8,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.io.FileInputStream;
@@ -52,35 +51,32 @@ public class ThesisDAO {
         }
     }
 
-    //DEMO
-    //TODO do
+    //TODO get number of documents in database
     public int getNumDocs(){
         return 4;
     }
 
-    //DEMO
-    //TODO do
+    //TODO get bow from given thesis
     public Map<Integer, Integer> getThesisBow(int id){
         return bow.get(id);
     }
 
-    //DEMO
-    //TODO do
+    //TODO get list of ids of theses in database
     public List<Integer> getThesisId(){
         return new ArrayList<Integer>(){{add(0); add(1); add(3); add(4);}};
     }
 
-    //TODO do
+    //TODO save similarity vector to database
     public void saveSimilarityVector(Integer integer, double[] similarityVector) {
         this.similarityVectors.put(integer, similarityVector);
     }
 
-    //TODO do
+    //TODO get similarity vector from database
     public double[] getTopicSimilarityVector(int thesisID) {
         return this.similarityVectors.get(thesisID);
     }
 
-    //TODO do
+    //TODO get thesis
     public Thesis getThesis(int thesisId) {
         return new Thesis();
     }

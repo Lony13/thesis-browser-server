@@ -1,9 +1,6 @@
 package com.koczy.kurek.mizera.thesisbrowser.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.internal.NotNull;
-import lombok.AllArgsConstructor;
-import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 import java.util.*;
