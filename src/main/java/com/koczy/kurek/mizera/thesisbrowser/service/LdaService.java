@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.SIMILARITY_THRESHOLD;
+import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.LDA_SIMILARITY_THRESHOLD;
 
 @Service
 public class LdaService implements ILdaService{
@@ -59,7 +59,7 @@ public class LdaService implements ILdaService{
         for(int thesisId : this.thesisDao.getThesisId()){
             if(cosineSimilarity(thesisSimilarityVector,
                     this.thesisDao.getTopicSimilarityVector(thesisId))
-                    >= SIMILARITY_THRESHOLD){
+                    >= LDA_SIMILARITY_THRESHOLD){
                 similarTheses.add(this.thesisDao.getThesis(thesisId));
             }
         }
@@ -73,7 +73,7 @@ public class LdaService implements ILdaService{
         for(int thesisId : theses){
             if(cosineSimilarity(thesisSimilarityVector,
                     this.thesisDao.getTopicSimilarityVector(thesisId))
-                    >= SIMILARITY_THRESHOLD){
+                    >= LDA_SIMILARITY_THRESHOLD){
                 similarThesesId.add(thesisId);
             }
         }
