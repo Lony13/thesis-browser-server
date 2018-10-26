@@ -27,19 +27,16 @@ public class Thesis {
     private String pathToTXT;
     private Date publicationDate;
 
-    @JsonIgnore
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "relatedTheses", joinColumns = @JoinColumn(name = "thesisId"))
     @Column(name = "relatedTheses")
     private List<String> relatedTheses = new ArrayList<>();
 
-    @JsonIgnore
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "keyWords", joinColumns = @JoinColumn(name = "thesisId"))
     @Column(name = "keyWords")
     private Set<String> keyWords = new HashSet<>();
 
-    @JsonIgnore
     @ManyToMany(mappedBy = "theses", fetch = FetchType.EAGER)
     private Set<Author> authors = new HashSet<>();
 

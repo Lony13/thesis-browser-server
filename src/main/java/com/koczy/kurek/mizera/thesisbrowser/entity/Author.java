@@ -11,7 +11,6 @@ import java.util.Set;
 @Entity
 public class Author {
 
-    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "author_thesis",
