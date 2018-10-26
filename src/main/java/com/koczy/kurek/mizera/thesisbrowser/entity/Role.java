@@ -1,24 +1,33 @@
 package com.koczy.kurek.mizera.thesisbrowser.entity;
 
 
+import javax.persistence.*;
+
+@Entity
 public class Role {
-    private long id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+    @Column
     private String name;
+    @Column
     private String description;
 
-    public Role(long id, String name, String description) {
+    public Role(Integer id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
     }
 
-    public Role(){}
+    public Role() {
+    }
 
-    public long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

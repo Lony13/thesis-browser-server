@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 @Entity
 public class Thesis {
 
@@ -27,19 +28,19 @@ public class Thesis {
     private Date publicationDate;
 
     @JsonIgnore
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "relatedTheses", joinColumns = @JoinColumn(name = "thesisId"))
     @Column(name = "relatedTheses")
     private List<String> relatedTheses = new ArrayList<>();
 
     @JsonIgnore
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "keyWords", joinColumns = @JoinColumn(name = "thesisId"))
     @Column(name = "keyWords")
     private Set<String> keyWords = new HashSet<>();
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "theses")
+    @ManyToMany(mappedBy = "theses", fetch = FetchType.EAGER)
     private Set<Author> authors = new HashSet<>();
 
 
@@ -51,11 +52,12 @@ public class Thesis {
         this.citationNo = citationNo;
         this.authors = authors;
     }
-    public Thesis(String title,String authorName, String link){
-        this.title=title;
-        this.linkToPDF=link;
+
+    public Thesis(String title, String authorName, String link) {
+        this.title = title;
+        this.linkToPDF = link;
         //TODO sort this out
-        authors.add(new Author(authorName,authorName));
+        authors.add(new Author(authorName));
     }
 
     public Thesis(String title) {
@@ -63,8 +65,8 @@ public class Thesis {
     }
 
     //TODO remove; only for demo ThesisDemoService.searchTheses
-    public String getAuthor(){
-        logger.log(Level.WARNING,"Thesis.getAuthor() is deprecated. Use this method for demo purpose only.");
+    public String getAuthor() {
+        logger.log(Level.WARNING, "Thesis.getAuthor() is deprecated. Use this method for demo purpose only.");
         return Objects.requireNonNull(authors.stream().findFirst().orElse(new Author())).toString();
     }
 

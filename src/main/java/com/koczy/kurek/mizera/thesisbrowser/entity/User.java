@@ -2,23 +2,35 @@ package com.koczy.kurek.mizera.thesisbrowser.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.*;
 import java.util.Set;
 
+@Entity
 public class User {
 
-    private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+    @Column
     private String username;
 
     @JsonIgnore
+    @Column
     private String password;
 
-    private long salary;
+    @Column
+    private Integer salary;
 
-    private int age;
+    @Column
+    private Integer age;
 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "USER_ROLES", joinColumns = {
+            @JoinColumn(name = "USER_ID")}, inverseJoinColumns = {
+            @JoinColumn(name = "ROLE_ID")})
     private Set<Role> roles;
 
-    public User(long id, String username, String password, long salary, int age, Set<Role> roles) {
+    public User(Integer id, String username, String password, Integer salary, Integer age, Set<Role> roles) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -27,13 +39,14 @@ public class User {
         this.roles = roles;
     }
 
-    public User(){}
+    public User() {
+    }
 
-    public long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -53,19 +66,19 @@ public class User {
         this.password = password;
     }
 
-    public long getSalary() {
+    public Integer getSalary() {
         return salary;
     }
 
-    public void setSalary(long salary) {
+    public void setSalary(Integer salary) {
         this.salary = salary;
     }
 
-    public int getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
