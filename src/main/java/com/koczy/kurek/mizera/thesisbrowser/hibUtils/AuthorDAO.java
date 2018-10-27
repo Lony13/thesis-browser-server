@@ -10,10 +10,11 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @Repository
-public class AuthorDAO {
+public class AuthorDAO implements IAuthorDao {
     private static final Logger logger = Logger.getLogger(AuthorDAO.class.getName());
 
-    public static Author getAuthorByName(String filterName) {
+    @Override
+    public Author getAuthorByName(String filterName) {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
 

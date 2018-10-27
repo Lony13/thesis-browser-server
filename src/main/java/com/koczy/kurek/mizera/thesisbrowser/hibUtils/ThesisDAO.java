@@ -6,6 +6,7 @@ import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -15,13 +16,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Repository
-public class ThesisDAO {
+public class ThesisDAO implements IThesisDao {
 
     private static final Logger logger = Logger.getLogger(ThesisDAO.class.getName());
     private static Boolean addAnd = false;
 
+    private IAuthorDao authorDao;
+
+    @Autowired
+    public ThesisDAO(IAuthorDao authorDao) {
+        this.authorDao = authorDao;
+    }
+
     //TODO add filter over position in authors list
-    public static List<Thesis> searchTheses(ThesisFilters thesisFilters) {
+    @Override
+    public List<Thesis> searchTheses(ThesisFilters thesisFilters) {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
 
@@ -37,7 +46,6 @@ public class ThesisDAO {
             }
         } catch (NullPointerException e) {
             logger.log(Level.SEVERE, "NullPointerException in thesisFilers. Returning empty list." + e.toString());
-            e.printStackTrace();
             thesisList = new ArrayList<>();
         }
 
@@ -48,7 +56,7 @@ public class ThesisDAO {
         return thesisList;
     }
 
-    private static void filterDate(List<Thesis> thesisList, ThesisFilters thesisFilters) {
+    private void filterDate(List<Thesis> thesisList, ThesisFilters thesisFilters) {
         if (Objects.nonNull(thesisFilters.getDateFrom())) {
             thesisList.removeIf(thesis -> thesis.getPublicationDate().after(thesisFilters.getDateFrom()));
         }
@@ -57,7 +65,7 @@ public class ThesisDAO {
         }
     }
 
-    private static String createQuery(ThesisFilters filters) {
+    private String createQuery(ThesisFilters filters) {
 
         String query = "SELECT * FROM thesis " +
                 "JOIN author_thesis on thesis.thesisId = author_thesis.thesisId " +
@@ -74,7 +82,7 @@ public class ThesisDAO {
         return query;
     }
 
-    private static String filterTitle(String query, String title) {
+    private String filterTitle(String query, String title) {
         if (!isBlank(title)) {
             query = addAndToWhere(addAnd, query);
             query = query.concat("thesis.title LIKE '%" + title + "%' ");
@@ -83,17 +91,17 @@ public class ThesisDAO {
         return query;
     }
 
-    private static String filterAuthor(String query, String authorName) {
+    private String filterAuthor(String query, String authorName) {
         if (!isBlank(authorName)) {
             query = addAndToWhere(addAnd, query);
-            Author author = AuthorDAO.getAuthorByName(authorName);
+            Author author = authorDao.getAuthorByName(authorName);
             query = query.concat("author_thesis.authorId = " + author.getAuthorId() + " ");
             addAnd = true;
         }
         return query;
     }
 
-    private static String filterInstitution(String query, String institution) {
+    private String filterInstitution(String query, String institution) {
         if (!isBlank(institution)) {
             query = addAndToWhere(addAnd, query);
             query = query.concat("author.university LIKE '%" + institution + "%' ");
@@ -102,7 +110,7 @@ public class ThesisDAO {
         return query;
     }
 
-    private static String filterKeyWords(String query, String keyWords) {
+    private String filterKeyWords(String query, String keyWords) {
         if (!isBlank(keyWords)) {
             query = addAndToWhere(addAnd, query);
             query = query.concat("keywords.keyWords LIKE '%" + keyWords + "%' ");
@@ -111,7 +119,7 @@ public class ThesisDAO {
         return query;
     }
 
-    private static String filterQuotationNumber(String query, Integer quotationNumber) {
+    private String filterQuotationNumber(String query, Integer quotationNumber) {
         if (!isBlank(quotationNumber)) {
             query = addAndToWhere(addAnd, query);
             query = query.concat("thesis.citationNo = " + quotationNumber + " ");
@@ -120,15 +128,15 @@ public class ThesisDAO {
         return query;
     }
 
-    private static Boolean isBlank(String filter) {
+    private Boolean isBlank(String filter) {
         return Objects.isNull(filter) || filter.trim().isEmpty();
     }
 
-    private static Boolean isBlank(Integer filter) {
+    private Boolean isBlank(Integer filter) {
         return Objects.isNull(filter) || filter < 0;
     }
 
-    private static String addAndToWhere(Boolean addAnd, String query) {
+    private String addAndToWhere(Boolean addAnd, String query) {
         return (addAnd ? query.concat("AND ") : query);
     }
 }

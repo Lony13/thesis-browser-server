@@ -17,11 +17,14 @@ import java.util.*;
 @Service
 public class UserService implements UserDetailsService, IUserService {
 
-    @Autowired
     private UserDao userDao;
+    private BCryptPasswordEncoder bcryptEncoder;
 
     @Autowired
-    private BCryptPasswordEncoder bcryptEncoder;
+    public UserService(UserDao userDao, BCryptPasswordEncoder bcryptEncoder) {
+        this.userDao = userDao;
+        this.bcryptEncoder = bcryptEncoder;
+    }
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userDao.findByUsername(username);
