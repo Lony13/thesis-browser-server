@@ -26,20 +26,20 @@ public class ThesisController extends DemoServiceResolver<IThesisService> {
     }
 
     @RequestMapping(value = "/api/theses", method = RequestMethod.GET)
-    public ResponseEntity<List<ThesisResponse>> getThesis(@RequestParam(required = false) String role, HttpServletRequest request) {
-        return new ResponseEntity<>(resolveService(role).getTheses(), HttpStatus.OK);
+    public ResponseEntity<List<ThesisResponse>> getThesis(HttpServletRequest request) {
+        return new ResponseEntity<>(resolveService(request).getTheses(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/api/theses/details/{id}", method = RequestMethod.GET)
     public ResponseEntity<ThesisDetails> getThesisDetails(@PathVariable(value = "id") int id,
-                                                          @RequestParam(required = false) String role, HttpServletRequest request) {
-        return new ResponseEntity<>(resolveService(role).getThesisDetails(id), HttpStatus.OK);
+                                                          HttpServletRequest request) {
+        return new ResponseEntity<>(resolveService(request).getThesisDetails(id), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/api/theses/search", method = RequestMethod.POST)
     public ResponseEntity<List<ThesisResponse>> searchTheses(@RequestBody(required = false) ThesisFilters thesisFilters,
-                                                     @RequestParam(required = false) String role) {
-        return new ResponseEntity<>(resolveService(role).searchTheses(thesisFilters), HttpStatus.OK);
+                                                             HttpServletRequest request) {
+        return new ResponseEntity<>(resolveService(request).searchTheses(thesisFilters), HttpStatus.OK);
     }
 
 }
