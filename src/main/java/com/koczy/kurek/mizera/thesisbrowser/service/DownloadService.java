@@ -38,6 +38,7 @@ public class DownloadService implements IDownloadService {
     private PdfDownloader pdfDownloader;
     private PdfParser pdfParser;
     private BagOfWordsConverter bagOfWordsConverter;
+    private IThesisService thesisService;
 
     @Autowired
     public DownloadService(AGHLibraryScraper aghLibraryScraper,
@@ -45,13 +46,15 @@ public class DownloadService implements IDownloadService {
                            GoogleScraper googleScraper,
                            PdfDownloader pdfDownloader,
                            PdfParser pdfParser,
-                           BagOfWordsConverter bagOfWordsConverter) {
+                           BagOfWordsConverter bagOfWordsConverter,
+                           IThesisService thesisService) {
         this.aghLibraryScraper = aghLibraryScraper;
         this.dblpScraper = dblpScraper;
         this.googleScraper = googleScraper;
         this.pdfDownloader = pdfDownloader;
         this.pdfParser = pdfParser;
         this.bagOfWordsConverter = bagOfWordsConverter;
+        this.thesisService = thesisService;
     }
 
     @Override
@@ -92,6 +95,11 @@ public class DownloadService implements IDownloadService {
             System.out.println(num);
         }
         //TODO add thesisBagOfWords to Thesis, save Thesis and Author to database at the end of downloadTheses
+    }
+
+    @Override
+    public ResponseEntity updateQuotations(int thesisId) {
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     private void downloadThesis(Thesis thesis){
