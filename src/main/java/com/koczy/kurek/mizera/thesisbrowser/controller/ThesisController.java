@@ -24,22 +24,20 @@ public class ThesisController extends DemoServiceResolver<IThesisService> {
     }
 
     @RequestMapping(value = "/api/theses", method = RequestMethod.GET)
-    public ResponseEntity<List<Thesis>> getThesis(@RequestParam String role, HttpServletRequest request) {
-        List<Thesis> theses = resolveService(role).getTheses();
-        return new ResponseEntity<>(theses, HttpStatus.OK);
+    public ResponseEntity<List<Thesis>> getThesis(@RequestParam(required = false) String role, HttpServletRequest request) {
+        return new ResponseEntity<>(resolveService(role).getTheses(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/api/theses/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Thesis> getThesisDetails(@PathVariable(value = "id") int id,
-                                                          @RequestParam String role, HttpServletRequest request) {
-        return new ResponseEntity<>(resolveService(role).getThesis(id), HttpStatus.OK);
+    @RequestMapping(value = "/api/theses/details/{id}", method = RequestMethod.GET)
+    public ResponseEntity<ThesisDetails> getThesisDetails(@PathVariable(value = "id") int id,
+                                                          @RequestParam(required = false) String role, HttpServletRequest request) {
+        return new ResponseEntity<>(resolveService(role).getThesisDetails(id), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/api/theses/search", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/theses/search", method = RequestMethod.POST)
     public ResponseEntity<List<Thesis>> searchTheses(@RequestBody(required = false) ThesisFilters thesisFilters,
-                                                     @RequestParam String role) {
-        List<Thesis> theses = resolveService(role).searchTheses(thesisFilters);
-        return new ResponseEntity<>(theses, HttpStatus.OK);
+                                                     @RequestParam(required = false) String role) {
+        return new ResponseEntity<>(resolveService(role).searchTheses(thesisFilters), HttpStatus.OK);
     }
 
 }

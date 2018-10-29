@@ -46,11 +46,10 @@ public class ThesisDemoService implements IThesisService {
 
     @Override
     public ThesisDetails getThesisDetails(int id) {
-        for (ThesisDetails thesisDetails : thesesDetails) {
-            if(thesisDetails.getThesisId() == id)
-                return thesisDetails;
+        if (this.thesesDetails.size() > id) {
+            return this.thesesDetails.get(id);
         }
-        return new ThesisDetails();
+        return this.thesesDetails.get(0);
     }
 
     @Override

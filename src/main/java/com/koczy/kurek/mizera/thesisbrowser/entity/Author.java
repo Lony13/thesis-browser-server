@@ -11,7 +11,6 @@ import java.util.Set;
 @Entity
 public class Author {
 
-    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "author_thesis",
@@ -40,20 +39,6 @@ public class Author {
 
     public Author(String name) {
         this.name = name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof Author))
-            return false;
-
-        Author author = (Author) o;
-
-        if (authorId != author.authorId)
-            return false;
-        return name.equals(author.name);
     }
 
     public Integer getAuthorId() {

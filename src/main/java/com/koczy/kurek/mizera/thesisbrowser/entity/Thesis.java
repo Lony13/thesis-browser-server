@@ -1,5 +1,6 @@
 package com.koczy.kurek.mizera.thesisbrowser.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.internal.NotNull;
 
 import javax.persistence.*;
@@ -36,7 +37,7 @@ public class Thesis {
     @Column(name = "keyWords")
     private Set<String> keyWords = new HashSet<>();
 
-    @ManyToMany(mappedBy = "theses",fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "theses", fetch = FetchType.EAGER)
     private Set<Author> authors = new HashSet<>();
 
 
@@ -71,21 +72,6 @@ public class Thesis {
     public Thesis(String title) {
         this.title = title;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof Author))
-            return false;
-
-        Thesis thesis = (Thesis) o;
-
-        if (thesisId != thesis.thesisId)
-            return false;
-        return title.equals(thesis.title);
-    }
-
 
     //TODO remove; only for demo ThesisDemoService.searchTheses
     public String getAuthor() {
