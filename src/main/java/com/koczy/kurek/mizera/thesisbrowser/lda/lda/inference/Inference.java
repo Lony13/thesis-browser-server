@@ -16,8 +16,8 @@
 
 package com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference;
 
+import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.VocabProbability;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.LDA;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
@@ -31,5 +31,5 @@ public interface Inference {
 
     public double getPhi(final int topicID, final int vocabID);
 
-    public List<Pair<String, Double>> getVocabsSortedByPhi(int topicID);
+    public List<VocabProbability> getVocabsSortedByPhi(int topicID);
 }

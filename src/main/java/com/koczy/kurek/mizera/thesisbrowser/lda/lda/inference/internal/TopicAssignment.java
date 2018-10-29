@@ -19,9 +19,13 @@ package com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 class TopicAssignment {
+    private static final Logger logger = Logger.getLogger(TopicAssignment.class.getName());
+
     private List<Integer> topicAssignment;
     private boolean ready;
     
@@ -31,24 +35,34 @@ class TopicAssignment {
     }
 
     void set(int wordID, int topicID) {
-        if (!ready) throw new IllegalStateException();
-        if (wordID < 0 || topicAssignment.size() <= wordID || topicID < 0) {
-            throw new IllegalArgumentException();
+        if (!ready){
+            logger.warning( "Topic Assignment is not initialized");
+            return;
+        }
+        if (wordID < 0 || topicAssignment.size() <= wordID || topicID < 0){
+            logger.warning( "Num of topic cannot be lower than 0 or" +
+                    " invalid value of word id");
+            return;
         }
         topicAssignment.set(wordID, topicID);
     }
     
     int get(int wordID) {
-        if (!ready) throw new IllegalStateException();
-        if (wordID < 0 || topicAssignment.size() <= wordID) {
-            throw new IllegalArgumentException();
+        if (!ready){
+            logger.warning( "Topic Assignment is not initialized");
+            return -1;
+        }
+        if (wordID < 0 || topicAssignment.size() <= wordID){
+            logger.warning( "Invalid value of word id");
+            return -1;
         }
         return topicAssignment.get(wordID);
     }
     
     void initialize(int docLength, int numTopics, long seed) {
-        if (docLength <= 0 || numTopics <= 0) {
-            throw new IllegalArgumentException();
+        if (docLength <= 0 || numTopics <= 0){
+            logger.warning( "value of docLength or numTopics cannot be lower than 0");
+            return;
         }
         
         Random random = new Random(seed);
@@ -56,5 +70,9 @@ class TopicAssignment {
                                 .boxed()
                                 .collect(Collectors.toList());
         ready = true;
+    }
+
+    int size(){
+        return topicAssignment.size();
     }
 }

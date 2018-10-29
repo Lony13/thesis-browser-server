@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.PARSED_PDF_FILE;
+
 @Service
 public class DownloadService implements IDownloadService {
 
@@ -81,19 +83,20 @@ public class DownloadService implements IDownloadService {
     }
 
     private void parseTxtToBow(Thesis thesis){
-        String filename = "parsedPDF/"+thesis.getTitle().replaceAll(REGEX, REPLACEMENT)+TXT;
+        String filename = PARSED_PDF_FILE + thesis.getTitle().replaceAll(REGEX, REPLACEMENT)+TXT;
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(filename);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        if(Objects.isNull(fileInputStream))
+            logger.warning(e.toString());
+            logger.warning("Couldn't find file with thesis to parse");
             return;
-        Map<Integer, Integer> thesisBagOfWords = bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream);
-        for(Integer num : thesisBagOfWords.values()){
-            System.out.println(num);
         }
+        if(Objects.isNull(fileInputStream)){
+            logger.warning("File input stream was not initialised");
+            return;
+        }
+        Map<Integer, Integer> thesisBagOfWords = bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream);
         //TODO add thesisBagOfWords to Thesis, save Thesis and Author to database at the end of downloadTheses
     }
 
@@ -105,16 +108,20 @@ public class DownloadService implements IDownloadService {
     private void downloadThesis(Thesis thesis){
         String filename = thesis.getTitle().replaceAll(REGEX, REPLACEMENT);
         InputStream in = pdfDownloader.getPdfStream(thesis.getLinkToPDF());
-        if(Objects.isNull(in))
+        if(Objects.isNull(in)){
+            logger.warning("File input stream was not initialised");
             return;
+        }
         pdfDownloader.downloadPdf(in, filename + PDF);
     }
 
     private void parseThesisToTxt(Thesis thesis){
         String filename = thesis.getTitle().replaceAll(REGEX, REPLACEMENT);
         InputStream in = pdfDownloader.getPdfStream(thesis.getLinkToPDF());
-        if(Objects.isNull(in))
+        if(Objects.isNull(in)){
+            logger.warning("File input stream was not initialised");
             return;
+        }
         pdfParser.parseToTxt(in, filename + TXT);
     }
 

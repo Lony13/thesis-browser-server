@@ -1,6 +1,7 @@
 package com.koczy.kurek.mizera.thesisbrowser.controller;
 
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
+import com.koczy.kurek.mizera.thesisbrowser.model.CompareThesesDto;
 import com.koczy.kurek.mizera.thesisbrowser.service.ILdaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +36,8 @@ public class LdaController {
     public ResponseEntity<List<Thesis>> getSimilarTheses(@PathVariable(value = "id") int id) {
         return ldaService.getSimilarTheses(id);
     }
-    @RequestMapping(value = "/api/similarThesesAmong/{id}", method = RequestMethod.POST)
-    public ResponseEntity<List<Integer>> getSimilarThesesAmong(@PathVariable(value = "id") int id,
-                                                         @RequestBody List<Integer> theses) {
-        return ldaService.getSimilarThesesAmong(id, theses);
+    @RequestMapping(value = "/api/similarThesesAmong", method = RequestMethod.POST)
+    public ResponseEntity<List<Integer>> getSimilarThesesAmong(@RequestBody CompareThesesDto compareThesesDto) {
+        return ldaService.getSimilarThesesAmong(compareThesesDto);
     }
 }

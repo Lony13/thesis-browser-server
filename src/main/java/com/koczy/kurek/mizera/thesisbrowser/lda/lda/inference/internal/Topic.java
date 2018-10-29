@@ -16,7 +16,12 @@
 
 package com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 class Topic {
+    private static final Logger logger = Logger.getLogger(Topic.class.getName());
+
     private final int id;
     private final int numVocabs;
     private VocabularyCounter counter;
@@ -28,7 +33,7 @@ class Topic {
         this.counter = new VocabularyCounter(numVocabs);
     }
 
-    int id() {
+    int getId() {
         return id;
     }
     
@@ -49,7 +54,10 @@ class Topic {
     }
     
     double getPhi(int vocabID, double beta) {
-        if (vocabID <= 0 || beta <= 0) throw new IllegalArgumentException();
+        if (vocabID <= 0 || beta <= 0){
+            logger.warning( "Invalid value of beta or invalid value of vocabId");
+            return -1;
+        }
         return (getVocabCount(vocabID) + beta) / (getSumCount() + beta * numVocabs);
     }
 }

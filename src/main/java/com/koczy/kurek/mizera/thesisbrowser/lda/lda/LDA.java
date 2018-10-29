@@ -16,20 +16,21 @@
 
 package com.koczy.kurek.mizera.thesisbrowser.lda.lda;
 
-import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWords;
-import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Dataset;
-import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.ThesisBowManager;
-import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Vocabularies;
+import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.*;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.Inference;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Component
 public class LDA {
+    private static final Logger logger = Logger.getLogger(LDA.class.getName());
+
     private Hyperparameters hyperparameters;
     private final int numTopics;
     private Dataset dataset;
@@ -46,8 +47,9 @@ public class LDA {
     }
 
     public String getVocab(int vocabID) {
-        if (vocabID <= 0 || dataset.getNumVocabs() < vocabID) {
-            throw new IllegalArgumentException();
+        if(vocabID <= 0 || dataset.getNumVocabs() < vocabID){
+            logger.warning("There is no vocab with that id");
+            return "";
         }
         return dataset.get(vocabID).toString();
     }
@@ -60,10 +62,7 @@ public class LDA {
     }
 
     public double getAlpha(final int topic) {
-        if (topic < 0 || numTopics <= topic) {
-            throw new ArrayIndexOutOfBoundsException(topic);
-        }
-        return hyperparameters.alpha(topic);
+        return (topic < 0 || numTopics <= topic) ? -1 : hyperparameters.alpha(topic);
     }
     
     public double getSumAlpha() {
@@ -83,25 +82,27 @@ public class LDA {
     }
 
     public double getTheta(final int docID, final int topicID) {
+        if(!trained) {
+            logger.warning("Lda is not trained");
+            return -1;
+        }
         if (docID <= 0 || dataset.getNumDocs() < docID
-                || topicID < 0 || numTopics <= topicID) {
-            throw new IllegalArgumentException();
+                || topicID < 0 || numTopics <= topicID){
+            logger.warning("There is no such docId or topicId");
+            return -1;
         }
-        if (!trained) {
-            throw new IllegalStateException();
-        }
-
         return inference.getTheta(docID, topicID);
     }
 
     public double getPhi(final int topicID, final int vocabID) {
-        if (topicID < 0 || numTopics <= topicID || vocabID <= 0) {
-            throw new IllegalArgumentException();
+        if(!trained) {
+            logger.warning("Lda is not trained");
+            return -1;
         }
-        if (!trained) {
-            throw new IllegalStateException();
+        if (topicID < 0 || numTopics <= topicID || vocabID <= 0){
+            logger.warning("There is no such topicId or vocabId");
+            return -1;
         }
-
         return inference.getPhi(topicID, vocabID);
     }
     
@@ -109,17 +110,21 @@ public class LDA {
         return dataset.getVocabularies();
     }
     
-    public List<Pair<String, Double>> getVocabsSortedByPhi(int topicID) {
+    public List<VocabProbability> getVocabsSortedByPhi(int topicID) {
+        if (topicID < 0 || topicID >= this.numTopics){
+            logger.warning("Invalid topicId");
+            return Collections.emptyList();
+        }
         return inference.getVocabsSortedByPhi(topicID);
     }
 
     public double computePerplexity(Dataset testDataset) {
         double loglikelihood = 0.0;
-        for (int d = 1; d <= testDataset.getNumDocs(); ++d) {
-            for (Integer w : testDataset.getWords(d)) {
+        for (int docId = 1; docId <= testDataset.getNumDocs(); docId++) {
+            for (Integer wordNum : testDataset.getWords(docId)) {
                 double sum = 0.0;
-                for (int t = 0; t < getNumTopics(); ++t) {
-                     sum += getTheta(d, t) * getPhi(t, w.intValue()); 
+                for (int topicNum = 0; topicNum < getNumTopics(); topicNum++) {
+                     sum += getTheta(docId, topicNum) * getPhi(topicNum, wordNum);
                 }
                 loglikelihood += Math.log(sum);
             }

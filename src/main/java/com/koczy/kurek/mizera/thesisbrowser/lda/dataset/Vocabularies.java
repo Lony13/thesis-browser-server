@@ -26,10 +26,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Component
 public class Vocabularies {
+    private static final Logger logger = Logger.getLogger(Vocabularies.class.getName());
+
     private List<Vocabulary> vocabs;
 
     @Autowired
@@ -40,7 +44,8 @@ public class Vocabularies {
             vocabs = lines.stream().map(v -> new Vocabulary(lines.indexOf(v) + 1, v))
                                    .collect(Collectors.toList());
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            logger.warning(ioe.toString());
+            logger.warning( "Couldn't read lines from vocab file");
         }
     }
     

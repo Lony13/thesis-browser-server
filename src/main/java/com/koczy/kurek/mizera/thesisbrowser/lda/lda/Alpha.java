@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,9 +31,6 @@ class Alpha {
 
     @Autowired
     Alpha(@Value("${lda.alpha}") double alpha, @Value("${lda.numTopics}") int numTopics) {
-        if (alpha <= 0.0 || numTopics <= 0) {
-            throw new IllegalArgumentException();
-        }
         this.alphas = Stream.generate(() -> alpha)
                             .limit(numTopics)
                             .collect(Collectors.toList());
@@ -48,5 +46,9 @@ class Alpha {
 
     double sum() {
         return alphas.stream().reduce(Double::sum).get();
+    }
+
+    public List<Double> getAlphas() {
+        return alphas;
     }
 }

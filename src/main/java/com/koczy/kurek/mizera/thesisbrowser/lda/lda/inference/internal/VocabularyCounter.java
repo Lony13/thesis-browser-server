@@ -26,8 +26,7 @@ class VocabularyCounter {
     }
 
     int getVocabCount(int vocabID) {
-        if (vocabCount.size() < vocabID) return 0;
-        else return vocabCount.get(vocabID - 1);
+        return (vocabCount.size() < vocabID) ? 0 : vocabCount.get(vocabID - 1);
     }
     
     int getSumCount() {

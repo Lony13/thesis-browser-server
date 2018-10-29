@@ -16,15 +16,24 @@
 
 package com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal;
 
+import java.util.ArrayList;
+import java.util.logging.Level;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 class AssignmentCounter {
+    private static final Logger logger = Logger.getLogger(AssignmentCounter.class.getName());
+
     private List<Integer> counter;
 
     AssignmentCounter(int size) {
-        if (size <= 0) throw new IllegalArgumentException();
+        this.counter = new ArrayList<>();
+        if (size <= 0) {
+            logger.warning( "Size of counter can't be smaller than 1");
+            return;
+        }
         this.counter = IntStream.generate(() -> 0)
                                 .limit(size)
                                 .boxed()
@@ -36,8 +45,9 @@ class AssignmentCounter {
     }
     
     int get(int id) {
-        if (id < 0 || counter.size() <= id) {
-            throw new IllegalArgumentException();
+        if(id < 0 || counter.size() <= id) {
+            logger.warning( "There is no such id");
+            return -1;
         }
         return counter.get(id);
     }
@@ -48,17 +58,20 @@ class AssignmentCounter {
     
     void increment(int id) {
         if (id < 0 || counter.size() <= id) {
-            throw new IllegalArgumentException();
+            logger.warning( "There is no such id");
+            return;
         }
         counter.set(id, counter.get(id) + 1);
     }
     
     void decrement(int id) {
-        if (id < 0 || counter.size() <= id) {
-            throw new IllegalArgumentException();
+        if (id < 0 || counter.size() <= id ) {
+            logger.warning( "There is no such id");
+            return;
         }
-        if (counter.get(id) == 0) {
-            throw new IllegalStateException();
+        if(counter.get(id) == 0) {
+            logger.warning( "There is no possibility to decrement counter lower than 0");
+            return;
         }
         counter.set(id, counter.get(id) - 1);
     }

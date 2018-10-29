@@ -19,15 +19,14 @@ package com.koczy.kurek.mizera.thesisbrowser.lda.lda;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.logging.Logger;
+
 @Component
 class Hyperparameters {
+    private static final Logger logger = Logger.getLogger(Hyperparameters.class.getName());
+
     private Alpha alpha;
     private Beta beta;
-
-    Hyperparameters(double alpha, double beta, int numTopics, int numVocabs) {
-        this.alpha = new Alpha(alpha, numTopics);
-        this.beta  = new Beta(beta, numVocabs);
-    }
 
     @Autowired
     Hyperparameters(Alpha alpha, Beta beta) {
@@ -36,6 +35,10 @@ class Hyperparameters {
     }
 
     double alpha(int i) {
+        if(alpha.getAlphas().size() - 1 < i){
+            logger.warning("Given i value is to big");
+            return -1;
+        }
         return alpha.get(i);
     }
     
@@ -48,6 +51,10 @@ class Hyperparameters {
     }
     
     double beta(int i) {
+        if(beta.getBetas().size() - 1 < i){
+            logger.warning("Given i value is to big");
+            return -1;
+        }
         return beta.get(i);
     }
     

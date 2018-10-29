@@ -18,14 +18,24 @@ package com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal;
 
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Vocabulary;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class Words {
+    private static final Logger logger = Logger.getLogger(Words.class.getName());
+
     private List<Vocabulary> words;
     
     Words(List<Vocabulary> words) {
-        if (words == null) throw new NullPointerException();
+        this.words = new ArrayList<>();
+        if (Objects.isNull(words)){
+            logger.warning( "Words were not initialized");
+            return;
+        }
         this.words = words; 
     }
 
@@ -35,12 +45,17 @@ class Words {
     
     Vocabulary get(int id) {
         if (id < 0 || words.size() <= id) {
-            throw new IllegalArgumentException();
+            logger.warning( "There is no word with that id");
+            return new Vocabulary(-1, "");
         }
         return words.get(id);
     }
     
     List<Vocabulary> getWords() {
+        if(Objects.isNull(words)){
+            logger.warning( "Words were not initialized");
+            return Collections.emptyList();
+        }
         return Collections.unmodifiableList(words);
     }
 }

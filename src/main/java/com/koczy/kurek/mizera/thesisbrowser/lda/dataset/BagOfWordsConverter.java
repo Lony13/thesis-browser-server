@@ -10,11 +10,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.LDA_NUM_OF_WORDS_THRESHOLD;
 
 @Component
 public class BagOfWordsConverter {
+
+    private static final Logger logger = Logger.getLogger(BagOfWordsConverter.class.getName());
 
     private Map<String, Integer> wordsIdMap = new HashMap<>();
 
@@ -27,7 +31,8 @@ public class BagOfWordsConverter {
                 wordsIdMap.put(line, lines.indexOf(line)+1);
             }
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            logger.warning(ioe.toString());
+            logger.warning("Couldn't read lines from vocab file");
         }
     }
 

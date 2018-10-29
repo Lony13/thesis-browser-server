@@ -16,6 +16,7 @@
 
 package com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal;
 
+import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.VocabProbability;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Vocabularies;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.LDA;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -24,60 +25,56 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 class Topics {
+    private static final Logger logger = Logger.getLogger(Topics.class.getName());
+
     private List<Topic> topics;
     
     Topics(LDA lda) {
-        if (lda == null) throw new NullPointerException();
-        
         topics = new ArrayList<>();
-        for (int t = 0; t < lda.getNumTopics(); ++t) {
-            topics.add(new Topic(t, lda.getVocabularies().size()));
+        if(Objects.isNull(lda)){
+            logger.warning("Lda is not initialized");
+            return;
+        }
+        for (int id = 0; id < lda.getNumTopics(); id++) {
+            topics.add(new Topic(id, lda.getVocabularies().size()));
         }
     }
-    
-    int numTopics() {
-        return topics.size();
-    }
-    
+
     Topic get(int id) {
+        if(id < 0 || id >= topics.size()) {
+            logger.warning( "There is no topic with that id");
+            return new Topic(-1,-1);
+        }
         return topics.get(id);
     }
-    
-    int getVocabCount(int topicID, int vocabID) {
-        return topics.get(topicID).getVocabCount(vocabID);
-    }
-    
-    int getSumCount(int topicID) {
-        return topics.get(topicID).getSumCount();
-    }
-    
-    void incrementVocabCount(int topicID, int vocabID) {
-        topics.get(topicID).incrementVocabCount(vocabID);
-    }
-    
-    void decrementVocabCount(int topicID, int vocabID) {
-        topics.get(topicID).decrementVocabCount(vocabID);
-    }
-    
+
     double getPhi(int topicID, int vocabID, double beta) {
-        if (topicID < 0 || topics.size() <= topicID) throw new IllegalArgumentException();
+        if (topicID < 0 || topics.size() <= topicID) {
+            logger.warning( "There is no topic with that id");
+            return -1;
+        }
         return topics.get(topicID).getPhi(vocabID, beta);
     }
     
-    List<Pair<String, Double>> getVocabsSortedByPhi(int topicID, Vocabularies vocabs, final double beta) {
-        if (topicID < 0 || topics.size() <= topicID || vocabs == null || beta <= 0.0) {
-            throw new IllegalArgumentException();
+    List<VocabProbability> getVocabsSortedByPhi(int topicID, Vocabularies vocabs, final double beta) {
+        if (topicID < 0 || topics.size() <= topicID || Objects.isNull(vocabs) || beta <= 0.0)  {
+            logger.warning( "Invalid topic id, beta value or " +
+                    "vocabs have not been initialised");
+            return Collections.emptyList();
         }
         
         Topic topic = topics.get(topicID);
-        List<Pair<String, Double>> vocabProbPairs
+        List<VocabProbability> vocabProbPairs
             = vocabs.getVocabularyList()
                     .stream()
-                    .map(v -> new ImmutablePair<String, Double>(v.toString(), topic.getPhi(v.id(), beta)))
-                    .sorted((p1, p2) -> Double.compare(p2.getRight(), p1.getRight()))
+                    .map(v -> new VocabProbability(v.toString(), topic.getPhi(v.id(), beta)))
+                    .sorted((p1, p2) -> Double.compare(p2.getProbability(), p1.getProbability()))
                     .collect(Collectors.toList());
         return Collections.unmodifiableList(vocabProbPairs);
     }

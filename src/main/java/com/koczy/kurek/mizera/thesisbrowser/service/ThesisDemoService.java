@@ -1,9 +1,6 @@
 package com.koczy.kurek.mizera.thesisbrowser.service;
 
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisDetails;
-import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
-import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
-import com.koczy.kurek.mizera.thesisbrowser.entity.ThesisDetails;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisResponse;
 import org.springframework.stereotype.Service;
@@ -75,7 +72,7 @@ public class ThesisDemoService implements IThesisService {
     }
 
     @Override
-    public Thesis getThesis(int id) {
+    public ThesisResponse getThesis(int id) {
         return theses.get(id);
     }
 }

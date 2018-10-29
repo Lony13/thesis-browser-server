@@ -16,18 +16,18 @@
 
 package com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal;
 
+import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.VocabProbability;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Vocabulary;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.LDA;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.Inference;
 import com.koczy.kurek.mizera.thesisbrowser.service.DownloadService;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.distribution.EnumeratedIntegerDistribution;
 import org.apache.commons.math3.distribution.IntegerDistribution;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
@@ -42,15 +42,14 @@ public class CollapsedGibbsSampler implements Inference {
     private LDA lda;
     private Topics topics;
     private Documents documents;
-    private boolean ready;
+    private boolean ready = false;
 
-    @Autowired
-    public CollapsedGibbsSampler() {
-        this.ready = false;
-    }
-    
     @Override
     public void setUp(LDA lda) {
+        if(Objects.isNull(lda)){
+            logger.warning( "Lda is null");
+            return;
+        }
         this.lda = lda;
 
         initialize(this.lda);
@@ -60,7 +59,6 @@ public class CollapsedGibbsSampler implements Inference {
     }
     
     private void initialize(LDA lda) {
-        assert lda != null;
         this.topics = new Topics(lda);
         this.documents = new Documents(lda);
     }
@@ -72,39 +70,40 @@ public class CollapsedGibbsSampler implements Inference {
     @Override
     public void run() {
         if (!ready) {
-            throw new IllegalStateException("instance has not set up yet");
+            logger.warning( "Instance has not set up yet");
+            return;
         }
 
-        for (int i = 1; i <= LDA_NUM_ITERATION; ++i) {
-            logger.log(Level.INFO, "Iteration: " + i);
+        for (int i = 1; i <= LDA_NUM_ITERATION; i++) {
+            logger.info( "Collapsed gibbs sampler iteration: " + i);
             runSampling();
         }
     }
 
     void runSampling() {
-        for (Document d : documents.getDocuments()) {
-            for (int w = 0; w < d.getDocLength(); ++w) {
-                final Topic oldTopic = topics.get(d.getTopicID(w));
-                d.decrementTopicCount(oldTopic.id());
+        for (Document document : documents.getDocuments()) {
+            for (int wordID = 0; wordID < document.getDocLength(); ++wordID) {
+                final Topic oldTopic = topics.get(document.getTopicID(wordID));
+                document.decrementTopicCount(oldTopic.getId());
                 
-                final Vocabulary v = d.getVocabulary(w);
-                oldTopic.decrementVocabCount(v.id());
+                final Vocabulary vocabulary = document.getVocabulary(wordID);
+                oldTopic.decrementVocabCount(vocabulary.id());
                 
                 IntegerDistribution distribution
-                    = getFullConditionalDistribution(lda.getNumTopics(), d.id(), v.id());
+                    = getFullConditionalDistribution(lda.getNumTopics(), document.id(), vocabulary.id());
                 
                 final int newTopicID = distribution.sample();
-                d.setTopicID(w, newTopicID);
+                document.setTopicID(wordID, newTopicID);
                 
-                d.incrementTopicCount(newTopicID);
+                document.incrementTopicCount(newTopicID);
                 final Topic newTopic = topics.get(newTopicID);
-                newTopic.incrementVocabCount(v.id());
+                newTopic.incrementVocabCount(vocabulary.id());
             }
         }
     }
 
     IntegerDistribution getFullConditionalDistribution(final int numTopics, final int docID, final int vocabID) {
-        int[]    topics        = IntStream.range(0, numTopics).toArray();
+        int[] topics = IntStream.range(0, numTopics).toArray();
         double[] probabilities = Arrays.stream(topics)
                                        .mapToDouble(t -> getTheta(docID, t) * getPhi(t, vocabID))
                                        .toArray();
@@ -116,26 +115,35 @@ public class CollapsedGibbsSampler implements Inference {
     }
 
     int getDTCount(final int docID, final int topicID) {
-        if (!ready) throw new IllegalStateException();
+        if (!ready){
+            logger.warning( "Instance has not set up yet");
+            return -1;
+        }
         if (docID <= 0 || lda.getBow().getNumDocs() < docID
-                || topicID < 0 || lda.getNumTopics() <= topicID) {
-            throw new IllegalArgumentException();
+                || topicID < 0 || lda.getNumTopics() <= topicID){
+            logger.warning( "Given docId or topicId does not exists");
+            return -1;
         }
         return documents.getTopicCount(docID, topicID);
     }
 
     int getTVCount(final int topicID, final int vocabID) {
-        if (!ready) throw new IllegalStateException();
-        if (topicID < 0 || lda.getNumTopics() <= topicID || vocabID <= 0) {
-            throw new IllegalArgumentException();
+        if (!ready){
+            logger.warning( "Instance has not set up yet");
+            return -1;
+        }
+        if (topicID < 0 || lda.getNumTopics() <= topicID || vocabID <= 0){
+            logger.warning( "Given topicId or vocabId does not exists");
+            return -1;
         }
         final Topic topic = topics.get(topicID);
         return topic.getVocabCount(vocabID);
     }
 
     int getTSumCount(final int topicID) {
-        if (topicID < 0 || lda.getNumTopics() <= topicID) {
-            throw new IllegalArgumentException();
+        if (topicID < 0 || lda.getNumTopics() <= topicID){
+            logger.warning( "Given topicId does not exists");
+            return -1;
         }
         final Topic topic = topics.get(topicID);
         return topic.getSumCount();
@@ -143,18 +151,24 @@ public class CollapsedGibbsSampler implements Inference {
 
     @Override
     public double getTheta(final int docID, final int topicID) {
-        if (!ready) throw new IllegalStateException();
+        if (!ready){
+            logger.warning( "Instance has not set up yet");
+            return -1;
+        }
         return documents.getTheta(docID, topicID, lda.getAlpha(topicID), lda.getSumAlpha());
     }
 
     @Override
     public double getPhi(int topicID, int vocabID) {
-        if (!ready) throw new IllegalStateException();
+        if (!ready){
+            logger.warning( "Instance has not set up yet");
+            return -1;
+        }
         return topics.getPhi(topicID, vocabID, lda.getBeta());
     }
     
     @Override
-    public List<Pair<String, Double>> getVocabsSortedByPhi(int topicID) {
+    public List<VocabProbability> getVocabsSortedByPhi(int topicID) {
         return topics.getVocabsSortedByPhi(topicID, lda.getVocabularies(), lda.getBeta());
     }
 }

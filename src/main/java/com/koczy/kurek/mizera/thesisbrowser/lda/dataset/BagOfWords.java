@@ -4,11 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Component
 public class BagOfWords {
+
+    private static final Logger logger = Logger.getLogger(BagOfWords.class.getName());
 
     private ThesisBowManager thesisBowManager;
 
@@ -44,7 +49,8 @@ public class BagOfWords {
 
     public List<Integer> getWords(final int docID) {
         if (docID <= 0 || getNumDocs() < docID) {
-            throw new IllegalArgumentException();
+            logger.warning("There is no document with given ID");
+            return Collections.emptyList();
         }
         Map<Integer, Integer> thesisBow = thesisBowManager.getThesisBow(docID);
 

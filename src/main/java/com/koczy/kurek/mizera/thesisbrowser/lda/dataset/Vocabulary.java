@@ -16,14 +16,24 @@
 
 package com.koczy.kurek.mizera.thesisbrowser.lda.dataset;
 
+import org.springframework.util.StringUtils;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Vocabulary {
     private final int id;
     private String vocabulary;
-    
+    private static final Logger logger = Logger.getLogger(Vocabulary.class.getName());
+
+
     public Vocabulary(int id, String vocabulary) {
-        if (vocabulary == null) throw new NullPointerException();
-        this.id         = id;
+        this.id = id;
         this.vocabulary = vocabulary;
+        if(StringUtils.isEmpty(vocabulary)){
+            logger.warning( "Empty string, couldn't create vocab");
+            this.vocabulary = "";
+        }
     }
     
     public int id() {

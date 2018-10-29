@@ -24,70 +24,63 @@ import com.koczy.kurek.mizera.thesisbrowser.lda.lda.LDA;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 class Documents {
+    private static final Logger logger = Logger.getLogger(Documents.class.getName());
+
     private List<Document> documents;
     
     Documents(LDA lda) {
-        if (lda == null) throw new NullPointerException();
-        
         documents = new ArrayList<>();
-        for (int d = 1; d <= lda.getBow().getNumDocs(); ++d) {
-            List<Vocabulary> vocabList = getVocabularyList(d, lda.getBow(), lda.getVocabularies());
-            Document doc = new Document(d, lda.getNumTopics(), vocabList);
+        if(Objects.isNull(lda)){
+            logger.warning( "Lda is not initialized");
+            return;
+        }
+        for (int id = 1; id <= lda.getBow().getNumDocs(); id++) {
+            List<Vocabulary> vocabList = getVocabularyList(id, lda.getBow(), lda.getVocabularies());
+            Document doc = new Document(id, lda.getNumTopics(), vocabList);
             documents.add(doc);
         }
     }
 
 
     List<Vocabulary> getVocabularyList(int docID, BagOfWords bow, Vocabularies vocabs) {
-        assert docID > 0 && bow != null && vocabs != null;
+        if(docID <= 0 || Objects.isNull(bow) || Objects.isNull(vocabs)){
+            logger.warning( "Bag of words or vocabularies were not initialized");
+            return Collections.emptyList();
+        }
         return bow.getWords(docID).stream()
                                   .map(id -> vocabs.get(id))
                                   .collect(Collectors.toList());
     }
 
-    int getTopicID(int docID, int wordID) {
-        return documents.get(docID - 1).getTopicID(wordID);
-    }
-
-    void setTopicID(int docID, int wordID, int topicID) {
-        documents.get(docID - 1).setTopicID(wordID, topicID);
-    }
-
-    Vocabulary getVocab(int docID, int wordID) {
-        return documents.get(docID - 1).getVocabulary(wordID);
-    }
-    
     List<Document> getDocuments() {
         return Collections.unmodifiableList(documents);
     }
-    
-    void incrementTopicCount(int docID, int topicID) {
-        documents.get(docID - 1).incrementTopicCount(topicID);
-    }
 
-    void decrementTopicCount(int docID, int topicID) {
-        documents.get(docID - 1).decrementTopicCount(topicID);
-    }
-    
     int getTopicCount(int docID, int topicID) {
         return documents.get(docID - 1).getTopicCount(topicID);
     }
     
     double getTheta(int docID, int topicID, double alpha, double sumAlpha) {
-        if (docID <= 0 || documents.size() < docID) throw new IllegalArgumentException();
+        if (docID <= 0 || documents.size() < docID){
+            logger.warning( "There is no document with that id");
+            return -1;
+        }
         return documents.get(docID - 1).getTheta(topicID, alpha, sumAlpha);
     }
     
     void initializeTopicAssignment(Topics topics, long seed) {
-        for (Document d : getDocuments()) {
-            d.initializeTopicAssignment(seed);
-            for (int w = 0; w < d.getDocLength(); ++w) {
-                final int topicID = d.getTopicID(w);
+        for (Document document : getDocuments()) {
+            document.initializeTopicAssignment(seed);
+            for (int wordId = 0; wordId < document.getDocLength(); ++wordId) {
+                final int topicID = document.getTopicID(wordId);
                 final Topic topic = topics.get(topicID);
-                final Vocabulary vocab = d.getVocabulary(w);
+                final Vocabulary vocab = document.getVocabulary(wordId);
                 topic.incrementVocabCount(vocab.id());
             }
         }

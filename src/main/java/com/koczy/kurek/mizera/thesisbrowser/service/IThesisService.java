@@ -14,5 +14,5 @@ public interface IThesisService {
 
     ThesisDetails getThesisDetails(int id);
 
-    Thesis getThesis(int id);
+    ThesisResponse getThesis(int id);
 }

@@ -28,21 +28,9 @@ import java.util.stream.Stream;
 @Component
 class Beta {
     private List<Double> betas;
-    
-    Beta(double beta, int numVocabs) {
-        if (beta <= 0.0 || numVocabs <= 0) {
-            throw new IllegalArgumentException();
-        }
-        this.betas = Stream.generate(() -> beta)
-                           .limit(numVocabs)
-                           .collect(Collectors.toList());
-    }
 
     @Autowired
     Beta(@Value("${lda.beta}") double beta) {
-        if (beta <= 0.0) {
-            throw new IllegalArgumentException();
-        }
         this.betas = Arrays.asList(beta);
     }
 
@@ -56,5 +44,9 @@ class Beta {
     
     void set(int i, double value) {
         betas.set(i, value);
+    }
+
+    public List<Double> getBetas() {
+        return betas;
     }
 }

@@ -1,7 +1,6 @@
 package com.koczy.kurek.mizera.thesisbrowser.controller;
 
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisDetails;
-import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisResponse;
 import com.koczy.kurek.mizera.thesisbrowser.service.DemoServiceResolver;

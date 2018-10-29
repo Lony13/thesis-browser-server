@@ -24,11 +24,6 @@ public class ThesisDAO implements IThesisDao {
 
     private IAuthorDao authorDao;
 
-    @Autowired
-    public ThesisDAO(IAuthorDao authorDao) {
-        this.authorDao = authorDao;
-    }
-
     //DEMO
     private BagOfWordsConverter bagOfWordsConverter;
     //DEMO
@@ -38,8 +33,9 @@ public class ThesisDAO implements IThesisDao {
 
     //DEMO
     @Autowired
-    public ThesisDAO(BagOfWordsConverter bagOfWordsConverter){
+    public ThesisDAO(BagOfWordsConverter bagOfWordsConverter, IAuthorDao authorDao){
         this.bagOfWordsConverter = bagOfWordsConverter;
+        this.authorDao = authorDao;
         FileInputStream fileInputStream = null;
         try {
             for(int i=0; i<1; i++){

@@ -3,7 +3,9 @@ package com.koczy.kurek.mizera.thesisbrowser.service;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.hibUtils.ThesisDAO;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Dataset;
+import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.VocabProbability;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.LDA;
+import com.koczy.kurek.mizera.thesisbrowser.model.CompareThesesDto;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,16 +34,6 @@ public class LdaService implements ILdaService{
     @Override
     public ResponseEntity run() {
         this.lda.run();
-        System.out.println(this.lda.computePerplexity(this.dataset));
-
-        for (int t = 0; t < lda.getNumTopics(); ++t) {
-            List<Pair<String, Double>> highRankVocabs = lda.getVocabsSortedByPhi(t);
-            System.out.print("t" + t + ": ");
-            for (int i = 0; i < 5; ++i) {
-                System.out.print("[" + highRankVocabs.get(i).getLeft() + "," + highRankVocabs.get(i).getRight() + "],");
-            }
-            System.out.println();
-        }
         lda.createSimilarityVectorForEveryThesis();
         return new ResponseEntity<>("LDA completed", HttpStatus.OK);
     }
@@ -57,9 +49,7 @@ public class LdaService implements ILdaService{
         double[] thesisSimilarityVector = this.thesisDao.getTopicSimilarityVector(id);
         List<Thesis> similarTheses = new ArrayList<>();
         for(int thesisId : this.thesisDao.getThesisId()){
-            if(cosineSimilarity(thesisSimilarityVector,
-                    this.thesisDao.getTopicSimilarityVector(thesisId))
-                    >= LDA_SIMILARITY_THRESHOLD){
+            if(isSimilarityAboveThreshold(thesisSimilarityVector, thesisId)){
                 similarTheses.add(this.thesisDao.getThesis(thesisId));
             }
         }
@@ -67,17 +57,21 @@ public class LdaService implements ILdaService{
     }
 
     @Override
-    public ResponseEntity<List<Integer>> getSimilarThesesAmong(int id, List<Integer> theses) {
-        double[] thesisSimilarityVector = this.thesisDao.getTopicSimilarityVector(id);
+    public ResponseEntity<List<Integer>> getSimilarThesesAmong(CompareThesesDto compareThesesDto) {
+        double[] thesisSimilarityVector = this.thesisDao.getTopicSimilarityVector(compareThesesDto.getExemplaryThesis());
         List<Integer> similarThesesId = new ArrayList<>();
-        for(int thesisId : theses){
-            if(cosineSimilarity(thesisSimilarityVector,
-                    this.thesisDao.getTopicSimilarityVector(thesisId))
-                    >= LDA_SIMILARITY_THRESHOLD){
+        for(int thesisId : compareThesesDto.getThesesToCompare()){
+            if(isSimilarityAboveThreshold(thesisSimilarityVector, thesisId)){
                 similarThesesId.add(thesisId);
             }
         }
         return new ResponseEntity<>(similarThesesId, HttpStatus.OK);
+    }
+
+    private boolean isSimilarityAboveThreshold(double[] thesisSimilarityVector, int thesisId) {
+        return cosineSimilarity(thesisSimilarityVector,
+                this.thesisDao.getTopicSimilarityVector(thesisId))
+                >= LDA_SIMILARITY_THRESHOLD;
     }
 
     private double cosineSimilarity(double[] vectorA, double[] vectorB) {
