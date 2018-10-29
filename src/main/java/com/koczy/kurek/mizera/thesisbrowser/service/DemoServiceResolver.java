@@ -12,15 +12,7 @@ public abstract class DemoServiceResolver<T> {
     }
 
     protected T resolveService(HttpServletRequest request){
-        if (request.isUserInRole("ROLE_DEMO")) {
-            return demoImplementation;
-        } else {
-            return implementation;
-        }
-    }
-
-    protected T resolveService(String role){
-        if ("ROLE_DEMO".equals(role)) {
+        if (request.isUserInRole("DEMO")) {
             return demoImplementation;
         } else {
             return implementation;
