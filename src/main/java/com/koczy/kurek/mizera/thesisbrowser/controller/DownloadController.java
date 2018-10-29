@@ -17,8 +17,13 @@ public class DownloadController {
         this.downloadService = downloadService;
     }
 
-    @RequestMapping(value = "/api/theses/download", method = RequestMethod.POST)
+    @RequestMapping(value = "/theses/download", method = RequestMethod.POST)
     public ResponseEntity downloadTheses(@RequestBody ThesisFilters thesisFilters) {
         return downloadService.downloadTheses(thesisFilters);
+    }
+
+    @RequestMapping(value = "/thesis/quotation/updates", method = RequestMethod.GET)
+    public ResponseEntity updateQuotations(@RequestParam(required = true) int thesisId) {
+        return downloadService.updateQuotations(thesisId);
     }
 }

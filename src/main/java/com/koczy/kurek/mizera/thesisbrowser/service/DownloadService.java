@@ -38,18 +38,21 @@ public class DownloadService implements IDownloadService {
     private GoogleScraper googleScraper;
     private PdfDownloader pdfDownloader;
     private PdfParser pdfParser;
+    private IThesisService thesisService;
 
     @Autowired
     public DownloadService(AGHLibraryScraper aghLibraryScraper,
                            DblpScraper dblpScraper,
                            GoogleScraper googleScraper,
                            PdfDownloader pdfDownloader,
-                           PdfParser pdfParser) {
+                           PdfParser pdfParser,
+                           IThesisService thesisService) {
         this.aghLibraryScraper = aghLibraryScraper;
         this.dblpScraper = dblpScraper;
         this.googleScraper = googleScraper;
         this.pdfDownloader = pdfDownloader;
         this.pdfParser = pdfParser;
+        this.thesisService = thesisService;
     }
 
     @Override
@@ -72,6 +75,11 @@ public class DownloadService implements IDownloadService {
             }
         }
         return new ResponseEntity<>("Downloading finished", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity updateQuotations(int thesisId) {
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     private void downloadThesis(Thesis thesis){

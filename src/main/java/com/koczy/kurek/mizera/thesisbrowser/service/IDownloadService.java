@@ -7,4 +7,5 @@ public interface IDownloadService {
 
     ResponseEntity downloadTheses(ThesisFilters thesisFilters);
 
+    ResponseEntity updateQuotations(int thesisId);
 }
