@@ -1,7 +1,5 @@
 package com.koczy.kurek.mizera.thesisbrowser.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.util.Set;
 
