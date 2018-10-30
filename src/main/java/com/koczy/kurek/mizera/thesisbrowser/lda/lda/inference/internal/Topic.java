@@ -27,7 +27,13 @@ class Topic {
     private VocabularyCounter counter;
     
     Topic(int id, int numVocabs) {
-        if (id < 0 || numVocabs <= 0) throw new IllegalArgumentException();
+        if (id < 0 || numVocabs <= 0){
+            logger.warning( "Id cannot be lower than 0 or number of vocabs cannot be lower than 1");
+            this.id = -1;
+            this.numVocabs = 0;
+            this.counter = new VocabularyCounter(numVocabs);
+            return;
+        }
         this.id = id;
         this.numVocabs = numVocabs;
         this.counter = new VocabularyCounter(numVocabs);

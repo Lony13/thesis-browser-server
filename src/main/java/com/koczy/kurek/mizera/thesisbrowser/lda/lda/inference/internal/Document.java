@@ -44,7 +44,7 @@ public class Document {
         this.assignment = new TopicAssignment();
     }
 
-    int id() {
+    int getId() {
         return id;
     }
     

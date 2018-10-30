@@ -28,7 +28,6 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
@@ -90,7 +89,7 @@ public class CollapsedGibbsSampler implements Inference {
                 oldTopic.decrementVocabCount(vocabulary.id());
                 
                 IntegerDistribution distribution
-                    = getFullConditionalDistribution(lda.getNumTopics(), document.id(), vocabulary.id());
+                    = getFullConditionalDistribution(lda.getNumTopics(), document.getId(), vocabulary.id());
                 
                 final int newTopicID = distribution.sample();
                 document.setTopicID(wordID, newTopicID);
