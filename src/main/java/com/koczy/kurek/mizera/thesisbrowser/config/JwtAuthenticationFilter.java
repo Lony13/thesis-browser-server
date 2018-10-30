@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -17,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.HEADER_STRING;
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.TOKEN_PREFIX;
@@ -51,7 +53,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         if (!StringUtils.isEmpty(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = null;
+            try{
+                userDetails = userDetailsService.loadUserByUsername(username);
+            } catch(UsernameNotFoundException e){
+                logger.warn(e.toString());
+                return;
+            }
+            if(Objects.isNull(userDetails)){
+                logger.warn("Invalid username or password");
+                return;
+            }
 
             if (jwtTokenUtil.validateToken(authToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authentication = jwtTokenUtil.getAuthentication(authToken, SecurityContextHolder.getContext().getAuthentication(), userDetails);

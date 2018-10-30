@@ -2,6 +2,7 @@ package com.koczy.kurek.mizera.thesisbrowser.hibUtils;
 
 import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
+import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWordsConverter;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -9,9 +10,9 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,9 +24,65 @@ public class ThesisDAO implements IThesisDao {
 
     private IAuthorDao authorDao;
 
+    //DEMO
+    private BagOfWordsConverter bagOfWordsConverter;
+    //DEMO
+    private List<Map<Integer, Integer>> bow = new ArrayList<Map<Integer, Integer>>();
+    //DEMO
+    private Map<Integer, double[]> similarityVectors = new HashMap<>();
+
+    //DEMO
     @Autowired
-    public ThesisDAO(IAuthorDao authorDao) {
+    public ThesisDAO(BagOfWordsConverter bagOfWordsConverter, IAuthorDao authorDao){
+        this.bagOfWordsConverter = bagOfWordsConverter;
         this.authorDao = authorDao;
+        FileInputStream fileInputStream = null;
+        try {
+            for(int i=0; i<1; i++){
+                fileInputStream = new FileInputStream("parsedPDF/Multiwinner_Voting__A_New_Challenge_for_Social_Choice_Theory.txt");
+                bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
+                fileInputStream = new FileInputStream("parsedPDF/Comparison_of_association_ratio_in_English_and_Polish_languages.txt");
+                bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
+                fileInputStream = new FileInputStream("parsedPDF/Comparison_of_association_ratio_in_English_and_Polish_languages.txt");
+                bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
+                fileInputStream = new FileInputStream("parsedPDF/Predictive_planning_method_for_rescue_robots_in_buildings.txt");
+                bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
+                fileInputStream = new FileInputStream("parsedPDF/Distance_rationalization_of_voting_rules.txt");
+                bow.add(bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //TODO get number of documents in database
+    public int getNumDocs(){
+        return 4;
+    }
+
+    //TODO get bow from given thesis
+    public Map<Integer, Integer> getThesisBow(int id){
+        return bow.get(id);
+    }
+
+    //TODO get list of ids of theses in database
+    public List<Integer> getThesisId(){
+        return new ArrayList<Integer>(){{add(0); add(1); add(3); add(4);}};
+    }
+
+    //TODO save similarity vector to database
+    public void saveSimilarityVector(Integer integer, double[] similarityVector) {
+        this.similarityVectors.put(integer, similarityVector);
+    }
+
+    //TODO get similarity vector from database
+    public double[] getTopicSimilarityVector(int thesisID) {
+        return this.similarityVectors.get(thesisID);
+    }
+
+    //TODO get thesis
+    public Thesis getThesis(int thesisId) {
+        return new Thesis();
     }
 
     //TODO add filter over position in authors list

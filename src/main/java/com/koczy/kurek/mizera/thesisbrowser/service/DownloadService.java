@@ -6,6 +6,7 @@ import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.AGHLibraryScraper
 import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.DblpScraper;
 import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.GoogleScraper;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
+import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWordsConverter;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,15 +14,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.PARSED_PDF_FILE;
 
 @Service
 public class DownloadService implements IDownloadService {
@@ -38,6 +39,7 @@ public class DownloadService implements IDownloadService {
     private GoogleScraper googleScraper;
     private PdfDownloader pdfDownloader;
     private PdfParser pdfParser;
+    private BagOfWordsConverter bagOfWordsConverter;
     private IThesisService thesisService;
 
     @Autowired
@@ -46,12 +48,14 @@ public class DownloadService implements IDownloadService {
                            GoogleScraper googleScraper,
                            PdfDownloader pdfDownloader,
                            PdfParser pdfParser,
+                           BagOfWordsConverter bagOfWordsConverter,
                            IThesisService thesisService) {
         this.aghLibraryScraper = aghLibraryScraper;
         this.dblpScraper = dblpScraper;
         this.googleScraper = googleScraper;
         this.pdfDownloader = pdfDownloader;
         this.pdfParser = pdfParser;
+        this.bagOfWordsConverter = bagOfWordsConverter;
         this.thesisService = thesisService;
     }
 
@@ -70,11 +74,30 @@ public class DownloadService implements IDownloadService {
             if(!StringUtils.isEmpty(thesis.getLinkToPDF())){
                 downloadThesis(thesis);
                 parseThesisToTxt(thesis);
+                parseTxtToBow(thesis);
             } else {
                 logger.info("PDF not found");
             }
         }
         return new ResponseEntity<>("Downloading finished", HttpStatus.OK);
+    }
+
+    private void parseTxtToBow(Thesis thesis){
+        String filename = PARSED_PDF_FILE + thesis.getTitle().replaceAll(REGEX, REPLACEMENT)+TXT;
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(filename);
+        } catch (FileNotFoundException e) {
+            logger.warning(e.toString());
+            logger.warning("Couldn't find file with thesis to parse");
+            return;
+        }
+        if(Objects.isNull(fileInputStream)){
+            logger.warning("File input stream was not initialised");
+            return;
+        }
+        Map<Integer, Integer> thesisBagOfWords = bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream);
+        //TODO add thesisBagOfWords to Thesis, save Thesis and Author to database at the end of downloadTheses
     }
 
     @Override
@@ -85,12 +108,20 @@ public class DownloadService implements IDownloadService {
     private void downloadThesis(Thesis thesis){
         String filename = thesis.getTitle().replaceAll(REGEX, REPLACEMENT);
         InputStream in = pdfDownloader.getPdfStream(thesis.getLinkToPDF());
+        if(Objects.isNull(in)){
+            logger.warning("File input stream was not initialised");
+            return;
+        }
         pdfDownloader.downloadPdf(in, filename + PDF);
     }
 
     private void parseThesisToTxt(Thesis thesis){
         String filename = thesis.getTitle().replaceAll(REGEX, REPLACEMENT);
         InputStream in = pdfDownloader.getPdfStream(thesis.getLinkToPDF());
+        if(Objects.isNull(in)){
+            logger.warning("File input stream was not initialised");
+            return;
+        }
         pdfParser.parseToTxt(in, filename + TXT);
     }
 

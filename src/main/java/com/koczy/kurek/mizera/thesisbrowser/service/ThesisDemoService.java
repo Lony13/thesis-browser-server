@@ -70,4 +70,9 @@ public class ThesisDemoService implements IThesisService {
         }
         return this.thesesDetails.get(0);
     }
+
+    @Override
+    public ThesisResponse getThesis(int id) {
+        return theses.get(id);
+    }
 }

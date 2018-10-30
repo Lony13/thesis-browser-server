@@ -43,12 +43,24 @@ public class Thesis {
     public Thesis() {
     }
 
-    public Thesis(String title, Integer citationNo, Set<Author> authors) {
+    public Thesis(String title, Set<Author> authors, String linkToPDF) {
         this.title = title;
-        this.citationNo = citationNo;
+        this.linkToPDF = linkToPDF;
         this.authors = authors;
     }
 
+    public Thesis(String title, Set<Author> authors, String linkToPDF, Integer citationNo,
+                  Date publicationDate, List<String> relatedTheses, Set<String> keyWords) {
+        this.title = title;
+        this.linkToPDF = linkToPDF;
+        this.authors = authors;
+        this.citationNo = citationNo;
+        this.publicationDate = publicationDate;
+        this.relatedTheses = relatedTheses;
+        this.keyWords = keyWords;
+    }
+
+    @Deprecated
     public Thesis(String title, String authorName, String link) {
         this.title = title;
         this.linkToPDF = link;
