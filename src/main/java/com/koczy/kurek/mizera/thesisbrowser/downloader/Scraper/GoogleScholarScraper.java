@@ -17,7 +17,7 @@ import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.ONLY_NUMBERS;
 @Component
 public class GoogleScholarScraper {
     private static final Logger logger = Logger.getLogger(GoogleScholarScraper.class.getName());
-    private static final String GOOGLE_SCHOLAR_SEARCH_URL = "https://scholar.google.pl/scholar?q=";
+    private static final String GOOGLE_SCHOLAR_SEARCH_URL = "https://scholar.google.pl/scholar?hl=en&as_sdt=0%2C5&q=";
 
     public int getCitationNumber(String authorName, String title){
         String searchUrl = getSearchUrl(authorName, title);
@@ -34,7 +34,7 @@ public class GoogleScholarScraper {
                      .first()
                      .text()
                      .replaceAll(ONLY_NUMBERS,""));
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.log(Level.WARNING, e.toString());
             logger.log(Level.WARNING, "Couldn't get citation number");
             return 0;

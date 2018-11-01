@@ -73,7 +73,8 @@ public class DownloadService implements IDownloadService {
         }
 
         for (Thesis thesis : theses) {
-            thesis.setCitationNo(googleScholarScraper.getCitationNumber(thesis.getAuthor(), thesis.getTitle()));
+            thesis.setCitationNo(googleScholarScraper.getCitationNumber(firstName + " " + lastName,
+                    thesis.getTitle()));
             if(!StringUtils.isEmpty(thesis.getLinkToPDF())){
                 downloadThesis(thesis);
                 parseThesisToTxt(thesis);
