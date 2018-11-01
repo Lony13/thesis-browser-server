@@ -7,7 +7,10 @@ public class Constants {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
     public static final String AUTHORITIES_KEY = "scopes";
+
     public static final String PARSED_PDF_FILE = "parsedPDF/";
+    public static final String PDF_SAVE_DIRECTORY = "downloadedPDF/";
+    public static final String ONLY_NUMBERS = "\\D+";
 
     public static final long LDA_SEED = 100L;
     public static final int LDA_NUM_ITERATION = 10;
