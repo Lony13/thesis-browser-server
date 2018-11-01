@@ -55,8 +55,13 @@ public class ThesisDAO implements IThesisDao {
         }
     }
 
+    //TODO gives nth record of theses
+    public Thesis getNthThesis(int n){
+        return new Thesis();
+    }
+
     //TODO get number of documents in database
-    public int getNumDocs(){
+    public int getNumTheses(){
         return 4;
     }
 
@@ -66,7 +71,7 @@ public class ThesisDAO implements IThesisDao {
     }
 
     //TODO get list of ids of theses in database
-    public List<Integer> getThesisId(){
+    public List<Integer> getThesesId(){
         return new ArrayList<Integer>(){{add(0); add(1); add(3); add(4);}};
     }
 
