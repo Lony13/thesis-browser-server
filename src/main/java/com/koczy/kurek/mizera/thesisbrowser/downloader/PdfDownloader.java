@@ -4,18 +4,18 @@ import com.koczy.kurek.mizera.thesisbrowser.service.DownloadService;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.PDF_SAVE_DIRECTORY;
 
 @Component
 public class PdfDownloader {
 
     private static final Logger log = Logger.getLogger(DownloadService.class.getName());
 
-    private static final String PDF_SAVE_DIRECTORY = "downloadedPDF/";
     private static final int READ_BUFFER_SIZE = 1024;
     private static final int END_OF_FILE = -1;
 

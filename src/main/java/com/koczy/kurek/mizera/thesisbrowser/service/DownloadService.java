@@ -4,6 +4,7 @@ import com.koczy.kurek.mizera.thesisbrowser.downloader.Parser.PdfParser;
 import com.koczy.kurek.mizera.thesisbrowser.downloader.PdfDownloader;
 import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.AGHLibraryScraper;
 import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.DblpScraper;
+import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.GoogleScholarScraper;
 import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.GoogleScraper;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWordsConverter;
@@ -40,7 +41,8 @@ public class DownloadService implements IDownloadService {
     private PdfDownloader pdfDownloader;
     private PdfParser pdfParser;
     private BagOfWordsConverter bagOfWordsConverter;
-    private IThesisService thesisService;
+    private GoogleScholarScraper googleScholarScraper;
+
 
     @Autowired
     public DownloadService(AGHLibraryScraper aghLibraryScraper,
@@ -49,14 +51,14 @@ public class DownloadService implements IDownloadService {
                            PdfDownloader pdfDownloader,
                            PdfParser pdfParser,
                            BagOfWordsConverter bagOfWordsConverter,
-                           IThesisService thesisService) {
+                           GoogleScholarScraper googleScholarScraper) {
         this.aghLibraryScraper = aghLibraryScraper;
         this.dblpScraper = dblpScraper;
         this.googleScraper = googleScraper;
         this.pdfDownloader = pdfDownloader;
         this.pdfParser = pdfParser;
         this.bagOfWordsConverter = bagOfWordsConverter;
-        this.thesisService = thesisService;
+        this.googleScholarScraper = googleScholarScraper;
     }
 
     @Override
@@ -71,6 +73,8 @@ public class DownloadService implements IDownloadService {
         }
 
         for (Thesis thesis : theses) {
+            thesis.setCitationNo(googleScholarScraper.getCitationNumber(firstName + " " + lastName,
+                    thesis.getTitle()));
             if(!StringUtils.isEmpty(thesis.getLinkToPDF())){
                 downloadThesis(thesis);
                 parseThesisToTxt(thesis);

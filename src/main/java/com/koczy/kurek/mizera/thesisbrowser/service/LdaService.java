@@ -3,10 +3,8 @@ package com.koczy.kurek.mizera.thesisbrowser.service;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.hibUtils.ThesisDAO;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Dataset;
-import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.VocabProbability;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.LDA;
 import com.koczy.kurek.mizera.thesisbrowser.model.CompareThesesDto;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +46,7 @@ public class LdaService implements ILdaService{
     public ResponseEntity<List<Thesis>> getSimilarTheses(int id) {
         double[] thesisSimilarityVector = this.thesisDao.getTopicSimilarityVector(id);
         List<Thesis> similarTheses = new ArrayList<>();
-        for(int thesisId : this.thesisDao.getThesisId()){
+        for(int thesisId : this.thesisDao.getThesesId()){
             if(isSimilarityAboveThreshold(thesisSimilarityVector, thesisId)){
                 similarTheses.add(this.thesisDao.getThesis(thesisId));
             }
