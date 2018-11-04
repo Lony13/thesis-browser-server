@@ -7,6 +7,7 @@ import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -57,12 +58,27 @@ public class ThesisDAO implements IThesisDao {
 
     //TODO gives nth record of theses
     public Thesis getNthThesis(int n) {
-        return new Thesis();
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        String sqlQuery = "SELECT * FROM thesis ORDER BY thesisId LIMIT 1 OFFSET " + Integer.toString(n);
+        List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).list();
+
+        session.close();
+
+        return thesisList.get(0);
     }
 
     //TODO get number of documents in database
-    public int getNumTheses() {
-        return 4;
+    public static int getNumTheses() {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        String sqlQuery = "SELECT * FROM thesis ";
+        List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).list();
+
+        session.close();
+        return thesisList.size();
     }
 
     //TODO get bow from given thesis
@@ -70,14 +86,20 @@ public class ThesisDAO implements IThesisDao {
         return bow.get(id);
     }
 
-    //TODO get list of ids of theses in database
     public List<Integer> getThesesId() {
-        return new ArrayList<Integer>() {{
-            add(0);
-            add(1);
-            add(3);
-            add(4);
-        }};
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        String sqlQuery = "SELECT * FROM thesis";
+        List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).list();
+
+        List<Integer> thesesIds = new ArrayList<>();
+        for (Thesis thesis : thesisList) {
+            thesesIds.add(thesis.getThesisId());
+        }
+
+        session.close();
+        return thesesIds;
     }
 
     //TODO save similarity vector to database
@@ -90,9 +112,16 @@ public class ThesisDAO implements IThesisDao {
         return this.similarityVectors.get(thesisID);
     }
 
-    //TODO get thesis
     public Thesis getThesis(int thesisId) {
-        return new Thesis();
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
+        Thesis thesis = session.get(Thesis.class, thesisId);
+
+        transaction.commit();
+        session.close();
+        return thesis;
     }
 
     //TODO add filter over position in authors list
@@ -135,7 +164,7 @@ public class ThesisDAO implements IThesisDao {
         }
     }
 
-    private String createQuery(ThesisFilters filters) throws NoAuthorException{
+    private String createQuery(ThesisFilters filters) throws NoAuthorException {
 
         if (!anyFilters(filters)) {
             logger.info("No filters specified. Selecting random 10 theses.");
@@ -228,6 +257,7 @@ public class ThesisDAO implements IThesisDao {
     private String addAndToWhere(String query) {
         return (addAnd ? query.concat("AND ") : query);
     }
+
     private class NoAuthorException extends Throwable {
     }
 }
