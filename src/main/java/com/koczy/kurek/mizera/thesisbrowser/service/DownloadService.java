@@ -63,17 +63,17 @@ public class DownloadService implements IDownloadService {
 
     @Override
     public ResponseEntity downloadTheses(ThesisFilters thesisFilters) {
-        String firstName = thesisFilters.getAuthor().split(" ")[0];
-        String lastName = thesisFilters.getAuthor().split(" ")[1];
         Set<Thesis> theses = new HashSet<>();
         if(StringUtils.isEmpty(thesisFilters.getTitle())){
-            theses.addAll(findAllThesesFromAuthor(firstName, lastName));
+            theses.addAll(findAllThesesFromAuthor(thesisFilters.getAuthor()));
         }else{
-            theses.add(findThesisByAuthorNameAndTitle(firstName, lastName, thesisFilters.getTitle()));
+            theses.add(findThesisByAuthorNameAndTitle(thesisFilters.getAuthor(), thesisFilters.getTitle()));
         }
 
         for (Thesis thesis : theses) {
-            thesis.setCitationNo(googleScholarScraper.getCitationNumber(firstName + " " + lastName,
+            thesis.setCitationNo(googleScholarScraper.getCitationNumber(thesisFilters.getAuthor(),
+                    thesis.getTitle()));
+            thesis.setKeyWords(aghLibraryScraper.getKeyWords(thesisFilters.getAuthor(),
                     thesis.getTitle()));
             if(!StringUtils.isEmpty(thesis.getLinkToPDF())){
                 downloadThesis(thesis);
@@ -129,8 +129,7 @@ public class DownloadService implements IDownloadService {
         pdfParser.parseToTxt(in, filename + TXT);
     }
 
-    private Thesis findThesisByAuthorNameAndTitle(String firstName, String lastName, String thesisTitle){
-        String authorName = firstName + " " + lastName;
+    private Thesis findThesisByAuthorNameAndTitle(String authorName, String thesisTitle){
         String searchTextWithName = authorName + " " + thesisTitle;
 
         String link = null;
@@ -148,12 +147,12 @@ public class DownloadService implements IDownloadService {
     }
 
 
-    private Set<Thesis> findAllThesesFromAuthor(String firstName, String lastName){
-        Set<String> publicationsSet = new HashSet<>(aghLibraryScraper.getListOfPublicationsByName(firstName, lastName));
+    private Set<Thesis> findAllThesesFromAuthor(String authorName){
+        Set<String> publicationsSet = new HashSet<>(aghLibraryScraper.getListOfPublicationsByName(authorName));
 
         Set<Thesis> theses = new HashSet<>();
         for(String thesisTitle : publicationsSet){
-            Thesis thesis = findThesisByAuthorNameAndTitle(firstName, lastName, thesisTitle);
+            Thesis thesis = findThesisByAuthorNameAndTitle(authorName, thesisTitle);
             if(Objects.nonNull(thesis)){
                 theses.add(thesis);
             }

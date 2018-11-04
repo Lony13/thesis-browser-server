@@ -56,7 +56,7 @@ public class GoogleScraper implements HTMLScraper{
     }
 
     @Override
-    public ArrayList<String> getListOfPublicationsByName(String firstName, String lastName) {
+    public ArrayList<String> getListOfPublicationsByName(String authorName) {
         return new ArrayList<>();
     }
 }
