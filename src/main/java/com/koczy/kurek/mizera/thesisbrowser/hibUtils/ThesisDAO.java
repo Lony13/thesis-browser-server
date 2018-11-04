@@ -56,6 +56,18 @@ public class ThesisDAO implements IThesisDao {
         }
     }
 
+    public Thesis getThesis(int thesisId) {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
+        Thesis thesis = session.get(Thesis.class, thesisId);
+
+        transaction.commit();
+        session.close();
+        return thesis;
+    }
+
     public Thesis getNthThesis(int n) {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
@@ -100,6 +112,17 @@ public class ThesisDAO implements IThesisDao {
         return thesesIds;
     }
 
+    public void saveThesis(Thesis thesis) {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
+        session.saveOrUpdate(thesis);
+
+        transaction.commit();
+        session.close();
+    }
+
     //TODO save similarity vector to database
     public void saveSimilarityVector(Integer integer, double[] similarityVector) {
         this.similarityVectors.put(integer, similarityVector);
@@ -108,18 +131,6 @@ public class ThesisDAO implements IThesisDao {
     //TODO get similarity vector from database
     public double[] getTopicSimilarityVector(int thesisID) {
         return this.similarityVectors.get(thesisID);
-    }
-
-    public Thesis getThesis(int thesisId) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-
-        Thesis thesis = session.get(Thesis.class, thesisId);
-
-        transaction.commit();
-        session.close();
-        return thesis;
     }
 
     //TODO add filter over position in authors list
