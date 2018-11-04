@@ -91,6 +91,17 @@ public class ThesisDAO implements IThesisDao {
         return thesisList.size();
     }
 
+    public List<Thesis> getThesesForPage(int pageNumber, int pageSize) {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        String sqlQuery = "SELECT * FROM thesis LIMIT " + pageSize + " OFFSET " + pageNumber * pageSize;
+        List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).list();
+
+        session.close();
+        return thesisList;
+    }
+
     //TODO get bow from given thesis
     public Map<Integer, Integer> getThesisBow(int id) {
         return bow.get(id);
