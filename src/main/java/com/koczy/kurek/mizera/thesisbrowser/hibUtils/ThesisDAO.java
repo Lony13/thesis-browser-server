@@ -56,7 +56,6 @@ public class ThesisDAO implements IThesisDao {
         }
     }
 
-    //TODO gives nth record of theses
     public Thesis getNthThesis(int n) {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
@@ -69,8 +68,7 @@ public class ThesisDAO implements IThesisDao {
         return thesisList.get(0);
     }
 
-    //TODO get number of documents in database
-    public static int getNumTheses() {
+    public int getNumTheses() {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
 
