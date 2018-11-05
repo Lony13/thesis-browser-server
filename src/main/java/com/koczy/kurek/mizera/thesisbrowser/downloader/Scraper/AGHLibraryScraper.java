@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.SCRAPER_TIMEOUT;
@@ -19,7 +20,6 @@ import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.SCRAPER_TIMEO
 public class AGHLibraryScraper implements HTMLScraper{
 
     private static final Logger logger = Logger.getLogger(AGHLibraryScraper.class.getName());
-
 
     private static final String BPP_AGH_URL = "https://bpp.agh.edu.pl/wyszukiwanie/?fA=";
     private static final String TITLE_SEARCH_PREAMBLE = "&fArb=1&fT=";
@@ -60,11 +60,11 @@ public class AGHLibraryScraper implements HTMLScraper{
     public ArrayList<String> getListOfPublicationsByName(String authorName){
         String url = getSearchUrl(authorName);
 
-        Document doc = getDocument(url);
-        if(Objects.isNull(doc))
+        Optional<Document> doc = getDocument(url);
+        if(!doc.isPresent())
             return new ArrayList<>();
 
-        int pagesNum = getNumberOfPages(doc);
+        int pagesNum = getNumberOfPages(doc.get());
 
         ArrayList<String> publications = new ArrayList<>();
         for(int pageNum = 1; pageNum <= pagesNum; pageNum++){
@@ -73,13 +73,17 @@ public class AGHLibraryScraper implements HTMLScraper{
         return publications;
     }
 
-    private Document getDocument(String url) {
+    private Optional<Document> getDocument(String url) {
         try {
-            return Jsoup.connect(url).userAgent(MOZILLA).timeout(SCRAPER_TIMEOUT).get();
+            return Optional.of(Jsoup.connect(url)
+                    .userAgent(MOZILLA)
+                    .timeout(SCRAPER_TIMEOUT)
+                    .get());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, "Cannot connect to " + url);
+            logger.log(Level.WARNING, e.toString());
+            return Optional.empty();
         }
-        return null;
     }
 
     private List<String> getPublicationsFromWebsitePage(String url, int pageNum) {
@@ -93,7 +97,8 @@ public class AGHLibraryScraper implements HTMLScraper{
         try {
             input.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, "Cannot close " + url);
+            logger.log(Level.WARNING, e.toString());
         }
         return pageHTML;
     }
