@@ -38,5 +38,5 @@ public interface HTMLScraper {
 
     String findUrlToPdf(String pdfName);
 
-    ArrayList<String> getListOfPublicationsByName(String firstName, String lastName);
+    ArrayList<String> getListOfPublicationsByName(String authorName);
 }
