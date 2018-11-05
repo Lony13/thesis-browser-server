@@ -53,7 +53,6 @@ public class GoogleScholarScraper {
             String relatedArticlesPageUrl = getRelatedArticlesUrlFromPage(authorName, title, pageNum);
             relatedTheses.addAll(getRelatedThesesTitles(relatedArticlesPageUrl));
         }
-
         return relatedTheses;
     }
 
@@ -70,7 +69,6 @@ public class GoogleScholarScraper {
         } catch (Exception e) {
             logger.log(Level.WARNING, e.toString());
             logger.log(Level.WARNING, "Couldn't get related theses from " + relatedArticlesPageUrl);
-            //return Collections.emptyList();
             return Collections.emptyList();
         }
     }
