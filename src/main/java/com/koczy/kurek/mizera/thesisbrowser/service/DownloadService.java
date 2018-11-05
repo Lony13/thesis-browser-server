@@ -77,7 +77,7 @@ public class DownloadService implements IDownloadService {
                     thesis.getTitle()));
             thesis.setRelatedTheses(googleScholarScraper.getRelatedTheses(thesisFilters.getAuthor(),
                     thesis.getTitle()));
-            if (!StringUtils.isEmpty(thesis.getLinkToPDF())) {
+            if (StringUtils.hasText(thesis.getLinkToPDF())) {
                 downloadThesis(thesis);
                 parseThesisToTxt(thesis);
                 parseTxtToBow(thesis);
@@ -136,11 +136,11 @@ public class DownloadService implements IDownloadService {
 
         String link = null;
         String url = dblpScraper.findUrlToPdf(thesisTitle);
-        if (!StringUtils.isEmpty(url)) {
+        if (StringUtils.hasText(url)) {
             link = dblpScraper.findDownloadPdfLink(url);
         } else {
             url = googleScraper.findUrlToPdf(searchTextWithName);
-            if (!StringUtils.isEmpty(url)) {
+            if (StringUtils.hasText(url)) {
                 link = googleScraper.findDownloadPdfLink(url);
             }
         }
