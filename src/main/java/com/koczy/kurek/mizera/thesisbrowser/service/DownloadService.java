@@ -64,9 +64,9 @@ public class DownloadService implements IDownloadService {
     @Override
     public ResponseEntity downloadTheses(ThesisFilters thesisFilters) {
         Set<Thesis> theses = new HashSet<>();
-        if(StringUtils.isEmpty(thesisFilters.getTitle())){
+        if (StringUtils.isEmpty(thesisFilters.getTitle())) {
             theses.addAll(findAllThesesFromAuthor(thesisFilters.getAuthor()));
-        }else{
+        } else {
             theses.add(findThesisByAuthorNameAndTitle(thesisFilters.getAuthor(), thesisFilters.getTitle()));
         }
 
@@ -75,7 +75,9 @@ public class DownloadService implements IDownloadService {
                     thesis.getTitle()));
             thesis.setKeyWords(aghLibraryScraper.getKeyWords(thesisFilters.getAuthor(),
                     thesis.getTitle()));
-            if(!StringUtils.isEmpty(thesis.getLinkToPDF())){
+            thesis.setRelatedTheses(googleScholarScraper.getRelatedTheses(thesisFilters.getAuthor(),
+                    thesis.getTitle()));
+            if (!StringUtils.isEmpty(thesis.getLinkToPDF())) {
                 downloadThesis(thesis);
                 parseThesisToTxt(thesis);
                 parseTxtToBow(thesis);
@@ -86,8 +88,8 @@ public class DownloadService implements IDownloadService {
         return new ResponseEntity<>("Downloading finished", HttpStatus.OK);
     }
 
-    private void parseTxtToBow(Thesis thesis){
-        String filename = PARSED_PDF_FILE + thesis.getTitle().replaceAll(REGEX, REPLACEMENT)+TXT;
+    private void parseTxtToBow(Thesis thesis) {
+        String filename = PARSED_PDF_FILE + thesis.getTitle().replaceAll(REGEX, REPLACEMENT) + TXT;
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(filename);
@@ -96,12 +98,12 @@ public class DownloadService implements IDownloadService {
             logger.warning("Couldn't find file with thesis to parse");
             return;
         }
-        if(Objects.isNull(fileInputStream)){
+        if (Objects.isNull(fileInputStream)) {
             logger.warning("File input stream was not initialised");
             return;
         }
         Map<Integer, Integer> thesisBagOfWords = bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream);
-        //TODO add thesisBagOfWords to Thesis, save Thesis and Author to database at the end of downloadTheses
+        //TODO add thesisBagOfWords to Thesis, save Thesis and Author to database at the end of downloadTheses function
     }
 
     @Override
@@ -109,36 +111,36 @@ public class DownloadService implements IDownloadService {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    private void downloadThesis(Thesis thesis){
+    private void downloadThesis(Thesis thesis) {
         String filename = thesis.getTitle().replaceAll(REGEX, REPLACEMENT);
         InputStream in = pdfDownloader.getPdfStream(thesis.getLinkToPDF());
-        if(Objects.isNull(in)){
+        if (Objects.isNull(in)) {
             logger.warning("File input stream was not initialised");
             return;
         }
         pdfDownloader.downloadPdf(in, filename + PDF);
     }
 
-    private void parseThesisToTxt(Thesis thesis){
+    private void parseThesisToTxt(Thesis thesis) {
         String filename = thesis.getTitle().replaceAll(REGEX, REPLACEMENT);
         InputStream in = pdfDownloader.getPdfStream(thesis.getLinkToPDF());
-        if(Objects.isNull(in)){
+        if (Objects.isNull(in)) {
             logger.warning("File input stream was not initialised");
             return;
         }
         pdfParser.parseToTxt(in, filename + TXT);
     }
 
-    private Thesis findThesisByAuthorNameAndTitle(String authorName, String thesisTitle){
+    private Thesis findThesisByAuthorNameAndTitle(String authorName, String thesisTitle) {
         String searchTextWithName = authorName + " " + thesisTitle;
 
         String link = null;
         String url = dblpScraper.findUrlToPdf(thesisTitle);
-        if(!StringUtils.isEmpty(url)){
+        if (!StringUtils.isEmpty(url)) {
             link = dblpScraper.findDownloadPdfLink(url);
         } else {
             url = googleScraper.findUrlToPdf(searchTextWithName);
-            if(!StringUtils.isEmpty(url)){
+            if (!StringUtils.isEmpty(url)) {
                 link = googleScraper.findDownloadPdfLink(url);
             }
         }
@@ -147,13 +149,13 @@ public class DownloadService implements IDownloadService {
     }
 
 
-    private Set<Thesis> findAllThesesFromAuthor(String authorName){
+    private Set<Thesis> findAllThesesFromAuthor(String authorName) {
         Set<String> publicationsSet = new HashSet<>(aghLibraryScraper.getListOfPublicationsByName(authorName));
 
         Set<Thesis> theses = new HashSet<>();
-        for(String thesisTitle : publicationsSet){
+        for (String thesisTitle : publicationsSet) {
             Thesis thesis = findThesisByAuthorNameAndTitle(authorName, thesisTitle);
-            if(Objects.nonNull(thesis)){
+            if (Objects.nonNull(thesis)) {
                 theses.add(thesis);
             }
         }
