@@ -9,4 +9,6 @@ public interface IThesisDao {
 
     List<Thesis> searchTheses(ThesisFilters thesisFilters);
 
+    Thesis getThesis(int thesisId);
+
 }
