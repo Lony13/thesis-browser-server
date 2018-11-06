@@ -4,6 +4,7 @@ import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWordsConverter;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
+import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -56,6 +57,7 @@ public class ThesisDAO implements IThesisDao {
         }
     }
 
+    @Override
     public Thesis getThesis(int thesisId) {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
@@ -68,6 +70,22 @@ public class ThesisDAO implements IThesisDao {
         return thesis;
     }
 
+    @Override
+    public Thesis getThesisByTitle(String title) {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
+        String sqlQuery = "SELECT * FROM thesis WHERE title ='" + title + "'";
+        List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).list();
+
+        transaction.commit();
+        session.close();
+
+        return thesisList.size() > 0 ? thesisList.get(0) : null;
+    }
+
+    @Override
     public Thesis getNthThesis(int n) {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
@@ -77,9 +95,10 @@ public class ThesisDAO implements IThesisDao {
 
         session.close();
 
-        return thesisList.get(0);
+        return thesisList.size() > 0 ? thesisList.get(0) : null;
     }
 
+    @Override
     public int getNumTheses() {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
@@ -91,22 +110,19 @@ public class ThesisDAO implements IThesisDao {
         return thesisList.size();
     }
 
-    public List<Thesis> getThesesForPage(int pageNumber, int pageSize) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-
-        String sqlQuery = "SELECT * FROM thesis LIMIT " + pageSize + " OFFSET " + pageNumber * pageSize;
-        List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).list();
-
-        session.close();
-        return thesisList;
-    }
-
-    //TODO get bow from given thesis
+    @Override
     public Map<Integer, Integer> getThesisBow(int id) {
-        return bow.get(id);
+        Map<Integer, Integer> result = new HashMap<>();
+        if (Objects.nonNull(getThesis(id))) {
+            result = getThesis(id).getBow();
+        } else {
+            logger.log(Level.SEVERE,
+                    "ThesisDAO.getThesisBow() | thesis not found. Returning empty Map.");
+        }
+        return result;
     }
 
+    @Override
     public List<Integer> getThesesId() {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
@@ -123,6 +139,7 @@ public class ThesisDAO implements IThesisDao {
         return thesesIds;
     }
 
+    @Override
     public void saveThesis(Thesis thesis) {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
@@ -134,14 +151,57 @@ public class ThesisDAO implements IThesisDao {
         session.close();
     }
 
-    //TODO save similarity vector to database
-    public void saveSimilarityVector(Integer integer, double[] similarityVector) {
-        this.similarityVectors.put(integer, similarityVector);
+    @Override
+    public void saveSimilarityVector(Integer id, double[] similarityVector) {
+        Thesis thesis = getThesis(id);
+        if (Objects.isNull(thesis)) {
+            logger.log(Level.SEVERE,
+                    "ThesisDAO.saveSimilarityVector() | thesis not found. Save failed.");
+            return;
+        }
+
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
+        Double[] tmpDoubleArray = ArrayUtils.toObject(similarityVector);
+        thesis.setSimilarityVector(Arrays.asList(tmpDoubleArray));
+        session.saveOrUpdate(thesis);
+
+        transaction.commit();
+        session.close();
     }
 
-    //TODO get similarity vector from database
+    @Override
     public double[] getTopicSimilarityVector(int thesisID) {
-        return this.similarityVectors.get(thesisID);
+
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
+        Thesis thesis = session.get(Thesis.class, thesisID);
+        if (Objects.isNull(thesis)) {
+            transaction.commit();
+            session.close();
+            logger.log(Level.SEVERE,
+                    "ThesisDAO.getTopicSimilarityVector() | thesis not found. Returning new double[0]");
+            return new double[0];
+        }
+
+        Hibernate.initialize(thesis.getSimilarityVector());
+        transaction.commit();
+        session.close();
+
+        return convertToPrimitives(thesis.getSimilarityVector());
+    }
+
+    private double[] convertToPrimitives(List<Double> similarityVector) {
+        List<Double> doubles = similarityVector;
+        double[] result = new double[doubles.size()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = doubles.get(i);
+        }
+        return result;
     }
 
     //TODO add filter over position in authors list
@@ -159,6 +219,8 @@ public class ThesisDAO implements IThesisDao {
                 Hibernate.initialize(thesis.getRelatedTheses());
                 Hibernate.initialize(thesis.getKeyWords());
                 Hibernate.initialize(thesis.getAuthors());
+                Hibernate.initialize(thesis.getSimilarityVector());
+                Hibernate.initialize(thesis.getBow());
             }
         } catch (NullPointerException e) {
             logger.log(Level.SEVERE, "NullPointerException in thesisFilers. Returning empty list." + e.toString());
