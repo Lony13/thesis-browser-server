@@ -23,11 +23,15 @@ public class AuthorDAO implements IAuthorDao {
         String sqlQuery = "SELECT * FROM author WHERE authorId = " + id;
         authors = session.createNativeQuery(sqlQuery, Author.class).list();
 
+        session.close();
+
         if (authors.size() > 0) {
             resultAuthor = authors.get(0);
             Hibernate.initialize(resultAuthor.getTheses());
+        }else {
+            logger.log(Level.SEVERE,
+                    "AuthorDAO.getAuthorById | Author not found. Returning null.");
         }
-        session.close();
 
         return resultAuthor;
     }

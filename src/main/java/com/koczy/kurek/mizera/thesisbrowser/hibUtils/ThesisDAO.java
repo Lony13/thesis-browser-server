@@ -82,7 +82,13 @@ public class ThesisDAO implements IThesisDao {
         transaction.commit();
         session.close();
 
-        return thesisList.size() > 0 ? thesisList.get(0) : null;
+        if (thesisList.size() > 0) {
+            return thesisList.get(0);
+        }else {
+            logger.log(Level.SEVERE,
+                    "ThesisDAO.getThesisByTitle | Thesis not found. Returning null.");
+            return null;
+        }
     }
 
     @Override
