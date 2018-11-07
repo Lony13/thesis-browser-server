@@ -25,7 +25,7 @@ public class ThesisDetails extends ThesisResponse {
 
     public ThesisDetails(Thesis thesis) {
         super(thesis);
-        this.citationNo = Optional.ofNullable(thesis.getCitationNo()).orElse(0);
+        this.citationNo = Optional.ofNullable(thesis.getCitationNo()).orElse(-1);
         this.publicationDate = thesis.getPublicationDate();
         this.relatedTheses = thesis.getRelatedTheses();
         this.keyWords = thesis.getKeyWords();

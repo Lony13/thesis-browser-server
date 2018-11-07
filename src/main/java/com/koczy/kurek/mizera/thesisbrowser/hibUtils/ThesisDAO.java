@@ -2,6 +2,7 @@ package com.koczy.kurek.mizera.thesisbrowser.hibUtils;
 
 import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
+import com.koczy.kurek.mizera.thesisbrowser.exceptions.NoAuthorException;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWordsConverter;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import org.apache.commons.lang3.ArrayUtils;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -84,7 +86,7 @@ public class ThesisDAO implements IThesisDao {
 
         if (thesisList.size() > 0) {
             return thesisList.get(0);
-        }else {
+        } else {
             logger.log(Level.SEVERE,
                     "ThesisDAO.getThesisByTitle | Thesis not found. Returning null.");
             return null;
@@ -109,11 +111,11 @@ public class ThesisDAO implements IThesisDao {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
 
-        String sqlQuery = "SELECT * FROM thesis ";
-        List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).list();
-
+        String query = "SELECT count(1) FROM thesis";
+        int result = ((BigInteger) session.createNativeQuery(query).uniqueResult()).intValue();
         session.close();
-        return thesisList.size();
+
+        return result;
     }
 
     @Override
@@ -346,6 +348,4 @@ public class ThesisDAO implements IThesisDao {
         return (addAnd ? query.concat("AND ") : query);
     }
 
-    private class NoAuthorException extends Throwable {
-    }
 }
