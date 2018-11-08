@@ -3,7 +3,6 @@ package com.koczy.kurek.mizera.thesisbrowser.hibUtils;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.exceptions.NoAuthorException;
-import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWordsConverter;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.Hibernate;
@@ -13,8 +12,6 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.logging.Level;
@@ -28,35 +25,9 @@ public class ThesisDAO implements IThesisDao {
 
     private IAuthorDao authorDao;
 
-    //DEMO
-    private BagOfWordsConverter bagOfWordsConverter;
-    //DEMO
-    private List<Map<Integer, Integer>> bow = new ArrayList<Map<Integer, Integer>>();
-    //DEMO
-    private Map<Integer, double[]> similarityVectors = new HashMap<>();
-
-    //DEMO
     @Autowired
-    public ThesisDAO(BagOfWordsConverter bagOfWordsConverter, IAuthorDao authorDao) {
-        this.bagOfWordsConverter = bagOfWordsConverter;
+    public ThesisDAO(IAuthorDao authorDao) {
         this.authorDao = authorDao;
-        FileInputStream fileInputStream = null;
-        try {
-            for (int i = 0; i < 1; i++) {
-                fileInputStream = new FileInputStream("parsedPDF/Multiwinner_Voting__A_New_Challenge_for_Social_Choice_Theory.txt");
-                bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
-                fileInputStream = new FileInputStream("parsedPDF/Comparison_of_association_ratio_in_English_and_Polish_languages.txt");
-                bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
-                fileInputStream = new FileInputStream("parsedPDF/Comparison_of_association_ratio_in_English_and_Polish_languages.txt");
-                bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
-                fileInputStream = new FileInputStream("parsedPDF/Predictive_planning_method_for_rescue_robots_in_buildings.txt");
-                bow.add(this.bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
-                fileInputStream = new FileInputStream("parsedPDF/Distance_rationalization_of_voting_rules.txt");
-                bow.add(bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
