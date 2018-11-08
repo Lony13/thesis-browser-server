@@ -73,6 +73,7 @@ public class Thesis {
     }
 
     //TODO remove; only for demo ThesisDemoService.searchTheses
+    @Deprecated
     public String getAuthor() {
         logger.log(Level.WARNING, "Thesis.getAuthor() is deprecated. Use this method for demo purpose only.");
         return Objects.requireNonNull(authors.stream().findFirst().orElse(new Author())).toString();
