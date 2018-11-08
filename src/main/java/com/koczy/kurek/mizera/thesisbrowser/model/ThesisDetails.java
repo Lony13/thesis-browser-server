@@ -4,6 +4,7 @@ import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class ThesisDetails extends ThesisResponse {
@@ -24,7 +25,7 @@ public class ThesisDetails extends ThesisResponse {
 
     public ThesisDetails(Thesis thesis) {
         super(thesis);
-        this.citationNo = thesis.getCitationNo();
+        this.citationNo = Optional.ofNullable(thesis.getCitationNo()).orElse(-1);
         this.publicationDate = thesis.getPublicationDate();
         this.relatedTheses = thesis.getRelatedTheses();
         this.keyWords = thesis.getKeyWords();

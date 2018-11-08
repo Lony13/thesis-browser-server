@@ -13,7 +13,7 @@ public class ThesisDemoService implements IThesisService {
     private ArrayList<ThesisResponse> theses = new ArrayList<ThesisResponse>() {{
         add(new ThesisResponse(0, "How hard is control in single-crossing elections?",
                 "https://link.springer.com/content/pdf/10.1007%2Fs10458-016-9339-3.pdf",
-                new ArrayList<>(Collections.singletonList("Piotr Faliszewski"))));
+                new ArrayList<>(Arrays.asList("Piotr Faliszewski", "Zbigniew Kaleta"))));
         add(new ThesisResponse(1, "Multiwinner Elections With Diversity Constraints",
                 "https://www.aaai.org/ocs/index.php/AAAI/AAAI18/paper/view/16769/15777",
                 new ArrayList<>(Collections.singletonList("Piotr Faliszewski"))));

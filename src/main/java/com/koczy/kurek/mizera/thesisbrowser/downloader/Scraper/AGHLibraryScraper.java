@@ -130,5 +130,4 @@ public class AGHLibraryScraper implements HTMLScraper{
         return "idform=2&vt=p&lastPage=" + pageNumber + "&cur_fOrd=srtAA&page%5B" + pageNumber + "%5D=" + pageNumber;
     }
 
-
 }

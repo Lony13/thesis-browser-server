@@ -20,11 +20,19 @@ public class Thesis {
     @NotNull
     private String title;
     private Integer citationNo;
-
-
     private String linkToPDF;
     private String pathToTXT;
     private Date publicationDate;
+
+    @ElementCollection
+    @CollectionTable(name = "similarityVector", joinColumns = @JoinColumn(name = "thesisId"))
+    @Column(name = "similarityVector")
+    private List<Double> similarityVector = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "bow", joinColumns = @JoinColumn(name = "thesisId"))
+    @Column(name = "bow")
+    private Map<Integer, Integer> bow = new HashMap<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "relatedTheses", joinColumns = @JoinColumn(name = "thesisId"))
@@ -47,6 +55,11 @@ public class Thesis {
         this.title = title;
         this.linkToPDF = linkToPDF;
         this.authors = authors;
+    }
+
+    public Thesis(String title, String linkToPDF) {
+        this.title = title;
+        this.linkToPDF = linkToPDF;
     }
 
     public Thesis(String title, Set<Author> authors, String linkToPDF, Integer citationNo,
@@ -162,4 +175,21 @@ public class Thesis {
     public void setPublicationDate(Date publicationDate) {
         this.publicationDate = publicationDate;
     }
+
+    public List<Double> getSimilarityVector() {
+        return similarityVector;
+    }
+
+    public void setSimilarityVector(List<Double> similarityVector) {
+        this.similarityVector = similarityVector;
+    }
+
+    public Map<Integer, Integer> getBow() {
+        return bow;
+    }
+
+    public void setBow(Map<Integer, Integer> bow) {
+        this.bow = bow;
+    }
+
 }
