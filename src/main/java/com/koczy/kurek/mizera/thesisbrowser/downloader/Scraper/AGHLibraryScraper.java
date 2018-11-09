@@ -56,6 +56,18 @@ public class AGHLibraryScraper implements HTMLScraper{
         return Collections.emptySet();
     }
 
+    public List<String>getAuthorsNames(String exampleAuthor, String title){
+        String searchUrl = getSearchUrl(exampleAuthor, title);
+        String pageHTML = getWebsitePageHTML(searchUrl,0);
+        ArrayList<String> authorNames = new ArrayList<>(Arrays.asList(Jsoup.parse(pageHTML)
+                                            .select(".li-publ .tp1, .tp2, .tp3")
+                                            .text()
+                                            .split(" / | // ")[1]
+                                            .split(", ")));
+        System.out.println(authorNames.get(0));
+        return authorNames;
+    }
+
     @Override
     public ArrayList<String> getListOfPublicationsByName(String authorName){
         String url = getSearchUrl(authorName);
