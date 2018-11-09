@@ -70,7 +70,7 @@ public class AGHLibraryScraper implements HTMLScraper{
         ArrayList<String> authorsNames = new ArrayList<>();
         if(publicationData.size() <= 1){
             authorsNames.add(exampleAuthor);
-            logger.warning("Couldn't find Authors for " + title + " using example author");
+            logger.warning("Couldn't find Authors for " + title + ", using example author");
         } else {
             authorsNames = new ArrayList<>(Arrays.asList(publicationData.get(1)
                     .split(", ")));
