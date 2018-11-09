@@ -6,4 +6,8 @@ public interface IAuthorDao {
 
     Author getAuthorByName(String filterName);
 
+    Author getAuthorById(int id);
+
+    void saveAuthor(Author author);
+
 }

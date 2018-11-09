@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 public class AuthorDAO implements IAuthorDao {
     private static final Logger logger = Logger.getLogger(AuthorDAO.class.getName());
 
+    @Override
     public Author getAuthorById(int id) {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
@@ -36,6 +37,7 @@ public class AuthorDAO implements IAuthorDao {
         return resultAuthor;
     }
 
+    @Override
     public void saveAuthor(Author author) {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();

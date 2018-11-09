@@ -1,6 +1,8 @@
 package com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper;
 
 import com.koczy.kurek.mizera.thesisbrowser.downloader.HTTPRequest.HTTPRequest;
+import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
+import com.koczy.kurek.mizera.thesisbrowser.hibUtils.IAuthorDao;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,10 +28,12 @@ public class AGHLibraryScraper implements HTMLScraper{
     private static final String NO_KEY_WORDS = "brak zdefiniowanych słów kluczowych";
 
     private HTTPRequest httpRequest;
+    private IAuthorDao authorDao;
 
     @Autowired
-    public AGHLibraryScraper(HTTPRequest httpRequest) {
+    public AGHLibraryScraper(HTTPRequest httpRequest, IAuthorDao authorDao) {
         this.httpRequest = httpRequest;
+        this.authorDao = authorDao;
     }
 
     @Override
@@ -56,14 +60,20 @@ public class AGHLibraryScraper implements HTMLScraper{
         return Collections.emptySet();
     }
 
-    public List<String>getAuthorsNames(String exampleAuthor, String title){
+    public List<Author> getAuthors(String exampleAuthor, String title){
         String searchUrl = getSearchUrl(exampleAuthor, title);
         String pageHTML = getWebsitePageHTML(searchUrl,0);
-        return new ArrayList<>(Arrays.asList(Jsoup.parse(pageHTML)
-                                            .select(".li-publ .tp1, .tp2, .tp3")
-                                            .text()
-                                            .split(" / | // ")[1]
-                                            .split(", ")));
+        ArrayList<String> authorsNames = new ArrayList<>(Arrays.asList(Jsoup.parse(pageHTML)
+                                                        .select(".li-publ .tp1, .tp2, .tp3")
+                                                        .text()
+                                                        .split(" / | // ")[1]
+                                                        .split(", ")));
+        ArrayList<Author> authors = new ArrayList<>();
+        for(String authorName : authorsNames){
+            Author author = authorDao.getAuthorByName(authorName);
+            authors.add(Objects.isNull(author) ? new Author(authorName) : author);
+        }
+        return authors;
     }
 
     @Override
