@@ -105,8 +105,8 @@ public class DownloadService implements IDownloadService {
     }
 
     @Override
-    public ResponseEntity updateQuotations(int thesisId) {
-        return new ResponseEntity(HttpStatus.OK);
+    public ResponseEntity<ServerInfo> updateQuotations(int thesisId) {
+        return new ResponseEntity<>(new ServerInfo(new Date(), ""), HttpStatus.OK);
     }
 
     private void downloadThesis(Thesis thesis) {

@@ -8,5 +8,5 @@ public interface IDownloadService {
 
     ResponseEntity<ServerInfo> downloadTheses(ThesisFilters thesisFilters);
 
-    ResponseEntity updateQuotations(int thesisId);
+    ResponseEntity<ServerInfo> updateQuotations(int thesisId);
 }
