@@ -19,6 +19,7 @@
         <mapping class="com.koczy.kurek.mizera.thesisbrowser.entity.Thesis"/>
         <mapping class="com.koczy.kurek.mizera.thesisbrowser.entity.User"/>
         <mapping class="com.koczy.kurek.mizera.thesisbrowser.entity.Role"/>
+        <mapping class="com.koczy.kurek.mizera.thesisbrowser.model.ServerInfo"/>
 
     </session-factory>
 </hibernate-configuration>
