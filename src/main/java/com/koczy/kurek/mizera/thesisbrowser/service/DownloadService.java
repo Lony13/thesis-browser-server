@@ -71,12 +71,7 @@ public class DownloadService implements IDownloadService {
         }
 
         for (Thesis thesis : theses) {
-            thesis.setCitationNo(googleScholarScraper.getCitationNumber(thesisFilters.getAuthor(),
-                    thesis.getTitle()));
-            thesis.setKeyWords(aghLibraryScraper.getKeyWords(thesisFilters.getAuthor(),
-                    thesis.getTitle()));
-            thesis.setRelatedTheses(googleScholarScraper.getRelatedTheses(thesisFilters.getAuthor(),
-                    thesis.getTitle()));
+            setThesisAttributes(thesisFilters, thesis);
             if (StringUtils.hasText(thesis.getLinkToPDF())) {
                 downloadThesis(thesis);
                 parseThesisToTxt(thesis);
@@ -86,6 +81,17 @@ public class DownloadService implements IDownloadService {
             }
         }
         return new ResponseEntity<>("Downloading finished", HttpStatus.OK);
+    }
+
+    private void setThesisAttributes(ThesisFilters thesisFilters, Thesis thesis) {
+        thesis.setAuthors(aghLibraryScraper.getAuthors(thesisFilters.getAuthor(),
+                thesis.getTitle()));
+        thesis.setCitationNo(googleScholarScraper.getCitationNumber(thesisFilters.getAuthor(),
+                thesis.getTitle()));
+        thesis.setKeyWords(aghLibraryScraper.getKeyWords(thesisFilters.getAuthor(),
+                thesis.getTitle()));
+        thesis.setRelatedTheses(googleScholarScraper.getRelatedTheses(thesisFilters.getAuthor(),
+                thesis.getTitle()));
     }
 
     private void parseTxtToBow(Thesis thesis) {
@@ -144,8 +150,7 @@ public class DownloadService implements IDownloadService {
                 link = googleScraper.findDownloadPdfLink(url);
             }
         }
-        //TODO add author last and first name \ create proper Thesis
-        return !StringUtils.isEmpty(link) ? new Thesis(thesisTitle, authorName, link) : null;
+        return !StringUtils.isEmpty(link) ? new Thesis(thesisTitle, link) : new Thesis(thesisTitle);
     }
 
 

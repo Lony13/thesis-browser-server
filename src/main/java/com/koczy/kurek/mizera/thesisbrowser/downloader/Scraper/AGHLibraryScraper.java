@@ -60,7 +60,7 @@ public class AGHLibraryScraper implements HTMLScraper{
         return Collections.emptySet();
     }
 
-    public List<Author> getAuthors(String exampleAuthor, String title){
+    public Set<Author> getAuthors(String exampleAuthor, String title){
         String searchUrl = getSearchUrl(exampleAuthor, title);
         String pageHTML = getWebsitePageHTML(searchUrl,0);
         ArrayList<String> authorsNames = new ArrayList<>(Arrays.asList(Jsoup.parse(pageHTML)
@@ -68,7 +68,7 @@ public class AGHLibraryScraper implements HTMLScraper{
                                                         .text()
                                                         .split(" / | // ")[1]
                                                         .split(", ")));
-        ArrayList<Author> authors = new ArrayList<>();
+        HashSet<Author> authors = new HashSet<>();
         for(String authorName : authorsNames){
             Author author = authorDao.getAuthorByName(authorName);
             authors.add(Objects.isNull(author) ? new Author(authorName) : author);
