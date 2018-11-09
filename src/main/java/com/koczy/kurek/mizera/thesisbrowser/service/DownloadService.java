@@ -6,7 +6,9 @@ import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.AGHLibraryScraper
 import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.DblpScraper;
 import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.GoogleScholarScraper;
 import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.GoogleScraper;
+import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
+import com.koczy.kurek.mizera.thesisbrowser.hibUtils.IThesisDao;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWordsConverter;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +19,8 @@ import org.springframework.util.StringUtils;
 
 import java.io.*;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.PARSED_PDF_FILE;
@@ -42,7 +42,7 @@ public class DownloadService implements IDownloadService {
     private PdfParser pdfParser;
     private BagOfWordsConverter bagOfWordsConverter;
     private GoogleScholarScraper googleScholarScraper;
-
+    private IThesisDao thesisDao;
 
     @Autowired
     public DownloadService(AGHLibraryScraper aghLibraryScraper,
@@ -51,7 +51,8 @@ public class DownloadService implements IDownloadService {
                            PdfDownloader pdfDownloader,
                            PdfParser pdfParser,
                            BagOfWordsConverter bagOfWordsConverter,
-                           GoogleScholarScraper googleScholarScraper) {
+                           GoogleScholarScraper googleScholarScraper,
+                           IThesisDao thesisDao) {
         this.aghLibraryScraper = aghLibraryScraper;
         this.dblpScraper = dblpScraper;
         this.googleScraper = googleScraper;
@@ -59,15 +60,18 @@ public class DownloadService implements IDownloadService {
         this.pdfParser = pdfParser;
         this.bagOfWordsConverter = bagOfWordsConverter;
         this.googleScholarScraper = googleScholarScraper;
+        this.thesisDao = thesisDao;
     }
 
     @Override
     public ResponseEntity downloadTheses(ThesisFilters thesisFilters) {
         Set<Thesis> theses = new HashSet<>();
         if (StringUtils.isEmpty(thesisFilters.getTitle())) {
-            theses.addAll(findAllThesesFromAuthor(thesisFilters.getAuthor()));
+            theses.addAll(findAllNewThesesFromAuthor(thesisFilters.getAuthor()));
         } else {
-            theses.add(findThesisByAuthorNameAndTitle(thesisFilters.getAuthor(), thesisFilters.getTitle()));
+            Thesis thesis = findNewThesisByAuthorNameAndTitle(thesisFilters.getAuthor(), thesisFilters.getTitle());
+            if(Objects.nonNull(thesis))
+                theses.add(thesis);
         }
 
         for (Thesis thesis : theses) {
@@ -80,12 +84,16 @@ public class DownloadService implements IDownloadService {
                 logger.info("PDF not found");
             }
         }
+        //TODO save Thesis and Author to database
         return new ResponseEntity<>("Downloading finished", HttpStatus.OK);
     }
 
     private void setThesisAttributes(ThesisFilters thesisFilters, Thesis thesis) {
         thesis.setAuthors(aghLibraryScraper.getAuthors(thesisFilters.getAuthor(),
                 thesis.getTitle()));
+        for(Author author : thesis.getAuthors()){
+            author.addThesis(thesis);
+        }
         thesis.setCitationNo(googleScholarScraper.getCitationNumber(thesisFilters.getAuthor(),
                 thesis.getTitle()));
         thesis.setKeyWords(aghLibraryScraper.getKeyWords(thesisFilters.getAuthor(),
@@ -104,12 +112,7 @@ public class DownloadService implements IDownloadService {
             logger.warning("Couldn't find file with thesis to parse");
             return;
         }
-        if (Objects.isNull(fileInputStream)) {
-            logger.warning("File input stream was not initialised");
-            return;
-        }
-        Map<Integer, Integer> thesisBagOfWords = bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream);
-        //TODO add thesisBagOfWords to Thesis, save Thesis and Author to database at the end of downloadTheses function
+        thesis.setBow(bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
     }
 
     @Override
@@ -137,7 +140,13 @@ public class DownloadService implements IDownloadService {
         pdfParser.parseToTxt(in, filename + TXT);
     }
 
-    private Thesis findThesisByAuthorNameAndTitle(String authorName, String thesisTitle) {
+    private Thesis findNewThesisByAuthorNameAndTitle(String authorName, String thesisTitle) {
+        Thesis thesis = thesisDao.getThesisByTitle(thesisTitle);
+        if(Objects.nonNull(thesis)){
+            logger.info("Thesis with that title already exists");
+            return null;
+        }
+
         String searchTextWithName = authorName + " " + thesisTitle;
 
         String link = null;
@@ -153,26 +162,15 @@ public class DownloadService implements IDownloadService {
         return !StringUtils.isEmpty(link) ? new Thesis(thesisTitle, link) : new Thesis(thesisTitle);
     }
 
-
-    private Set<Thesis> findAllThesesFromAuthor(String authorName) {
+    private Set<Thesis> findAllNewThesesFromAuthor(String authorName) {
         Set<String> publicationsSet = new HashSet<>(aghLibraryScraper.getListOfPublicationsByName(authorName));
 
         Set<Thesis> theses = new HashSet<>();
         for (String thesisTitle : publicationsSet) {
-            Thesis thesis = findThesisByAuthorNameAndTitle(authorName, thesisTitle);
-            if (Objects.nonNull(thesis)) {
+            Thesis thesis = findNewThesisByAuthorNameAndTitle(authorName, thesisTitle);
+            if(Objects.nonNull(thesis))
                 theses.add(thesis);
-            }
         }
         return theses;
-    }
-
-    private String getSearchText() {
-        try {
-            return new BufferedReader(new InputStreamReader(System.in)).readLine();
-        } catch (IOException e) {
-            logger.log(Level.WARNING, e.toString());
-        }
-        return null;
     }
 }
