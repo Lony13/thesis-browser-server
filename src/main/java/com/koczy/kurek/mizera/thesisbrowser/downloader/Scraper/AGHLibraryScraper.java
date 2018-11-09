@@ -63,11 +63,18 @@ public class AGHLibraryScraper implements HTMLScraper{
     public Set<Author> getAuthors(String exampleAuthor, String title){
         String searchUrl = getSearchUrl(exampleAuthor, title);
         String pageHTML = getWebsitePageHTML(searchUrl,0);
-        ArrayList<String> authorsNames = new ArrayList<>(Arrays.asList(Jsoup.parse(pageHTML)
-                                                        .select(".li-publ .tp1, .tp2, .tp3")
-                                                        .text()
-                                                        .split(" / | // ")[1]
-                                                        .split(", ")));
+        ArrayList<String> publicationData = new ArrayList<>(Arrays.asList(Jsoup.parse(pageHTML)
+                            .select(".li-publ .tp1, .tp2, .tp3")
+                            .text()
+                            .split(" / | // ")));
+        ArrayList<String> authorsNames = new ArrayList<>();
+        if(publicationData.size() <= 1){
+            authorsNames.add(exampleAuthor);
+            logger.warning("Couldn't find Authors for " + title + " using example author");
+        } else {
+            authorsNames = new ArrayList<>(Arrays.asList(publicationData.get(1)
+                    .split(", ")));
+        }
         HashSet<Author> authors = new HashSet<>();
         for(String authorName : authorsNames){
             Author author = authorDao.getAuthorByName(authorName);

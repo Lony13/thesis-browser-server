@@ -8,6 +8,7 @@ import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.GoogleScholarScra
 import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.GoogleScraper;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
+import com.koczy.kurek.mizera.thesisbrowser.hibUtils.IAuthorDao;
 import com.koczy.kurek.mizera.thesisbrowser.hibUtils.IThesisDao;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWordsConverter;
 import com.koczy.kurek.mizera.thesisbrowser.model.ServerInfo;
@@ -20,7 +21,6 @@ import org.springframework.util.StringUtils;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.PARSED_PDF_FILE;
@@ -43,6 +43,7 @@ public class DownloadService implements IDownloadService {
     private BagOfWordsConverter bagOfWordsConverter;
     private GoogleScholarScraper googleScholarScraper;
     private IThesisDao thesisDao;
+    private IAuthorDao authorDao;
 
     @Autowired
     public DownloadService(AGHLibraryScraper aghLibraryScraper,
@@ -52,7 +53,8 @@ public class DownloadService implements IDownloadService {
                            PdfParser pdfParser,
                            BagOfWordsConverter bagOfWordsConverter,
                            GoogleScholarScraper googleScholarScraper,
-                           IThesisDao thesisDao) {
+                           IThesisDao thesisDao,
+                           IAuthorDao authorDao) {
         this.aghLibraryScraper = aghLibraryScraper;
         this.dblpScraper = dblpScraper;
         this.googleScraper = googleScraper;
@@ -61,6 +63,7 @@ public class DownloadService implements IDownloadService {
         this.bagOfWordsConverter = bagOfWordsConverter;
         this.googleScholarScraper = googleScholarScraper;
         this.thesisDao = thesisDao;
+        this.authorDao = authorDao;
     }
 
     @Override
@@ -83,8 +86,10 @@ public class DownloadService implements IDownloadService {
             } else {
                 logger.info("PDF not found");
             }
+            for(Author author : thesis.getAuthors()){
+                authorDao.saveAuthor(author);
+            }
         }
-        //TODO save Thesis and Author to database
         return new ResponseEntity<>(new ServerInfo(new Date(), "Downloading finished"), HttpStatus.OK);
     }
 
