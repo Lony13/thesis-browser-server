@@ -28,8 +28,8 @@ public class AGHLibraryScraper implements HTMLScraper{
     private HTTPRequest httpRequest;
 
     @Autowired
-    public AGHLibraryScraper() {
-        this.httpRequest = new HTTPRequest();
+    public AGHLibraryScraper(HTTPRequest httpRequest) {
+        this.httpRequest = httpRequest;
     }
 
     @Override
@@ -59,13 +59,11 @@ public class AGHLibraryScraper implements HTMLScraper{
     public List<String>getAuthorsNames(String exampleAuthor, String title){
         String searchUrl = getSearchUrl(exampleAuthor, title);
         String pageHTML = getWebsitePageHTML(searchUrl,0);
-        ArrayList<String> authorNames = new ArrayList<>(Arrays.asList(Jsoup.parse(pageHTML)
+        return new ArrayList<>(Arrays.asList(Jsoup.parse(pageHTML)
                                             .select(".li-publ .tp1, .tp2, .tp3")
                                             .text()
                                             .split(" / | // ")[1]
                                             .split(", ")));
-        System.out.println(authorNames.get(0));
-        return authorNames;
     }
 
     @Override

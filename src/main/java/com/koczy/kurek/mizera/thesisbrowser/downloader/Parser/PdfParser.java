@@ -1,6 +1,5 @@
 package com.koczy.kurek.mizera.thesisbrowser.downloader.Parser;
 
-import com.koczy.kurek.mizera.thesisbrowser.service.DownloadService;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
@@ -17,7 +16,7 @@ import java.util.logging.Logger;
 @Component
 public class PdfParser {
 
-    private static final Logger logger = Logger.getLogger(DownloadService.class.getName());
+    private static final Logger logger = Logger.getLogger(PdfParser.class.getName());
 
     private static final String TXT_SAVE_DIRECTORY = "parsedPDF/";
 
