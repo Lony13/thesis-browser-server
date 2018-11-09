@@ -25,12 +25,36 @@ public class AuthorDAO implements IAuthorDao {
 
         session.close();
 
-        if (authors.size() > 0) {
+        if (!authors.isEmpty()) {
             resultAuthor = authors.get(0);
             Hibernate.initialize(resultAuthor.getTheses());
-        }else {
+        } else {
             logger.log(Level.SEVERE,
                     "AuthorDAO.getAuthorById | Author not found. Returning null.");
+        }
+
+        return resultAuthor;
+    }
+
+    @Override
+    public Author getAuthorByName(String filterName) {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        List<Author> authors;
+        Author resultAuthor = null;
+
+        String sqlQuery = "SELECT * FROM author WHERE name LIKE '%" + filterName + "%'";
+        authors = session.createNativeQuery(sqlQuery, Author.class).list();
+
+        session.close();
+
+        if (!authors.isEmpty()) {
+            resultAuthor = authors.get(0);
+            Hibernate.initialize(resultAuthor.getTheses());
+        } else {
+            logger.log(Level.SEVERE,
+                    "AuthorDAO.getAuthorByName | Author not found. Returning null.");
         }
 
         return resultAuthor;
@@ -48,25 +72,5 @@ public class AuthorDAO implements IAuthorDao {
             logger.log(Level.INFO, "Thesis already connected with author.");
         }
         session.close();
-    }
-
-    @Override
-    public Author getAuthorByName(String filterName) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-
-        List<Author> authors;
-        Author resultAuthor = null;
-
-        String sqlQuery = "SELECT * FROM author WHERE name LIKE '%" + filterName + "%'";
-        authors = session.createNativeQuery(sqlQuery, Author.class).list();
-
-        if (authors.size() > 0) {
-            resultAuthor = authors.get(0);
-            Hibernate.initialize(resultAuthor.getTheses());
-        }
-        session.close();
-
-        return resultAuthor;
     }
 }
