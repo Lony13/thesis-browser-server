@@ -2,13 +2,14 @@ package com.koczy.kurek.mizera.thesisbrowser.service;
 
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.model.CompareThesesDto;
+import com.koczy.kurek.mizera.thesisbrowser.model.ServerInfo;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface ILdaService {
 
-    ResponseEntity run();
+    ResponseEntity<ServerInfo> run();
 
     ResponseEntity<Double> getSimilarity(int id1, int id2);
 

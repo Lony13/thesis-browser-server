@@ -10,6 +10,7 @@ import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.hibUtils.IThesisDao;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWordsConverter;
+import com.koczy.kurek.mizera.thesisbrowser.model.ServerInfo;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,9 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.*;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.PARSED_PDF_FILE;
@@ -64,7 +64,7 @@ public class DownloadService implements IDownloadService {
     }
 
     @Override
-    public ResponseEntity downloadTheses(ThesisFilters thesisFilters) {
+    public ResponseEntity<ServerInfo> downloadTheses(ThesisFilters thesisFilters) {
         Set<Thesis> theses = new HashSet<>();
         if (StringUtils.isEmpty(thesisFilters.getTitle())) {
             theses.addAll(findAllNewThesesFromAuthor(thesisFilters.getAuthor()));
@@ -85,7 +85,7 @@ public class DownloadService implements IDownloadService {
             }
         }
         //TODO save Thesis and Author to database
-        return new ResponseEntity<>("Downloading finished", HttpStatus.OK);
+        return new ResponseEntity<>(new ServerInfo(new Date(), "Downloading finished"), HttpStatus.OK);
     }
 
     private void setThesisAttributes(ThesisFilters thesisFilters, Thesis thesis) {
@@ -116,8 +116,8 @@ public class DownloadService implements IDownloadService {
     }
 
     @Override
-    public ResponseEntity updateQuotations(int thesisId) {
-        return new ResponseEntity(HttpStatus.OK);
+    public ResponseEntity<ServerInfo> updateQuotations(int thesisId) {
+        return new ResponseEntity<>(new ServerInfo(new Date(), ""), HttpStatus.OK);
     }
 
     private void downloadThesis(Thesis thesis) {

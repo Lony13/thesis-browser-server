@@ -5,12 +5,14 @@ import com.koczy.kurek.mizera.thesisbrowser.hibUtils.ThesisDAO;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Dataset;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.LDA;
 import com.koczy.kurek.mizera.thesisbrowser.model.CompareThesesDto;
+import com.koczy.kurek.mizera.thesisbrowser.model.ServerInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.LDA_SIMILARITY_THRESHOLD;
@@ -30,10 +32,10 @@ public class LdaService implements ILdaService{
     }
 
     @Override
-    public ResponseEntity run() {
+    public ResponseEntity<ServerInfo> run() {
         this.lda.run();
         lda.createSimilarityVectorForEveryThesis();
-        return new ResponseEntity<>("LDA completed", HttpStatus.OK);
+        return new ResponseEntity<>(new ServerInfo(new Date(), "LDA completed"), HttpStatus.OK);
     }
 
     @Override
