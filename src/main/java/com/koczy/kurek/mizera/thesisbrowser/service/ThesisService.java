@@ -8,7 +8,6 @@ import com.koczy.kurek.mizera.thesisbrowser.model.ThesisResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +23,7 @@ public class ThesisService implements IThesisService {
 
     @Override
     public List<ThesisResponse> getTheses() {
-        return Collections.emptyList();
+        return searchTheses(new ThesisFilters());
     }
 
     @Override

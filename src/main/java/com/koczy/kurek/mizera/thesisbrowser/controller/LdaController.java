@@ -2,6 +2,7 @@ package com.koczy.kurek.mizera.thesisbrowser.controller;
 
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.model.CompareThesesDto;
+import com.koczy.kurek.mizera.thesisbrowser.model.ServerInfo;
 import com.koczy.kurek.mizera.thesisbrowser.service.ILdaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class LdaController {
     }
 
     @RequestMapping(value="/api/lda/run", method = RequestMethod.POST)
-    public ResponseEntity run(){
+    public ResponseEntity<ServerInfo> run(){
         return ldaService.run();
     }
 
