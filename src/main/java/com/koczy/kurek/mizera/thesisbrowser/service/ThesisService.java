@@ -24,7 +24,7 @@ public class ThesisService implements IThesisService {
 
     @Override
     public List<ThesisResponse> getTheses() {
-        return Collections.emptyList();
+        return searchTheses(new ThesisFilters());
     }
 
     @Override
