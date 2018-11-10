@@ -63,10 +63,8 @@ public class AGHLibraryScraper implements HTMLScraper{
     public Set<Author> getAuthors(String exampleAuthor, String title){
         String searchUrl = getSearchUrl(exampleAuthor, title);
         String pageHTML = getWebsitePageHTML(searchUrl,0);
-        ArrayList<String> publicationData = new ArrayList<>(Arrays.asList(Jsoup.parse(pageHTML)
-                            .select(".li-publ .tp1, .tp2, .tp3")
-                            .text()
-                            .split(" / | // ")));
+        ArrayList<String> publicationData = getPublicationData(pageHTML);
+
         ArrayList<String> authorsNames = new ArrayList<>();
         if(publicationData.size() <= 1){
             authorsNames.add(exampleAuthor);
@@ -81,6 +79,13 @@ public class AGHLibraryScraper implements HTMLScraper{
             authors.add(Objects.isNull(author) ? new Author(authorName) : author);
         }
         return authors;
+    }
+
+    private ArrayList<String> getPublicationData(String pageHTML) {
+        return new ArrayList<>(Arrays.asList(Jsoup.parse(pageHTML)
+                            .select(".li-publ .tp1, .tp2, .tp3")
+                            .text()
+                            .split(" / | // ")));
     }
 
     @Override
