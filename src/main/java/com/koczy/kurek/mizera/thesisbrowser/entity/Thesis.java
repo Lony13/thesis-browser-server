@@ -73,14 +73,6 @@ public class Thesis {
         this.keyWords = keyWords;
     }
 
-    @Deprecated
-    public Thesis(String title, String authorName, String link) {
-        this.title = title;
-        this.linkToPDF = link;
-        //TODO sort this out
-        authors.add(new Author(authorName));
-    }
-
     public Thesis(String title) {
         this.title = title;
     }

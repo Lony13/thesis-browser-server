@@ -1,6 +1,5 @@
 package com.koczy.kurek.mizera.thesisbrowser.downloader.HTTPRequest;
 
-import com.koczy.kurek.mizera.thesisbrowser.service.DownloadService;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -13,7 +12,7 @@ import java.util.logging.Logger;
 @Component
 public class HTTPRequest {
 
-    private static final Logger logger = Logger.getLogger(DownloadService.class.getName());
+    private static final Logger logger = Logger.getLogger(HTTPRequest.class.getName());
 
     public HTTPRequest() {
     }
