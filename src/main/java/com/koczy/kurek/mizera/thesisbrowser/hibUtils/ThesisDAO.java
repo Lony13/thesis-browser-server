@@ -37,11 +37,19 @@ public class ThesisDAO implements IThesisDao {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
 
-        Thesis thesis = session.get(Thesis.class, thesisId);
+        String sqlQuery = "SELECT * FROM thesis WHERE thesisId =:thesisId";
+        List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).setParameter("thesisId", thesisId).list();
 
         transaction.commit();
         session.close();
-        return thesis;
+
+        if (thesisList.size() > 0) {
+            return thesisList.get(0);
+        } else {
+            logger.log(Level.SEVERE,
+                    "ThesisDAO.getThesis | Thesis not found. Returning null.");
+            return null;
+        }
     }
 
     @Override
