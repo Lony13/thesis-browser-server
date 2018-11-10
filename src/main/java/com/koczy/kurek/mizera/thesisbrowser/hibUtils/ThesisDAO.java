@@ -9,6 +9,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -49,8 +50,8 @@ public class ThesisDAO implements IThesisDao {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
 
-        String sqlQuery = "SELECT * FROM thesis WHERE title ='" + title + "'";
-        List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).list();
+        String sqlQuery = "SELECT * FROM thesis WHERE title =:title";
+        List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).setParameter("title", title).list();
 
         transaction.commit();
         session.close();
@@ -69,8 +70,8 @@ public class ThesisDAO implements IThesisDao {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
 
-        String sqlQuery = "SELECT * FROM thesis ORDER BY thesisId LIMIT 1 OFFSET " + Integer.toString(n);
-        List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).list();
+        String sqlQuery = "SELECT * FROM thesis ORDER BY thesisId LIMIT 1 OFFSET :n";
+        List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).setParameter("n", n).list();
 
         session.close();
 
@@ -192,8 +193,12 @@ public class ThesisDAO implements IThesisDao {
         List<Thesis> thesisList;
 
         try {
+
             String sqlQuery = createQuery(thesisFilters);
-            thesisList = session.createNativeQuery(sqlQuery, Thesis.class).list();
+            NativeQuery<Thesis> nativeQuery = session.createNativeQuery(sqlQuery, Thesis.class);
+            nativeQuery = setAllParameters(nativeQuery, thesisFilters);
+            thesisList = nativeQuery.list();
+
             for (Thesis thesis : thesisList) {
                 Hibernate.initialize(thesis.getRelatedTheses());
                 Hibernate.initialize(thesis.getKeyWords());
@@ -214,6 +219,22 @@ public class ThesisDAO implements IThesisDao {
         session.close();
 
         return thesisList;
+    }
+
+    private NativeQuery<Thesis> setAllParameters(NativeQuery<Thesis> nativeQuery, ThesisFilters thesisFilters) {
+        if (!isBlank(thesisFilters.getTitle())) {
+            nativeQuery.setParameter("title", "%" + thesisFilters.getTitle() + "%");
+        }
+        if (!isBlank(thesisFilters.getInstitution())) {
+            nativeQuery.setParameter("institution", "%" + thesisFilters.getInstitution() + "%");
+        }
+        if (!isBlank(thesisFilters.getKeyWords())) {
+            nativeQuery.setParameter("keyWords", "%" + thesisFilters.getKeyWords() + "%");
+        }
+        if (!isBlank(thesisFilters.getQuotationNumber())) {
+            nativeQuery.setParameter("quotationNumber", thesisFilters.getQuotationNumber());
+        }
+        return nativeQuery;
     }
 
     private void filterDate(List<Thesis> thesisList, ThesisFilters thesisFilters) {
@@ -260,7 +281,7 @@ public class ThesisDAO implements IThesisDao {
     private String filterTitle(String query, String title) {
         if (!isBlank(title)) {
             query = addAndToWhere(query);
-            query = query.concat("thesis.title LIKE '%" + title + "%' ");
+            query = query.concat("thesis.title LIKE :title ");
             addAnd = true;
         }
         return query;
@@ -283,7 +304,7 @@ public class ThesisDAO implements IThesisDao {
     private String filterInstitution(String query, String institution) {
         if (!isBlank(institution)) {
             query = addAndToWhere(query);
-            query = query.concat("author.university LIKE '%" + institution + "%' ");
+            query = query.concat("author.university LIKE :institution ");
             addAnd = true;
         }
         return query;
@@ -292,7 +313,7 @@ public class ThesisDAO implements IThesisDao {
     private String filterKeyWords(String query, String keyWords) {
         if (!isBlank(keyWords)) {
             query = addAndToWhere(query);
-            query = query.concat("keywords.keyWords LIKE '%" + keyWords + "%' ");
+            query = query.concat("keywords.keyWords LIKE :keyWords ");
             addAnd = true;
         }
         return query;
@@ -301,7 +322,7 @@ public class ThesisDAO implements IThesisDao {
     private String filterQuotationNumber(String query, Integer quotationNumber) {
         if (!isBlank(quotationNumber)) {
             query = addAndToWhere(query);
-            query = query.concat("thesis.citationNo = " + quotationNumber + " ");
+            query = query.concat("thesis.citationNo = :quotationNumber ");
             addAnd = true;
         }
         return query;
