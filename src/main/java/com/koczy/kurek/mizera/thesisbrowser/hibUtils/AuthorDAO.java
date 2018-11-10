@@ -26,7 +26,7 @@ public class AuthorDAO implements IAuthorDao {
 
         session.close();
 
-        if (authors.size() > 0) {
+        if (!authors.isEmpty()) {
             resultAuthor = authors.get(0);
             Hibernate.initialize(resultAuthor.getTheses());
         } else {
@@ -35,21 +35,6 @@ public class AuthorDAO implements IAuthorDao {
         }
 
         return resultAuthor;
-    }
-
-    @Override
-    public void saveAuthor(Author author) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-
-        try {
-            session.saveOrUpdate(author);
-            transaction.commit();
-        } catch (NonUniqueObjectException | EntityExistsException e) {
-            logger.log(Level.INFO, "Thesis already connected with author.");
-        }
-        session.close();
     }
 
     @Override
@@ -63,12 +48,30 @@ public class AuthorDAO implements IAuthorDao {
         String sqlQuery = "SELECT * FROM author WHERE name LIKE :name";
         authors = session.createNativeQuery(sqlQuery, Author.class).setParameter("name", "%" + filterName + "%").list();
 
-        if (authors.size() > 0) {
-            resultAuthor = authors.get(0);
-            Hibernate.initialize(resultAuthor.getTheses());
-        }
         session.close();
 
+        if (!authors.isEmpty()) {
+            resultAuthor = authors.get(0);
+            Hibernate.initialize(resultAuthor.getTheses());
+        } else {
+            logger.log(Level.SEVERE,
+                    "AuthorDAO.getAuthorByName | Author not found. Returning null.");
+        }
+
         return resultAuthor;
+    }
+
+    public void saveAuthor(Author author) {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
+        try {
+            session.saveOrUpdate(author);
+            transaction.commit();
+        } catch (NonUniqueObjectException | EntityExistsException e) {
+            logger.log(Level.INFO, "Thesis already connected with author.");
+        }
+        session.close();
     }
 }
