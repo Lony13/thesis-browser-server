@@ -1,6 +1,8 @@
 package com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper;
 
 import com.koczy.kurek.mizera.thesisbrowser.downloader.HTTPRequest.HTTPRequest;
+import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
+import com.koczy.kurek.mizera.thesisbrowser.hibUtils.IAuthorDao;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,10 +28,12 @@ public class AGHLibraryScraper implements HTMLScraper{
     private static final String NO_KEY_WORDS = "brak zdefiniowanych słów kluczowych";
 
     private HTTPRequest httpRequest;
+    private IAuthorDao authorDao;
 
     @Autowired
-    public AGHLibraryScraper() {
-        this.httpRequest = new HTTPRequest();
+    public AGHLibraryScraper(HTTPRequest httpRequest, IAuthorDao authorDao) {
+        this.httpRequest = httpRequest;
+        this.authorDao = authorDao;
     }
 
     @Override
@@ -54,6 +58,34 @@ public class AGHLibraryScraper implements HTMLScraper{
         }
         logger.info("Didn't find any key words for " + title);
         return Collections.emptySet();
+    }
+
+    public Set<Author> getAuthors(String exampleAuthor, String title){
+        String searchUrl = getSearchUrl(exampleAuthor, title);
+        String pageHTML = getWebsitePageHTML(searchUrl,0);
+        ArrayList<String> publicationData = getPublicationData(pageHTML);
+
+        ArrayList<String> authorsNames = new ArrayList<>();
+        if(publicationData.size() <= 1){
+            authorsNames.add(exampleAuthor);
+            logger.warning("Couldn't find Authors for " + title + ", using example author");
+        } else {
+            authorsNames = new ArrayList<>(Arrays.asList(publicationData.get(1)
+                    .split(", ")));
+        }
+        HashSet<Author> authors = new HashSet<>();
+        for(String authorName : authorsNames){
+            Author author = authorDao.getAuthorByName(authorName);
+            authors.add(Objects.isNull(author) ? new Author(authorName) : author);
+        }
+        return authors;
+    }
+
+    private ArrayList<String> getPublicationData(String pageHTML) {
+        return new ArrayList<>(Arrays.asList(Jsoup.parse(pageHTML)
+                            .select(".li-publ .tp1, .tp2, .tp3")
+                            .text()
+                            .split(" / | // ")));
     }
 
     @Override
