@@ -20,15 +20,15 @@ public class AuthorDAO implements IAuthorDao {
         List<Author> authors;
         Author resultAuthor = null;
 
-        String sqlQuery = "SELECT * FROM author WHERE authorId = " + id;
-        authors = session.createNativeQuery(sqlQuery, Author.class).list();
+        String sqlQuery = "SELECT * FROM author WHERE authorId = :id";
+        authors = session.createNativeQuery(sqlQuery, Author.class).setParameter("id", id).list();
 
         session.close();
 
         if (authors.size() > 0) {
             resultAuthor = authors.get(0);
             Hibernate.initialize(resultAuthor.getTheses());
-        }else {
+        } else {
             logger.log(Level.SEVERE,
                     "AuthorDAO.getAuthorById | Author not found. Returning null.");
         }
@@ -58,8 +58,8 @@ public class AuthorDAO implements IAuthorDao {
         List<Author> authors;
         Author resultAuthor = null;
 
-        String sqlQuery = "SELECT * FROM author WHERE name LIKE '%" + filterName + "%'";
-        authors = session.createNativeQuery(sqlQuery, Author.class).list();
+        String sqlQuery = "SELECT * FROM author WHERE name LIKE :name";
+        authors = session.createNativeQuery(sqlQuery, Author.class).setParameter("name", "%" + filterName + "%").list();
 
         if (authors.size() > 0) {
             resultAuthor = authors.get(0);
