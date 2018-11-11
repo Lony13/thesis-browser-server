@@ -2,31 +2,29 @@ package com.koczy.kurek.mizera.thesisbrowser.service;
 
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.hibUtils.ThesisDAO;
-import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Dataset;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.LDA;
 import com.koczy.kurek.mizera.thesisbrowser.model.CompareThesesDto;
 import com.koczy.kurek.mizera.thesisbrowser.model.ServerInfo;
+import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
+import com.koczy.kurek.mizera.thesisbrowser.model.ThesisResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.LDA_SIMILARITY_THRESHOLD;
 
 @Service
 public class LdaService implements ILdaService{
 
-    private Dataset dataset;
     private LDA lda;
     private ThesisDAO thesisDao;
 
     @Autowired
-    public LdaService(Dataset dataset, LDA lda, ThesisDAO thesisDao){
-        this.dataset = dataset;
+    public LdaService(LDA lda, ThesisDAO thesisDao){
         this.lda = lda;
         this.thesisDao = thesisDao;
     }
@@ -66,6 +64,39 @@ public class LdaService implements ILdaService{
             }
         }
         return new ResponseEntity<>(similarThesesId, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<ThesisResponse>> getSimilarThesesFromFilter(ArrayList<Integer> exemplaryTheses,
+                                                                           ThesisFilters thesisFilters) {
+        List<Thesis> thesesFromFilterWithSimVector = thesisDao.searchTheses(thesisFilters)
+                .stream()
+                .filter(thesis -> Objects.nonNull(thesis.getSimilarityVector()))
+                .collect(Collectors.toList());
+
+        List<Thesis> similarTheses = exemplaryTheses
+                .stream()
+                .map(thesisId -> thesisDao.getThesis(thesisId))
+                .collect(Collectors.toList());
+
+        List<Integer> exemplaryThesesWithSimVector = exemplaryTheses
+                .stream()
+                .filter(thesisId -> Objects.nonNull(thesisDao.getThesis(thesisId).getSimilarityVector()))
+                .collect(Collectors.toList());
+
+        for (Integer exemplaryThesisWithSimVector : exemplaryThesesWithSimVector) {
+            for(Iterator<Thesis> it = thesesFromFilterWithSimVector.iterator(); it.hasNext();){
+                Thesis thesisFromFilterWithSimVector = it.next();
+                if(isSimilarityAboveThreshold(thesisDao.convertToPrimitives(thesisFromFilterWithSimVector.getSimilarityVector())
+                        , exemplaryThesisWithSimVector)){
+                    similarTheses.add(thesisFromFilterWithSimVector);
+                    it.remove();
+                }
+            }
+        }
+        return new ResponseEntity<>(similarTheses.stream()
+                                                .map(ThesisResponse::new)
+                                                .collect(Collectors.toList()), HttpStatus.OK);
     }
 
     private boolean isSimilarityAboveThreshold(double[] thesisSimilarityVector, int thesisId) {

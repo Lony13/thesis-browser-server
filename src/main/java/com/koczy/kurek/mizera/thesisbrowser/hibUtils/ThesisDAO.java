@@ -162,7 +162,6 @@ public class ThesisDAO implements IThesisDao {
 
     @Override
     public double[] getTopicSimilarityVector(int thesisID) {
-
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
@@ -183,7 +182,7 @@ public class ThesisDAO implements IThesisDao {
         return convertToPrimitives(thesis.getSimilarityVector());
     }
 
-    private double[] convertToPrimitives(List<Double> similarityVector) {
+    public double[] convertToPrimitives(List<Double> similarityVector) {
         List<Double> doubles = similarityVector;
         double[] result = new double[doubles.size()];
         for (int i = 0; i < result.length; i++) {

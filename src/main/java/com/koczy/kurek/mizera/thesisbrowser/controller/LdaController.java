@@ -3,11 +3,14 @@ package com.koczy.kurek.mizera.thesisbrowser.controller;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.model.CompareThesesDto;
 import com.koczy.kurek.mizera.thesisbrowser.model.ServerInfo;
+import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
+import com.koczy.kurek.mizera.thesisbrowser.model.ThesisResponse;
 import com.koczy.kurek.mizera.thesisbrowser.service.ILdaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -27,6 +30,12 @@ public class LdaController {
         return ldaService.run();
     }
 
+    @RequestMapping(value = "/api/similarThesesAmongFromFilter", method = RequestMethod.GET)
+    public ResponseEntity<List<ThesisResponse>> getSimilarThesesAmongFromFilter(@RequestBody ArrayList<Integer> exemplaryTheses,
+                                                                                @RequestBody ThesisFilters thesisFilters) {
+        return ldaService.getSimilarThesesFromFilter(exemplaryTheses, thesisFilters);
+    }
+
     @RequestMapping(value = "/api/similarity/{id1}/{id2}", method = RequestMethod.GET)
     public ResponseEntity<Double> getSimilarity(@PathVariable(value = "id1") int id1,
                                                  @PathVariable(value = "id2") int id2) {
@@ -37,6 +46,7 @@ public class LdaController {
     public ResponseEntity<List<Thesis>> getSimilarTheses(@PathVariable(value = "id") int id) {
         return ldaService.getSimilarTheses(id);
     }
+
     @RequestMapping(value = "/api/similarThesesAmong", method = RequestMethod.POST)
     public ResponseEntity<List<Integer>> getSimilarThesesAmong(@RequestBody CompareThesesDto compareThesesDto) {
         return ldaService.getSimilarThesesAmong(compareThesesDto);
