@@ -21,8 +21,7 @@ public class Thesis {
     private String title;
     private Integer citationNo;
     private String linkToPDF;
-    private String pathToTXT;
-    private Date publicationDate;
+    private Integer publicationDate;
 
     @ElementCollection
     @CollectionTable(name = "similarityVector", joinColumns = @JoinColumn(name = "thesisId"))
@@ -63,7 +62,7 @@ public class Thesis {
     }
 
     public Thesis(String title, Set<Author> authors, String linkToPDF, Integer citationNo,
-                  Date publicationDate, List<String> relatedTheses, Set<String> keyWords) {
+                  Integer publicationDate, List<String> relatedTheses, Set<String> keyWords) {
         this.title = title;
         this.linkToPDF = linkToPDF;
         this.authors = authors;
@@ -152,19 +151,11 @@ public class Thesis {
         this.linkToPDF = linkToPDF;
     }
 
-    public String getPathToTXT() {
-        return pathToTXT;
-    }
-
-    public void setPathToTXT(String pathToTXT) {
-        this.pathToTXT = pathToTXT;
-    }
-
-    public Date getPublicationDate() {
+    public Integer getPublicationDate() {
         return publicationDate;
     }
 
-    public void setPublicationDate(Date publicationDate) {
+    public void setPublicationDate(Integer publicationDate) {
         this.publicationDate = publicationDate;
     }
 

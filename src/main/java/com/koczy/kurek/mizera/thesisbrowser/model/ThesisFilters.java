@@ -11,14 +11,14 @@ public class ThesisFilters {
     private String institution;
     private String keyWords;
     private Integer quotationNumber;
-    private Date dateFrom;
-    private Date dateTo;
+    private Integer dateFrom;
+    private Integer dateTo;
 
     public ThesisFilters() {
     }
 
     public ThesisFilters(String author, String title, Integer positionFrom, Integer positionTo, String institution,
-                         String keyWords, Integer quotationNumber, Date dateFrom, Date dateTo) {
+                         String keyWords, Integer quotationNumber, Integer dateFrom, Integer dateTo) {
         this.author = author;
         this.title = title;
         this.positionFrom = positionFrom;
@@ -86,19 +86,19 @@ public class ThesisFilters {
         this.quotationNumber = quotationNumber;
     }
 
-    public Date getDateFrom() {
+    public Integer getDateFrom() {
         return dateFrom;
     }
 
-    public void setDateFrom(Date dateFrom) {
+    public void setDateFrom(Integer dateFrom) {
         this.dateFrom = dateFrom;
     }
 
-    public Date getDateTo() {
+    public Integer getDateTo() {
         return dateTo;
     }
 
-    public void setDateTo(Date dateTo) {
+    public void setDateTo(Integer dateTo) {
         this.dateTo = dateTo;
     }
 }

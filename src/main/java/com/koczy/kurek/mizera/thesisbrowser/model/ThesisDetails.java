@@ -10,13 +10,13 @@ import java.util.Set;
 public class ThesisDetails extends ThesisResponse {
 
     private int citationNo;
-    private Date publicationDate;
+    private Integer publicationDate;
     private List<String> relatedTheses;
     private Set<String> keyWords;
 
     public ThesisDetails(){}
 
-    public ThesisDetails(int citationNo, Date publicationDate, List<String> relatedTheses, Set<String> keyWords) {
+    public ThesisDetails(int citationNo, Integer publicationDate, List<String> relatedTheses, Set<String> keyWords) {
         this.citationNo = citationNo;
         this.publicationDate = publicationDate;
         this.relatedTheses = relatedTheses;
@@ -32,7 +32,7 @@ public class ThesisDetails extends ThesisResponse {
     }
 
     public ThesisDetails(int id, String title, String linkToPDF, List<String> authors, int citationNo,
-                         Date publicationDate, List<String> relatedTheses, Set<String> keyWords) {
+                         Integer publicationDate, List<String> relatedTheses, Set<String> keyWords) {
         super(id, title, linkToPDF, authors);
         this.citationNo = citationNo;
         this.publicationDate = publicationDate;
@@ -48,11 +48,11 @@ public class ThesisDetails extends ThesisResponse {
         this.citationNo = citationNo;
     }
 
-    public Date getPublicationDate() {
+    public Integer getPublicationDate() {
         return publicationDate;
     }
 
-    public void setPublicationDate(Date publicationDate) {
+    public void setPublicationDate(Integer publicationDate) {
         this.publicationDate = publicationDate;
     }
 
