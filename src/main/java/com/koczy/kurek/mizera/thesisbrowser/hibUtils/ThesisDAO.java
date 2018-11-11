@@ -222,8 +222,6 @@ public class ThesisDAO implements IThesisDao {
             thesisList = new ArrayList<>();
         }
 
-        filterDate(thesisList, thesisFilters);
-
         session.close();
 
         return thesisList;
@@ -242,16 +240,13 @@ public class ThesisDAO implements IThesisDao {
         if (!isBlank(thesisFilters.getQuotationNumber())) {
             nativeQuery.setParameter("quotationNumber", thesisFilters.getQuotationNumber());
         }
+        if (!isBlank(thesisFilters.getDateFrom())) {
+            nativeQuery.setParameter("dateFrom", thesisFilters.getDateFrom());
+        }
+        if (!isBlank(thesisFilters.getDateTo())) {
+            nativeQuery.setParameter("dateTo", thesisFilters.getDateTo());
+        }
         return nativeQuery;
-    }
-
-    private void filterDate(List<Thesis> thesisList, ThesisFilters thesisFilters) {
-        if (Objects.nonNull(thesisFilters.getDateFrom())) {
-            thesisList.removeIf(thesis -> thesis.getPublicationDate().after(thesisFilters.getDateFrom()));
-        }
-        if (Objects.nonNull(thesisFilters.getDateTo())) {
-            thesisList.removeIf(thesis -> thesis.getPublicationDate().after(thesisFilters.getDateTo()));
-        }
     }
 
     private String createQuery(ThesisFilters filters) throws NoAuthorException {
@@ -273,6 +268,8 @@ public class ThesisDAO implements IThesisDao {
         query = filterInstitution(query, filters.getInstitution());
         query = filterKeyWords(query, filters.getKeyWords());
         query = filterQuotationNumber(query, filters.getQuotationNumber());
+        query = filterDateFrom(query, filters.getDateFrom());
+        query = filterDateTo(query, filters.getDateTo());
 
         query = query.concat("GROUP BY thesis.thesisId");
         return query;
@@ -283,6 +280,8 @@ public class ThesisDAO implements IThesisDao {
                 !isBlank(filters.getAuthor()) ||
                 !isBlank(filters.getInstitution()) ||
                 !isBlank(filters.getKeyWords()) ||
+                !isBlank(filters.getDateFrom()) ||
+                !isBlank(filters.getDateTo()) ||
                 !isBlank(filters.getQuotationNumber());
     }
 
@@ -331,6 +330,24 @@ public class ThesisDAO implements IThesisDao {
         if (!isBlank(quotationNumber)) {
             query = addAndToWhere(query);
             query = query.concat("thesis.citationNo = :quotationNumber ");
+            addAnd = true;
+        }
+        return query;
+    }
+
+    private String filterDateFrom(String query, Integer dateFrom) {
+        if (!isBlank(dateFrom)) {
+            query = addAndToWhere(query);
+            query = query.concat("thesis.publicationDate >= :dateFrom ");
+            addAnd = true;
+        }
+        return query;
+    }
+
+    private String filterDateTo(String query, Integer dateTo) {
+        if (!isBlank(dateTo)) {
+            query = addAndToWhere(query);
+            query = query.concat("thesis.publicationDate <= :dateTo ");
             addAnd = true;
         }
         return query;
