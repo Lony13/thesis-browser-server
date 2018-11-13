@@ -45,6 +45,7 @@ public class Thesis {
     private Set<String> keyWords = new HashSet<>();
 
     @ManyToMany(mappedBy = "theses", fetch = FetchType.EAGER)
+    @OrderBy
     private Set<Author> authors = new HashSet<>();
 
 
