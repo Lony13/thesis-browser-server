@@ -16,7 +16,6 @@ public class CompareThesesDto {
     }
 
     public int getExemplaryThesis() {
-
         return exemplaryThesis;
     }
 
