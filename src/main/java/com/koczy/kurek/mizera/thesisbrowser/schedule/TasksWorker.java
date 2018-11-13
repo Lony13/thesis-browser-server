@@ -1,6 +1,7 @@
 package com.koczy.kurek.mizera.thesisbrowser.schedule;
 
 import com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.GoogleScholarScraper;
+import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.hibUtils.ThesisDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +36,11 @@ public class TasksWorker {
 
         while(currentThesisNumber < numOfTheses){
             Thesis currentThesis = thesisDao.getNthThesis(currentThesisNumber);
-            if(Objects.nonNull(currentThesis.getTitle()))
-                currentThesis.setCitationNo(googleScholarScraper.getCitationNumber(currentThesis.getAuthor(),
+            if(Objects.nonNull(currentThesis.getTitle())){
+                Author firstAuthor = (Author) currentThesis.getAuthors().toArray()[0];
+                currentThesis.setCitationNo(googleScholarScraper.getCitationNumber(firstAuthor.getName(),
                         currentThesis.getTitle()));
+            }
             currentThesisNumber+=NEXT_THESIS_NUM;
         }
 
