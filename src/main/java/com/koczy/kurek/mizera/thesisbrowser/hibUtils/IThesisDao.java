@@ -28,4 +28,6 @@ public interface IThesisDao {
 
     double[] getTopicSimilarityVector(int thesisID);
 
+    double[] convertToPrimitives(List<Double> similarityVector);
+
 }

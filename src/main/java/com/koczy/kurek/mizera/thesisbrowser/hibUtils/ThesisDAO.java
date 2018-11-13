@@ -182,6 +182,7 @@ public class ThesisDAO implements IThesisDao {
         return convertToPrimitives(thesis.getSimilarityVector());
     }
 
+    @Override
     public double[] convertToPrimitives(List<Double> similarityVector) {
         List<Double> doubles = similarityVector;
         double[] result = new double[doubles.size()];
