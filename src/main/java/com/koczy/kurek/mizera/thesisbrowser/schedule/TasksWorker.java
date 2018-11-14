@@ -37,10 +37,13 @@ public class TasksWorker {
         while(currentThesisNumber < numOfTheses){
             Thesis currentThesis = thesisDao.getNthThesis(currentThesisNumber);
             if(Objects.nonNull(currentThesis.getTitle())){
-                Author firstAuthor = (Author) currentThesis.getAuthors().toArray()[0];
-                currentThesis.setCitationNo(googleScholarScraper.getCitationNumber(firstAuthor.getName(),
-                        currentThesis.getTitle()));
-                thesisDao.saveThesis(currentThesis);
+                Object[] authors = currentThesis.getAuthors().toArray();
+                if(authors.length > 0){
+                    Author firstAuthor = (Author) authors[0];
+                    currentThesis.setCitationNo(googleScholarScraper.getCitationNumber(firstAuthor.getName(),
+                            currentThesis.getTitle()));
+                    thesisDao.saveThesis(currentThesis);
+                }
             }
             currentThesisNumber+=NEXT_THESIS_NUM;
         }
