@@ -40,6 +40,7 @@ public class TasksWorker {
                 Author firstAuthor = (Author) currentThesis.getAuthors().toArray()[0];
                 currentThesis.setCitationNo(googleScholarScraper.getCitationNumber(firstAuthor.getName(),
                         currentThesis.getTitle()));
+                thesisDao.saveThesis(currentThesis);
             }
             currentThesisNumber+=NEXT_THESIS_NUM;
         }
