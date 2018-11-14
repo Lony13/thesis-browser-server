@@ -30,8 +30,8 @@ public class AuthorDAO implements IAuthorDao {
             resultAuthor = authors.get(0);
             Hibernate.initialize(resultAuthor.getTheses());
         } else {
-            logger.log(Level.SEVERE,
-                    "AuthorDAO.getAuthorById | Author not found. Returning null.");
+            logger.log(Level.INFO,
+                    "getAuthorById | Author with id: {0} not found.", id);
         }
 
         return resultAuthor;
@@ -54,8 +54,8 @@ public class AuthorDAO implements IAuthorDao {
             resultAuthor = authors.get(0);
             Hibernate.initialize(resultAuthor.getTheses());
         } else {
-            logger.log(Level.SEVERE,
-                    "AuthorDAO.getAuthorByName | Author not found. Returning null.");
+            logger.log(Level.INFO,
+                    "getAuthorByName | Author: {0} not found.", filterName);
         }
 
         return resultAuthor;
@@ -70,7 +70,7 @@ public class AuthorDAO implements IAuthorDao {
             session.saveOrUpdate(author);
             transaction.commit();
         } catch (NonUniqueObjectException | EntityExistsException e) {
-            logger.log(Level.INFO, "Thesis already connected with author.");
+            logger.log(Level.INFO, "Thesis already connected with author: {0}.", author.getName());
         }
         session.close();
     }

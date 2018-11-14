@@ -47,7 +47,7 @@ public class ThesisDAO implements IThesisDao {
             return thesisList.get(0);
         } else {
             logger.log(Level.INFO,
-                    "ThesisDAO.getThesis | Thesis not found. Returning null.");
+                    "getThesis | Thesis with id: {0} not found.", thesisId);
             return null;
         }
     }
@@ -68,7 +68,7 @@ public class ThesisDAO implements IThesisDao {
             return thesisList.get(0);
         } else {
             logger.log(Level.INFO,
-                    "ThesisDAO.getThesisByTitle | Thesis not found. Returning null.");
+                    "getThesisByTitle | Thesis with title:  not found.", title);
             return null;
         }
     }
@@ -105,7 +105,7 @@ public class ThesisDAO implements IThesisDao {
             result = getThesis(id).getBow();
         } else {
             logger.log(Level.INFO,
-                    "ThesisDAO.getThesisBow() | thesis not found. Returning empty Map.");
+                    "getThesisBow | Thesis with id: {0} not found.", id);
         }
         return result;
     }
@@ -144,7 +144,7 @@ public class ThesisDAO implements IThesisDao {
         Thesis thesis = getThesis(id);
         if (Objects.isNull(thesis)) {
             logger.log(Level.INFO,
-                    "ThesisDAO.saveSimilarityVector() | thesis not found. Save failed.");
+                    "saveSimilarityVector | Thesis with id: {0} not found. Save failed.", id);
             return;
         }
 
@@ -171,7 +171,7 @@ public class ThesisDAO implements IThesisDao {
             transaction.commit();
             session.close();
             logger.log(Level.INFO,
-                    "ThesisDAO.getTopicSimilarityVector() | thesis not found. Returning new double[0]");
+                    "getTopicSimilarityVector | Thesis with id: {0} not found.", thesisID);
             return new double[0];
         }
 
@@ -215,10 +215,10 @@ public class ThesisDAO implements IThesisDao {
                 Hibernate.initialize(thesis.getBow());
             }
         } catch (NullPointerException e) {
-            logger.log(Level.INFO, "ThesisFilters are empty. Returning empty list." + e.toString());
+            logger.log(Level.INFO, "ThesisFilters are empty." + e.toString());
             thesisList = new ArrayList<>();
         } catch (NoAuthorException e) {
-            logger.log(Level.INFO, "Couldn't find author. Returning empty list.");
+            logger.log(Level.INFO, "Couldn't find author for thesis.");
             thesisList = new ArrayList<>();
         }
 
