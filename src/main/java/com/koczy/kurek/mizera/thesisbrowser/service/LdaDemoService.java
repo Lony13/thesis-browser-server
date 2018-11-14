@@ -1,6 +1,9 @@
 package com.koczy.kurek.mizera.thesisbrowser.service;
 
-import com.koczy.kurek.mizera.thesisbrowser.model.*;
+import com.koczy.kurek.mizera.thesisbrowser.model.CompareThesesDto;
+import com.koczy.kurek.mizera.thesisbrowser.model.ServerInfo;
+import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
+import com.koczy.kurek.mizera.thesisbrowser.model.ThesisResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -50,7 +53,7 @@ public class LdaDemoService implements ILdaService{
     }
 
     @Override
-    public ResponseEntity<List<ThesisResponse>> getSimilarThesesFromFilter(ExemplaryThesesDto exemplaryTheses, ThesisFilters thesisFilters) {
+    public ResponseEntity<List<ThesisResponse>> getSimilarThesesFromFilter(ThesisFilters thesisFilters) {
         return new ResponseEntity<>(similarTheses, HttpStatus.OK);
     }
 }

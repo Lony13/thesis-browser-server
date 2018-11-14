@@ -3,7 +3,10 @@ package com.koczy.kurek.mizera.thesisbrowser.service;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.hibUtils.IThesisDao;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.LDA;
-import com.koczy.kurek.mizera.thesisbrowser.model.*;
+import com.koczy.kurek.mizera.thesisbrowser.model.CompareThesesDto;
+import com.koczy.kurek.mizera.thesisbrowser.model.ServerInfo;
+import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
+import com.koczy.kurek.mizera.thesisbrowser.model.ThesisResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,20 +69,19 @@ public class LdaService implements ILdaService{
     }
 
     @Override
-    public ResponseEntity<List<ThesisResponse>> getSimilarThesesFromFilter(ExemplaryThesesDto exemplaryTheses,
-                                                                           ThesisFilters thesisFilters) {
+    public ResponseEntity<List<ThesisResponse>> getSimilarThesesFromFilter(ThesisFilters thesisFilters) {
         List<Thesis> thesesFromFilterWithSimVector = thesisDao.searchTheses(thesisFilters)
                 .stream()
                 .filter(thesis -> Objects.nonNull(thesis.getSimilarityVector()))
                 .collect(Collectors.toList());
 
-        List<Integer> exemplaryThesesWithSimVector = exemplaryTheses
+        List<Integer> exemplaryThesesWithSimVector = thesisFilters
                 .getExemplaryTheses()
                 .stream()
                 .filter(thesisId -> Objects.nonNull(thesisDao.getThesis(thesisId).getSimilarityVector()))
                 .collect(Collectors.toList());
 
-        List<Thesis> similarTheses = exemplaryTheses
+        List<Thesis> similarTheses = thesisFilters
                 .getExemplaryTheses()
                 .stream()
                 .map(thesisId -> thesisDao.getThesis(thesisId))

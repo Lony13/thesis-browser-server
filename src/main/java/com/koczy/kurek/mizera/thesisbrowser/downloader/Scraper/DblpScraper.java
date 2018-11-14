@@ -9,11 +9,14 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.SCRAPER_TIMEOUT;
 
 @Component
 public class DblpScraper implements HTMLScraper {
+
+    private static final Logger logger = Logger.getLogger(DblpScraper.class.getName());
 
     private static final String DBLP_UNI_URL = "https://dblp.uni-trier.de/search?q=";
     private static final String REGEX = "[ :/*?|\"<>.]";
@@ -28,7 +31,7 @@ public class DblpScraper implements HTMLScraper {
             doc = Jsoup.connect(DBLP_UNI_URL
                     + URLEncoder.encode(pdfName, UTF_8)).userAgent(MOZILLA).timeout(SCRAPER_TIMEOUT).get();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.info("Connecting last longer than define timeout: " + SCRAPER_TIMEOUT);
         }
         if(Objects.isNull(doc))
             return null;

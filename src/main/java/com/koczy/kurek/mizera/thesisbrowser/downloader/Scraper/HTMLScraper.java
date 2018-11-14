@@ -7,10 +7,13 @@ import org.jsoup.nodes.Element;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.SCRAPER_TIMEOUT;
 
 public interface HTMLScraper {
+
+    Logger logger = Logger.getLogger(HTMLScraper.class.getName());
 
     String MOZILLA = "Mozilla/5.0";
     String UTF_8 = "UTF-8";
@@ -21,7 +24,7 @@ public interface HTMLScraper {
         try {
             doc = Jsoup.connect(url).userAgent(MOZILLA).timeout(SCRAPER_TIMEOUT).get();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.info("Connecting last longer than define timeout: " + SCRAPER_TIMEOUT);
         }
         if(Objects.isNull(doc))
             return null;

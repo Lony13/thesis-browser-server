@@ -46,8 +46,8 @@ public class ThesisDAO implements IThesisDao {
         if (thesisList.size() > 0) {
             return thesisList.get(0);
         } else {
-            logger.log(Level.SEVERE,
-                    "ThesisDAO.getThesis | Thesis not found. Returning null.");
+            logger.log(Level.INFO,
+                    "getThesis | Thesis with id: {0} not found.", thesisId);
             return null;
         }
     }
@@ -67,8 +67,8 @@ public class ThesisDAO implements IThesisDao {
         if (thesisList.size() > 0) {
             return thesisList.get(0);
         } else {
-            logger.log(Level.SEVERE,
-                    "ThesisDAO.getThesisByTitle | Thesis not found. Returning null.");
+            logger.log(Level.INFO,
+                    "getThesisByTitle | Thesis with title:  not found.", title);
             return null;
         }
     }
@@ -104,8 +104,8 @@ public class ThesisDAO implements IThesisDao {
         if (Objects.nonNull(getThesis(id))) {
             result = getThesis(id).getBow();
         } else {
-            logger.log(Level.SEVERE,
-                    "ThesisDAO.getThesisBow() | thesis not found. Returning empty Map.");
+            logger.log(Level.INFO,
+                    "getThesisBow | Thesis with id: {0} not found.", id);
         }
         return result;
     }
@@ -143,8 +143,8 @@ public class ThesisDAO implements IThesisDao {
     public void saveSimilarityVector(Integer id, double[] similarityVector) {
         Thesis thesis = getThesis(id);
         if (Objects.isNull(thesis)) {
-            logger.log(Level.SEVERE,
-                    "ThesisDAO.saveSimilarityVector() | thesis not found. Save failed.");
+            logger.log(Level.INFO,
+                    "saveSimilarityVector | Thesis with id: {0} not found. Save failed.", id);
             return;
         }
 
@@ -170,8 +170,8 @@ public class ThesisDAO implements IThesisDao {
         if (Objects.isNull(thesis)) {
             transaction.commit();
             session.close();
-            logger.log(Level.SEVERE,
-                    "ThesisDAO.getTopicSimilarityVector() | thesis not found. Returning new double[0]");
+            logger.log(Level.INFO,
+                    "getTopicSimilarityVector | Thesis with id: {0} not found.", thesisID);
             return new double[0];
         }
 
@@ -215,10 +215,10 @@ public class ThesisDAO implements IThesisDao {
                 Hibernate.initialize(thesis.getBow());
             }
         } catch (NullPointerException e) {
-            logger.log(Level.SEVERE, "NullPointerException in thesisFilers. Returning empty list." + e.toString());
+            logger.log(Level.INFO, "ThesisFilters are empty." + e.toString());
             thesisList = new ArrayList<>();
         } catch (NoAuthorException e) {
-            logger.log(Level.SEVERE, "Couldn't find author. Returning empty list.");
+            logger.log(Level.INFO, "Couldn't find author for thesis.");
             thesisList = new ArrayList<>();
         }
 

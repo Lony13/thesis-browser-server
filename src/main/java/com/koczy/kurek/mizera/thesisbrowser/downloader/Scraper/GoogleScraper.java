@@ -9,11 +9,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.SCRAPER_TIMEOUT;
 
 @Component
 public class GoogleScraper implements HTMLScraper{
+
+    private static final Logger logger = Logger.getLogger(GoogleScraper.class.getName());
 
     private static final String GOOGLE_SEARCH_URL = "https://google.com/search?q=filetype%3Apdf+";
 
@@ -39,7 +43,7 @@ public class GoogleScraper implements HTMLScraper{
                 return null;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.INFO, "Connecting to url: {0} last longer than define timeout", url);
         }
         return parsedDownloadPdfLink;
     }
@@ -50,7 +54,7 @@ public class GoogleScraper implements HTMLScraper{
         try {
             return GOOGLE_SEARCH_URL + URLEncoder.encode(pdfName, UTF_8);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.log(Level.INFO, "Could not create URL for pdf: {0}", pdfName);
         }
         return null;
     }
