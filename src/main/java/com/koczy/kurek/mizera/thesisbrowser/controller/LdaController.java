@@ -1,7 +1,13 @@
 package com.koczy.kurek.mizera.thesisbrowser.controller;
 
-import com.koczy.kurek.mizera.thesisbrowser.model.*;
-import com.koczy.kurek.mizera.thesisbrowser.service.*;
+import com.koczy.kurek.mizera.thesisbrowser.model.CompareThesesDto;
+import com.koczy.kurek.mizera.thesisbrowser.model.ServerInfo;
+import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
+import com.koczy.kurek.mizera.thesisbrowser.model.ThesisResponse;
+import com.koczy.kurek.mizera.thesisbrowser.service.DemoServiceResolver;
+import com.koczy.kurek.mizera.thesisbrowser.service.ILdaService;
+import com.koczy.kurek.mizera.thesisbrowser.service.LdaDemoService;
+import com.koczy.kurek.mizera.thesisbrowser.service.LdaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,10 +30,9 @@ public class LdaController extends DemoServiceResolver<ILdaService> {
     }
 
     @RequestMapping(value = "/api/theses/similar", method = RequestMethod.GET)
-    public ResponseEntity<List<ThesisResponse>> getSimilarThesesAmongFromFilter(@RequestBody ExemplaryThesesDto exemplaryTheses,
-                                                                                @RequestBody ThesisFilters thesisFilters,
+    public ResponseEntity<List<ThesisResponse>> getSimilarThesesAmongFromFilter(@RequestBody ThesisFilters thesisFilters,
                                                                                 HttpServletRequest request) {
-        return resolveService(request).getSimilarThesesFromFilter(exemplaryTheses, thesisFilters);
+        return resolveService(request).getSimilarThesesFromFilter(thesisFilters);
     }
 
     @RequestMapping(value = "/api/similarity/{id1}/{id2}", method = RequestMethod.GET)

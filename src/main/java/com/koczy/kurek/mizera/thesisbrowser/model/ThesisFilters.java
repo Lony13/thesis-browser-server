@@ -1,6 +1,6 @@
 package com.koczy.kurek.mizera.thesisbrowser.model;
 
-import java.util.Date;
+import java.util.List;
 
 public class ThesisFilters {
 
@@ -13,6 +13,7 @@ public class ThesisFilters {
     private Integer quotationNumber;
     private Integer dateFrom;
     private Integer dateTo;
+    private List<Integer> exemplaryTheses;
 
     public ThesisFilters() {
     }
@@ -101,4 +102,13 @@ public class ThesisFilters {
     public void setDateTo(Integer dateTo) {
         this.dateTo = dateTo;
     }
+
+    public List<Integer> getExemplaryTheses() {
+        return exemplaryTheses;
+    }
+
+    public void setExemplaryTheses(List<Integer> exemplaryTheses) {
+        this.exemplaryTheses = exemplaryTheses;
+    }
+
 }
