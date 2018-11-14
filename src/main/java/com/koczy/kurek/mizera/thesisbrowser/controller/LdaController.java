@@ -29,7 +29,7 @@ public class LdaController extends DemoServiceResolver<ILdaService> {
         return resolveService(request).run();
     }
 
-    @RequestMapping(value = "/api/theses/similar", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/theses/similar", method = RequestMethod.POST)
     public ResponseEntity<List<ThesisResponse>> getSimilarThesesAmongFromFilter(@RequestBody ThesisFilters thesisFilters,
                                                                                 HttpServletRequest request) {
         return resolveService(request).getSimilarThesesFromFilter(thesisFilters);

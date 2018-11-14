@@ -24,7 +24,7 @@ public interface HTMLScraper {
         try {
             doc = Jsoup.connect(url).userAgent(MOZILLA).timeout(SCRAPER_TIMEOUT).get();
         } catch (IOException e) {
-            logger.info("Connection last longer than define timeout: " + SCRAPER_TIMEOUT);
+            logger.info("Connecting last longer than define timeout: " + SCRAPER_TIMEOUT);
         }
         if(Objects.isNull(doc))
             return null;

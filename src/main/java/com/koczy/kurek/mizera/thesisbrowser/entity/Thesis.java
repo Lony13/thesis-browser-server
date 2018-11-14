@@ -20,6 +20,8 @@ public class Thesis {
     @NotNull
     private String title;
     private Integer citationNo;
+
+    @Column(length = 1024)
     private String linkToPDF;
     private Integer publicationDate;
 
