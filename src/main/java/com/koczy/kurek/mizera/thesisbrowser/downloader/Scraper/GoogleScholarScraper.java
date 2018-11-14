@@ -44,6 +44,28 @@ public class GoogleScholarScraper {
             return 0;
         }
     }
+    public Integer getPublicationDate(String exampleAuthor, String title){
+        String searchUrl = getSearchUrl(exampleAuthor, title);
+        if (searchUrl.equals("")) {
+            logger.log(Level.WARNING, "Couldn't get url");
+            return 0;
+        }
+        try {
+            return Integer.parseInt(Jsoup.connect(searchUrl)
+                    .userAgent(MOZILLA)
+                    .timeout(SCRAPER_TIMEOUT)
+                    .get()
+                    .select(".gs_a")
+                    .first()
+                    .text()
+                    .replaceAll(ONLY_NUMBERS, ""));
+        } catch (Exception e) {
+            logger.log(Level.WARNING, e.toString());
+            logger.log(Level.WARNING, "Couldn't get citation number");
+            return 0;
+        }
+
+    }
 
     public List<String> getRelatedTheses(String authorName, String title) {
         int pagesNum = getCitationNumber(authorName, title) / 10 + 1;

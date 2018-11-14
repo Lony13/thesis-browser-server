@@ -105,6 +105,8 @@ public class DownloadService implements IDownloadService {
                 thesis.getTitle()));
         thesis.setRelatedTheses(googleScholarScraper.getRelatedTheses(thesisFilters.getAuthor(),
                 thesis.getTitle()));
+        thesis.setPublicationDate(googleScholarScraper.getPublicationDate(thesisFilters.getAuthor(),
+                thesis.getTitle()));
     }
 
     private void parseTxtToBow(Thesis thesis) {
