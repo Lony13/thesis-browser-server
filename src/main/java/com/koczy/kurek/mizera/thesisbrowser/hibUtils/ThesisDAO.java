@@ -46,7 +46,7 @@ public class ThesisDAO implements IThesisDao {
         if (thesisList.size() > 0) {
             return thesisList.get(0);
         } else {
-            logger.log(Level.SEVERE,
+            logger.log(Level.INFO,
                     "ThesisDAO.getThesis | Thesis not found. Returning null.");
             return null;
         }
@@ -67,7 +67,7 @@ public class ThesisDAO implements IThesisDao {
         if (thesisList.size() > 0) {
             return thesisList.get(0);
         } else {
-            logger.log(Level.SEVERE,
+            logger.log(Level.INFO,
                     "ThesisDAO.getThesisByTitle | Thesis not found. Returning null.");
             return null;
         }
@@ -104,7 +104,7 @@ public class ThesisDAO implements IThesisDao {
         if (Objects.nonNull(getThesis(id))) {
             result = getThesis(id).getBow();
         } else {
-            logger.log(Level.SEVERE,
+            logger.log(Level.INFO,
                     "ThesisDAO.getThesisBow() | thesis not found. Returning empty Map.");
         }
         return result;
@@ -143,7 +143,7 @@ public class ThesisDAO implements IThesisDao {
     public void saveSimilarityVector(Integer id, double[] similarityVector) {
         Thesis thesis = getThesis(id);
         if (Objects.isNull(thesis)) {
-            logger.log(Level.SEVERE,
+            logger.log(Level.INFO,
                     "ThesisDAO.saveSimilarityVector() | thesis not found. Save failed.");
             return;
         }
@@ -170,7 +170,7 @@ public class ThesisDAO implements IThesisDao {
         if (Objects.isNull(thesis)) {
             transaction.commit();
             session.close();
-            logger.log(Level.SEVERE,
+            logger.log(Level.INFO,
                     "ThesisDAO.getTopicSimilarityVector() | thesis not found. Returning new double[0]");
             return new double[0];
         }
@@ -215,10 +215,10 @@ public class ThesisDAO implements IThesisDao {
                 Hibernate.initialize(thesis.getBow());
             }
         } catch (NullPointerException e) {
-            logger.log(Level.SEVERE, "NullPointerException in thesisFilers. Returning empty list." + e.toString());
+            logger.log(Level.INFO, "ThesisFilters are empty. Returning empty list." + e.toString());
             thesisList = new ArrayList<>();
         } catch (NoAuthorException e) {
-            logger.log(Level.SEVERE, "Couldn't find author. Returning empty list.");
+            logger.log(Level.INFO, "Couldn't find author. Returning empty list.");
             thesisList = new ArrayList<>();
         }
 
