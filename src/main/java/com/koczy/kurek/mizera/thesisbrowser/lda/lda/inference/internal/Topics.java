@@ -19,14 +19,11 @@ package com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.VocabProbability;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Vocabularies;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.LDA;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -48,7 +45,7 @@ class Topics {
 
     Topic get(int id) {
         if(id < 0 || id >= topics.size()) {
-            logger.warning( "There is no topic with that id");
+            logger.warning( "There is no topic with that id: " + id);
             return new Topic(-1,-1);
         }
         return topics.get(id);
@@ -56,7 +53,7 @@ class Topics {
 
     double getPhi(int topicID, int vocabID, double beta) {
         if (topicID < 0 || topics.size() <= topicID) {
-            logger.warning( "There is no topic with that id");
+            logger.warning( "There is no topic with that id: " + topicID);
             return -1;
         }
         return topics.get(topicID).getPhi(vocabID, beta);
@@ -64,8 +61,8 @@ class Topics {
     
     List<VocabProbability> getVocabsSortedByPhi(int topicID, Vocabularies vocabs, final double beta) {
         if (topicID < 0 || topics.size() <= topicID || Objects.isNull(vocabs) || beta <= 0.0)  {
-            logger.warning( "Invalid topic id, beta value or " +
-                    "vocabs have not been initialised");
+            logger.warning( "Invalid topic id, beta value or vocabs have not been initialised, topicID: "
+                    + topicID + ", beta: " + beta);
             return Collections.emptyList();
         }
         

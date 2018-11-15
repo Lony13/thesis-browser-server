@@ -46,7 +46,7 @@ public class CollapsedGibbsSampler implements Inference {
     @Override
     public void setUp(LDA lda) {
         if(Objects.isNull(lda)){
-            logger.warning( "Lda is null");
+            logger.warning( "Lda is empty");
             return;
         }
         this.lda = lda;
@@ -120,7 +120,7 @@ public class CollapsedGibbsSampler implements Inference {
         }
         if (docID <= 0 || lda.getBow().getNumDocs() < docID
                 || topicID < 0 || lda.getNumTopics() <= topicID){
-            logger.warning( "Given docId or topicId does not exists");
+            logger.warning( "Given docId: " + docID + " or topicId: " + topicID + " does not exists");
             return -1;
         }
         return documents.getTopicCount(docID, topicID);
@@ -132,7 +132,7 @@ public class CollapsedGibbsSampler implements Inference {
             return -1;
         }
         if (topicID < 0 || lda.getNumTopics() <= topicID || vocabID <= 0){
-            logger.warning( "Given topicId or vocabId does not exists");
+            logger.warning( "Given topicId: " + topicID + " or vocabId: " + vocabID + " does not exists");
             return -1;
         }
         final Topic topic = topics.get(topicID);
@@ -141,7 +141,7 @@ public class CollapsedGibbsSampler implements Inference {
 
     int getTSumCount(final int topicID) {
         if (topicID < 0 || lda.getNumTopics() <= topicID){
-            logger.warning( "Given topicId does not exists");
+            logger.warning( "Given topicId: " + topicID + " does not exists");
             return -1;
         }
         final Topic topic = topics.get(topicID);

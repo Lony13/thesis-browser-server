@@ -36,7 +36,7 @@ class Hyperparameters {
 
     double alpha(int i) {
         if(alpha.getAlphas().size() - 1 < i){
-            logger.warning("Given i value is to big");
+            logger.warning("Given i value is to big, i: " + i);
             return -1;
         }
         return alpha.get(i);
@@ -52,7 +52,7 @@ class Hyperparameters {
     
     double beta(int i) {
         if(beta.getBetas().size() - 1 < i){
-            logger.warning("Given i value is to big");
+            logger.warning("Given i value is to big, i: " + i);
             return -1;
         }
         return beta.get(i);

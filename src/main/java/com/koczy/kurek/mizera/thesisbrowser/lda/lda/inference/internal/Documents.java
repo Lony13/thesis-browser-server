@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -47,7 +46,6 @@ class Documents {
         }
     }
 
-
     List<Vocabulary> getVocabularyList(int docID, BagOfWords bow, Vocabularies vocabs) {
         if(docID <= 0 || Objects.isNull(bow) || Objects.isNull(vocabs)){
             logger.warning( "Bag of words or vocabularies were not initialized");
@@ -68,7 +66,7 @@ class Documents {
     
     double getTheta(int docID, int topicID, double alpha, double sumAlpha) {
         if (docID <= 0 || documents.size() < docID){
-            logger.warning( "There is no document with that id");
+            logger.warning( "There is no document with that id: " + docID);
             return -1;
         }
         return documents.get(docID - 1).getTheta(topicID, alpha, sumAlpha);

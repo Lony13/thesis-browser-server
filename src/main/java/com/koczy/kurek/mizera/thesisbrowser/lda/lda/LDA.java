@@ -18,7 +18,6 @@ package com.koczy.kurek.mizera.thesisbrowser.lda.lda;
 
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.*;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.Inference;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -48,7 +47,7 @@ public class LDA {
 
     public String getVocab(int vocabID) {
         if(vocabID <= 0 || dataset.getNumVocabs() < vocabID){
-            logger.warning("There is no vocab with that id");
+            logger.warning("There is no vocab with that id: " + vocabID);
             return "";
         }
         return dataset.get(vocabID).toString();
@@ -88,7 +87,7 @@ public class LDA {
         }
         if (docID <= 0 || dataset.getNumDocs() < docID
                 || topicID < 0 || numTopics <= topicID){
-            logger.warning("There is no such docId or topicId");
+            logger.warning("There is no such docId or topicId: " + topicID);
             return -1;
         }
         return inference.getTheta(docID, topicID);
@@ -100,7 +99,7 @@ public class LDA {
             return -1;
         }
         if (topicID < 0 || numTopics <= topicID || vocabID <= 0){
-            logger.warning("There is no such topicId or vocabId");
+            logger.warning("There is no such topicId: " + topicID + " or vocabId: " + vocabID);
             return -1;
         }
         return inference.getPhi(topicID, vocabID);
@@ -112,7 +111,7 @@ public class LDA {
     
     public List<VocabProbability> getVocabsSortedByPhi(int topicID) {
         if (topicID < 0 || topicID >= this.numTopics){
-            logger.warning("Invalid topicId");
+            logger.warning("Invalid topicId: " + topicID);
             return Collections.emptyList();
         }
         return inference.getVocabsSortedByPhi(topicID);

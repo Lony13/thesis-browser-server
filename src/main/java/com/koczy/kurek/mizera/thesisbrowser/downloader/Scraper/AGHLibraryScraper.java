@@ -113,7 +113,6 @@ public class AGHLibraryScraper implements HTMLScraper{
                     .get());
         } catch (IOException e) {
             logger.log(Level.WARNING, "Cannot connect to " + url);
-            logger.log(Level.WARNING, e.toString());
             return Optional.empty();
         }
     }
@@ -130,7 +129,6 @@ public class AGHLibraryScraper implements HTMLScraper{
             input.close();
         } catch (IOException e) {
             logger.log(Level.WARNING, "Cannot close " + url);
-            logger.log(Level.WARNING, e.toString());
         }
         return pageHTML;
     }

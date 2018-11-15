@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 class Words {
@@ -45,7 +44,7 @@ class Words {
     
     Vocabulary get(int id) {
         if (id < 0 || words.size() <= id) {
-            logger.warning( "There is no word with that id");
+            logger.warning( "There is no word with that id: " + id);
             return new Vocabulary(-1, "");
         }
         return words.get(id);

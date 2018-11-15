@@ -32,9 +32,9 @@ public class PdfParser {
 
             parseDocument(inputstream, handler, metadata, pcontext);
             closeStreams(inputstream, out);
-            logger.info("File parsed");
+            logger.info("File with name " + txtName + " was parsed");
         } else {
-            logger.log(Level.WARNING, "Couldn't parse file to txt");
+            logger.log(Level.WARNING, "Couldn't parse file: " + txtName + " to txt");
         }
     }
 
@@ -42,7 +42,7 @@ public class PdfParser {
         try {
             return new FileOutputStream(TXT_SAVE_DIRECTORY + txtName);
         } catch (FileNotFoundException e) {
-            logger.log(Level.WARNING, e.toString());
+            logger.log(Level.WARNING, "File with name " + txtName + " was not found");
         }
         return null;
     }
@@ -52,7 +52,7 @@ public class PdfParser {
         try {
             pdfparser.parse(inputstream, handler, metadata, pcontext);
         } catch (IOException | SAXException | TikaException e) {
-            logger.log(Level.WARNING, e.toString());
+            logger.log(Level.WARNING, "Exception occured during parse document");
         }
     }
 
@@ -61,7 +61,7 @@ public class PdfParser {
             inputstream.close();
             out.close();
         } catch (IOException e) {
-            logger.log(Level.WARNING, e.toString());
+            logger.log(Level.WARNING, "IOException while closing streams");
         }
     }
 }
