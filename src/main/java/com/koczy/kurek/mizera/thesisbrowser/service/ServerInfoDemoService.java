@@ -11,7 +11,7 @@ import java.util.List;
 public class ServerInfoDemoService implements IServerInfoService {
 
     @Override
-    public List<ServerInfo> getInfo(int from, int to) {
+    public List<ServerInfo> getInfo() {
         ArrayList<ServerInfo> infos = new ArrayList<>();
         infos.add(new ServerInfo(new Date(),
                 "Theses for Piotr Faliszewski downloaded. Downloaded 24 new theses and updated 67."));
