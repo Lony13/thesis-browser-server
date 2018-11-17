@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.Calendar;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -21,6 +22,8 @@ public class TasksWorker {
     private GoogleScholarScraper googleScholarScraper;
     private static final int NEXT_THESIS_NUM = 30;
     private int initialThesisNumber = 0;
+
+    private Calendar cal = Calendar.getInstance();
 
     @Autowired
     public TasksWorker(ThesisDAO thesisDao,GoogleScholarScraper googleScholarScraper){
@@ -40,16 +43,14 @@ public class TasksWorker {
                 Object[] authors = currentThesis.getAuthors().toArray();
                 if(authors.length > 0){
                     Author firstAuthor = (Author) authors[0];
-                    currentThesis.setCitationNo(googleScholarScraper.getCitationNumber(firstAuthor.getName(),
+                    currentThesis.setCitationNo(googleScholarScraper.getPublicationDate(firstAuthor.getName(),
                             currentThesis.getTitle()));
                     thesisDao.saveThesis(currentThesis);
                 }
             }
             currentThesisNumber+=NEXT_THESIS_NUM;
         }
-
-        initialThesisNumber++;
-        initialThesisNumber=initialThesisNumber%NEXT_THESIS_NUM;
+        initialThesisNumber = cal.get(Calendar.DAY_OF_MONTH)%NEXT_THESIS_NUM;
         log.info("Citation numbers updated");
     }
 
