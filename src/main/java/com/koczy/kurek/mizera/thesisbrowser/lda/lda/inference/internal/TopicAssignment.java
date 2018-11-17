@@ -19,7 +19,6 @@ package com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -41,7 +40,7 @@ class TopicAssignment {
         }
         if (wordID < 0 || topicAssignment.size() <= wordID || topicID < 0){
             logger.warning( "Num of topic cannot be lower than 0 or" +
-                    " invalid value of word id");
+                    " invalid value of word id, wordId: " + wordID + ", topicId: " + topicID);
             return;
         }
         topicAssignment.set(wordID, topicID);
@@ -53,7 +52,7 @@ class TopicAssignment {
             return -1;
         }
         if (wordID < 0 || topicAssignment.size() <= wordID){
-            logger.warning( "Invalid value of word id");
+            logger.warning( "Invalid value of word id: " + wordID);
             return -1;
         }
         return topicAssignment.get(wordID);
@@ -61,7 +60,8 @@ class TopicAssignment {
     
     void initialize(int docLength, int numTopics, long seed) {
         if (docLength <= 0 || numTopics <= 0){
-            logger.warning( "value of docLength or numTopics cannot be lower than 0");
+            logger.warning( "Value of docLength or numTopics cannot be lower than 0, docLength: " + docLength
+                    + ", numTopics: " + numTopics);
             return;
         }
         

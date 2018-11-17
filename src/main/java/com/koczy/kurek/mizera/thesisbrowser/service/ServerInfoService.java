@@ -18,7 +18,7 @@ public class ServerInfoService implements IServerInfoService {
     }
 
     @Override
-    public List<ServerInfo> getInfo(int from, int to) {
+    public List<ServerInfo> getInfo() {
         return serverInfoDAO.getServerInfo();
     }
 

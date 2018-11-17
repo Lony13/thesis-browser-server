@@ -57,11 +57,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try{
                 userDetails = userDetailsService.loadUserByUsername(username);
             } catch(UsernameNotFoundException e){
-                logger.warn(e.toString());
+                logger.warn("User with username: " + username + "was not found");
                 return;
             }
             if(Objects.isNull(userDetails)){
-                logger.warn("Invalid username or password");
+                logger.warn("Invalid username or password for username: " + username);
                 return;
             }
 

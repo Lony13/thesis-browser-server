@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Component
@@ -49,7 +48,7 @@ public class BagOfWords {
 
     public List<Integer> getWords(final int docID) {
         if (docID <= 0 || getNumDocs() < docID) {
-            logger.warning("There is no document with given ID");
+            logger.warning("There is no document with given ID: " + docID);
             return Collections.emptyList();
         }
         Map<Integer, Integer> thesisBow = thesisBowManager.getThesisBow(docID);

@@ -215,10 +215,10 @@ public class ThesisDAO implements IThesisDao {
                 Hibernate.initialize(thesis.getBow());
             }
         } catch (NullPointerException e) {
-            logger.log(Level.INFO, "ThesisFilters are empty." + e.toString());
+            logger.log(Level.INFO, "ThesisFilters are empty");
             thesisList = new ArrayList<>();
         } catch (NoAuthorException e) {
-            logger.log(Level.INFO, "Couldn't find author for thesis.");
+            logger.log(Level.INFO, "Couldn't find author for thesis in thesisFilters");
             thesisList = new ArrayList<>();
         }
 

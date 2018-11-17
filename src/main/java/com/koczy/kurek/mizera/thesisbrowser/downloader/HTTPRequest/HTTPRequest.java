@@ -35,8 +35,7 @@ public class HTTPRequest {
 
             return httpURLconnection.getInputStream();
         } catch (IOException e) {
-            logger.log(Level.WARNING, e.toString());
-            logger.log(Level.WARNING, "Couldn't get the input stream");
+            logger.log(Level.WARNING, "Couldn't get the input stream for url " + urlString);
         }
         return null;
     }
@@ -52,7 +51,6 @@ public class HTTPRequest {
                 content.append(System.lineSeparator());
             }
         } catch (IOException e) {
-            logger.log(Level.WARNING, e.toString());
             logger.log(Level.WARNING, "Couldn't get the page content");
         }
         return content.toString();
