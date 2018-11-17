@@ -46,8 +46,7 @@ public class TasksWorker {
                     int citationNumber = googleScholarScraper.getCitationNumber(firstAuthor.getName(),
                             currentThesis.getTitle());
                     if(citationNumber > currentThesis.getCitationNo()){
-                        currentThesis.setCitationNo(googleScholarScraper.getCitationNumber(firstAuthor.getName(),
-                                currentThesis.getTitle()));
+                        currentThesis.setCitationNo(citationNumber);
                         thesisDao.saveThesis(currentThesis);
                     }
                 }
