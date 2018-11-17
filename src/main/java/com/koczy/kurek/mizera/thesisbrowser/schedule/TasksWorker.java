@@ -50,7 +50,7 @@ public class TasksWorker {
             }
             currentThesisNumber+=NEXT_THESIS_NUM;
         }
-        initialThesisNumber = cal.get(Calendar.DAY_OF_MONTH)%NEXT_THESIS_NUM;
+        initialThesisNumber = this.cal.get(Calendar.DAY_OF_MONTH)%NEXT_THESIS_NUM;
         log.info("Citation numbers updated");
     }
 
