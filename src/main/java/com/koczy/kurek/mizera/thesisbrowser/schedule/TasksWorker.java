@@ -43,9 +43,13 @@ public class TasksWorker {
                 Object[] authors = currentThesis.getAuthors().toArray();
                 if(authors.length > 0){
                     Author firstAuthor = (Author) authors[0];
-                    currentThesis.setCitationNo(googleScholarScraper.getPublicationDate(firstAuthor.getName(),
-                            currentThesis.getTitle()));
-                    thesisDao.saveThesis(currentThesis);
+                    int citationNumber = googleScholarScraper.getCitationNumber(firstAuthor.getName(),
+                            currentThesis.getTitle());
+                    if(citationNumber > currentThesis.getCitationNo()){
+                        currentThesis.setCitationNo(googleScholarScraper.getCitationNumber(firstAuthor.getName(),
+                                currentThesis.getTitle()));
+                        thesisDao.saveThesis(currentThesis);
+                    }
                 }
             }
             currentThesisNumber+=NEXT_THESIS_NUM;
