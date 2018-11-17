@@ -62,7 +62,8 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     public User findById(Long id) {
-        return userDao.findById(id).get();
+        Optional<User> optUser = userDao.findById(id);
+        return optUser.orElseGet(User::new);
     }
 
     @Override
