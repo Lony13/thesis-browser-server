@@ -16,7 +16,6 @@
 
 package com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 class TopicCounter {
@@ -38,7 +37,7 @@ class TopicCounter {
     
     void incrementTopicCount(int topicID) {
         if(topicID >= topicCount.size()){
-            logger.warning("There is no such topic id");
+            logger.warning("There is no such topic id: " + topicID);
             return;
         }
         topicCount.increment(topicID);
@@ -46,7 +45,7 @@ class TopicCounter {
     
     void decrementTopicCount(int topicID) {
         if(topicID >= topicCount.size()){
-            logger.warning( "There is no such topic id");
+            logger.warning( "There is no such topic id: " + topicID);
             return;
         }
         topicCount.decrement(topicID);

@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface IServerInfoService {
 
-    List<ServerInfo> getInfo(int from, int to);
+    List<ServerInfo> getInfo();
 
 }

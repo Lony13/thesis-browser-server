@@ -16,7 +16,7 @@ public class HibernateUtil {
         try {
             sessionFactory = conf.buildSessionFactory();
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Initial SessionFactory creation failed." + e.toString());
+            logger.log(Level.SEVERE, "Initial SessionFactory creation failed");
             throw new ExceptionInInitializerError(e);
         }
     }

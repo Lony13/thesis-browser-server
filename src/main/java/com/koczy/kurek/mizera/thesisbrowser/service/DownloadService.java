@@ -19,8 +19,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.PARSED_PDF_FILE;
@@ -84,7 +89,7 @@ public class DownloadService implements IDownloadService {
                 parseThesisToTxt(thesis);
                 parseTxtToBow(thesis);
             } else {
-                logger.info("PDF not found");
+                logger.info("PDF not found for given thesisFilters");
             }
             for(Author author : thesis.getAuthors()){
                 authorDao.saveAuthor(author);
@@ -115,7 +120,9 @@ public class DownloadService implements IDownloadService {
         try {
             fileInputStream = new FileInputStream(filename);
         } catch (FileNotFoundException e) {
-            logger.warning(e.toString());
+            logger.warning("Couldn't find file with thesis to parse, thesis title: " + thesis.getTitle());
+            return;
+        } catch (NullPointerException e) {
             logger.warning("Couldn't find file with thesis to parse");
             return;
         }
@@ -150,7 +157,7 @@ public class DownloadService implements IDownloadService {
     private Thesis findNewThesisByAuthorNameAndTitle(String authorName, String thesisTitle) {
         Thesis thesis = thesisDao.getThesisByTitle(thesisTitle);
         if(Objects.nonNull(thesis)){
-            logger.info("Thesis with that title already exists");
+            logger.info("Thesis with title: " + thesisTitle + " already exists");
             return null;
         }
 

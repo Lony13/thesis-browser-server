@@ -17,7 +17,6 @@
 package com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -31,7 +30,7 @@ class AssignmentCounter {
     AssignmentCounter(int size) {
         this.counter = new ArrayList<>();
         if (size <= 0) {
-            logger.warning( "Size of counter can't be smaller than 1");
+            logger.warning( "Size of counter can't be smaller than 1, given size: " + size);
             return;
         }
         this.counter = IntStream.generate(() -> 0)
@@ -46,7 +45,7 @@ class AssignmentCounter {
     
     int get(int id) {
         if(id < 0 || counter.size() <= id) {
-            logger.warning( "There is no such id");
+            logger.warning( "There is no such id: " + id);
             return -1;
         }
         return counter.get(id);
@@ -58,7 +57,7 @@ class AssignmentCounter {
     
     void increment(int id) {
         if (id < 0 || counter.size() <= id) {
-            logger.warning( "There is no such id");
+            logger.warning( "There is no such id: " + id);
             return;
         }
         counter.set(id, counter.get(id) + 1);
@@ -66,7 +65,7 @@ class AssignmentCounter {
     
     void decrement(int id) {
         if (id < 0 || counter.size() <= id ) {
-            logger.warning( "There is no such id");
+            logger.warning( "There is no such id: " + id);
             return;
         }
         if(counter.get(id) == 0) {

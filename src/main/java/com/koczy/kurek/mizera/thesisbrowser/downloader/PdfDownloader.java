@@ -23,13 +23,13 @@ public class PdfDownloader {
     }
 
     public InputStream getPdfStream(String urlString) {
-        log.info("Opening connection");
+        log.info("Opening connection to url: " + urlString);
         InputStream in = null;
         try {
             URL url = new URL(urlString);
             in = url.openStream();
         } catch (IOException e) {
-            log.log(Level.WARNING, e.toString());
+            log.log(Level.WARNING, "Could not open stream for url: " + urlString);
         }
         return in;
     }
@@ -39,15 +39,14 @@ public class PdfDownloader {
         try {
             fos = new FileOutputStream(new File(PDF_SAVE_DIRECTORY + toFileName));
         } catch (FileNotFoundException e) {
-            log.log(Level.WARNING, e.toString());
-            log.log(Level.WARNING, "Couldn't open output stream");
+            log.log(Level.WARNING, "Couldn't open output stream to file: " + toFileName);
         }
         if (Objects.isNull(fos)){
-            log.log(Level.WARNING, "Couldn't open output stream");
+            log.log(Level.WARNING, "Couldn't open output stream to file: " + toFileName);
             return;
         }
 
-        log.info("Reading from resource and writing to file...");
+        log.info("Reading from resource and writing to file: " + toFileName);
         int length;
         byte[] buffer = new byte[READ_BUFFER_SIZE];
         try {
@@ -55,10 +54,10 @@ public class PdfDownloader {
                 fos.write(buffer, 0, length);
             }
         } catch (IOException e) {
-            log.log(Level.WARNING, e.toString());
+            log.log(Level.WARNING, "IOException during writing to file: " + toFileName);
         }
         closeStreams(in, fos);
-        log.info("File downloaded");
+        log.info("File downloaded for file: " + toFileName);
     }
 
     private void closeStreams(InputStream in, FileOutputStream fos) {
@@ -66,7 +65,7 @@ public class PdfDownloader {
             fos.close();
             in.close();
         } catch (IOException e) {
-            log.log(Level.WARNING, e.toString());
+            log.log(Level.WARNING, "Exception while closing streams");
         }
     }
 }

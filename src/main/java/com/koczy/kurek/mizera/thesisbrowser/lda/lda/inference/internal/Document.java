@@ -19,7 +19,6 @@ package com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.internal;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.Vocabulary;
 
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Document {
@@ -34,7 +33,7 @@ public class Document {
     Document(int id, int numTopics, List<Vocabulary> words) {
         if (id <= 0 || numTopics <= 0){
             logger.warning( "Document could not have been initialized, " +
-                    "id or number of topics lower than 0");
+                    "id: " + id + " or number of topics: + " + numTopics + " are lower than 0");
             this.id = -1;
             return;
         }
@@ -50,7 +49,7 @@ public class Document {
     
     int getTopicCount(int topicID) {
         if(topicID >= topicCount.size()){
-            logger.warning( "There is no such topic id");
+            logger.warning( "There is no such topic id: " + id);
             return -1;
         }
         return topicCount.getTopicCount(topicID);
@@ -62,7 +61,7 @@ public class Document {
     
     void incrementTopicCount(int topicID) {
         if(topicID >= topicCount.size()){
-            logger.warning( "There is no such topic id");
+            logger.warning( "There is no such topic id: " + id);
             return;
         }
         topicCount.incrementTopicCount(topicID);
@@ -70,7 +69,7 @@ public class Document {
     
     void decrementTopicCount(int topicID) {
         if(topicID >= topicCount.size()){
-            logger.warning( "There is no such topic id");
+            logger.warning( "There is no such topic id: " + id);
             return;
         }
         topicCount.decrementTopicCount(topicID);
@@ -85,7 +84,7 @@ public class Document {
     
     int getTopicID(int wordID) {
         if(wordID >= assignment.size()){
-            logger.warning("There is no such word id");
+            logger.warning("There is no such word id: " + id);
             return -1;
         }
         return assignment.get(wordID);
@@ -101,7 +100,8 @@ public class Document {
     
     double getTheta(int topicID, double alpha, double sumAlpha) {
         if (topicID < 0 || alpha <= 0.0 || sumAlpha <= 0.0){
-            logger.warning( "Wrong topicId, alpha or sumAlpha value");
+            logger.warning( "Wrong topicId, alpha or sumAlpha value, topicID: " + topicID + ", alpha: "
+                    + alpha + ", sumAlpha: " + sumAlpha);
             return -1;
         }
         return (getTopicCount(topicID) + alpha) / (getDocLength() + sumAlpha);

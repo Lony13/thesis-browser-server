@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 
 import static com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.HTMLScraper.MOZILLA;
 import static com.koczy.kurek.mizera.thesisbrowser.downloader.Scraper.HTMLScraper.UTF_8;
-import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.SCRAPER_TIMEOUT;
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.ONLY_NUMBERS;
+import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.SCRAPER_TIMEOUT;
 
 @Component
 public class GoogleScholarScraper {
@@ -27,7 +27,7 @@ public class GoogleScholarScraper {
     public int getCitationNumber(String authorName, String title) {
         String searchUrl = getSearchUrl(authorName, title);
         if (searchUrl.equals("")) {
-            logger.log(Level.WARNING, "Couldn't get url");
+            logger.log(Level.WARNING, "Couldn't get url for author: " + authorName + ", title: " + title);
             return 0;
         }
         try {
@@ -40,8 +40,7 @@ public class GoogleScholarScraper {
                     .text()
                     .replaceAll(ONLY_NUMBERS, ""));
         } catch (Exception e) {
-            logger.log(Level.WARNING, e.toString());
-            logger.log(Level.WARNING, "Couldn't get citation number");
+            logger.log(Level.WARNING, "Couldn't get citation number for author: " + authorName + ", title: " + title);
             return 0;
         }
     }
@@ -90,7 +89,6 @@ public class GoogleScholarScraper {
                     .map(Element::text)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            logger.log(Level.WARNING, e.toString());
             logger.log(Level.WARNING, "Couldn't get related theses from " + relatedArticlesPageUrl);
             return Collections.emptyList();
         }
@@ -99,7 +97,7 @@ public class GoogleScholarScraper {
     private String getRelatedArticlesUrlFromPage(String authorName, String title, int pageNum) {
         String searchUrl = getSearchUrl(authorName, title);
         if (searchUrl.equals("")) {
-            logger.log(Level.WARNING, "Couldn't get url");
+            logger.log(Level.WARNING, "Couldn't get url from author: " + authorName + ", title: " + title);
             return "";
         }
         try {
@@ -112,8 +110,7 @@ public class GoogleScholarScraper {
                     .attr("abs:href")
                     .concat("&start=" + pageNum * 10);
         } catch (Exception e) {
-            logger.log(Level.WARNING, e.toString());
-            logger.log(Level.WARNING, "Couldn't get cited by url");
+            logger.log(Level.WARNING, "Couldn't get cited by url for author: " + authorName + ", title: " + title);
             return "";
         }
     }
@@ -122,8 +119,7 @@ public class GoogleScholarScraper {
         try {
             return GOOGLE_SCHOLAR_SEARCH_URL + URLEncoder.encode(authorName + " " + title, UTF_8);
         } catch (UnsupportedEncodingException e) {
-            logger.log(Level.WARNING, e.toString());
-            logger.log(Level.WARNING, "Couldn't create url");
+            logger.log(Level.WARNING, "Couldn't create url for author: " + authorName + ", title: " + title);
             return "";
         }
     }

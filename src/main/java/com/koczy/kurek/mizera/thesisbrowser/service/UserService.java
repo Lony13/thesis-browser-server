@@ -29,7 +29,7 @@ public class UserService implements UserDetailsService, IUserService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userDao.findByUsername(username);
         if (Objects.isNull(user)) {
-            throw new UsernameNotFoundException("Invalid username or password.");
+            throw new UsernameNotFoundException("Invalid username or password for username: " + username);
         }
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), getAuthority(user));
     }
@@ -62,7 +62,8 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     public User findById(Long id) {
-        return userDao.findById(id).get();
+        Optional<User> optUser = userDao.findById(id);
+        return optUser.orElseGet(User::new);
     }
 
     @Override

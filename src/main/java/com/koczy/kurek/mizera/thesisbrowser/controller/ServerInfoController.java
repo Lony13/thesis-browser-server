@@ -29,7 +29,7 @@ public class ServerInfoController extends DemoServiceResolver<IServerInfoService
     public ResponseEntity<List<ServerInfo>> getServerInfo(@RequestParam(required = true) int from,
                                                           @RequestParam(required = true) int to,
                                                           HttpServletRequest request) {
-        return new ResponseEntity<>(resolveService(request).getInfo(from, to), HttpStatus.OK);
+        return new ResponseEntity<>(resolveService(request).getInfo(), HttpStatus.OK);
     }
 
 }

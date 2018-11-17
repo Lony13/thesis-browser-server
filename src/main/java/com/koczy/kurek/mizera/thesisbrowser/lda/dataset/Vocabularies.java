@@ -26,7 +26,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -44,8 +43,7 @@ public class Vocabularies {
             vocabs = lines.stream().map(v -> new Vocabulary(lines.indexOf(v) + 1, v))
                                    .collect(Collectors.toList());
         } catch (IOException ioe) {
-            logger.warning(ioe.toString());
-            logger.warning( "Couldn't read lines from vocab file");
+            logger.warning( "Couldn't read lines from vocab file, filePath: " + filePath);
         }
     }
     

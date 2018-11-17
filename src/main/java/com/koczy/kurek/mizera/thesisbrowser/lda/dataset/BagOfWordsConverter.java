@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.LDA_NUM_OF_WORDS_THRESHOLD;
@@ -31,8 +30,7 @@ public class BagOfWordsConverter {
                 wordsIdMap.put(line, lines.indexOf(line)+1);
             }
         } catch (IOException ioe) {
-            logger.warning(ioe.toString());
-            logger.warning("Couldn't read lines from vocab file");
+            logger.warning("Couldn't read lines from vocab file, filePath: " + vocabsFilePath);
         }
     }
 
