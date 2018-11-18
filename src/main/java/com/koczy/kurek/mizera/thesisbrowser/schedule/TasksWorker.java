@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.Calendar;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -22,8 +23,10 @@ public class TasksWorker {
     private static final int NEXT_THESIS_NUM = 30;
     private int initialThesisNumber = 0;
 
+    private Calendar cal = Calendar.getInstance();
+
     @Autowired
-    public TasksWorker(ThesisDAO thesisDao,GoogleScholarScraper googleScholarScraper){
+    public TasksWorker(ThesisDAO thesisDao, GoogleScholarScraper googleScholarScraper) {
         this.thesisDao = thesisDao;
         this.googleScholarScraper = googleScholarScraper;
     }
@@ -34,22 +37,23 @@ public class TasksWorker {
         int numOfTheses = thesisDao.getNumTheses();
         int currentThesisNumber = initialThesisNumber;
 
-        while(currentThesisNumber < numOfTheses){
+        while (currentThesisNumber < numOfTheses) {
             Thesis currentThesis = thesisDao.getNthThesis(currentThesisNumber);
-            if(Objects.nonNull(currentThesis.getTitle())){
+            if (Objects.nonNull(currentThesis.getTitle())) {
                 Object[] authors = currentThesis.getAuthors().toArray();
-                if(authors.length > 0){
+                if (authors.length > 0) {
                     Author firstAuthor = (Author) authors[0];
-                    currentThesis.setCitationNo(googleScholarScraper.getCitationNumber(firstAuthor.getName(),
-                            currentThesis.getTitle()));
-                    thesisDao.saveThesis(currentThesis);
+                    int citationNumber = googleScholarScraper.getCitationNumber(firstAuthor.getName(),
+                            currentThesis.getTitle());
+                    if (citationNumber > currentThesis.getCitationNo()) {
+                        currentThesis.setCitationNo(citationNumber);
+                        thesisDao.saveThesis(currentThesis);
+                    }
                 }
             }
-            currentThesisNumber+=NEXT_THESIS_NUM;
+            currentThesisNumber += NEXT_THESIS_NUM;
         }
-
-        initialThesisNumber++;
-        initialThesisNumber=initialThesisNumber%NEXT_THESIS_NUM;
+        initialThesisNumber = this.cal.get(Calendar.DAY_OF_MONTH) % NEXT_THESIS_NUM;
         log.info("Citation numbers updated");
     }
 

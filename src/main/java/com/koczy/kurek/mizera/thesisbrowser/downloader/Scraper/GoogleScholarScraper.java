@@ -22,6 +22,7 @@ import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.SCRAPER_TIMEO
 public class GoogleScholarScraper {
     private static final Logger logger = Logger.getLogger(GoogleScholarScraper.class.getName());
     private static final String GOOGLE_SCHOLAR_SEARCH_URL = "https://scholar.google.pl/scholar?hl=en&as_sdt=0%2C5&q=";
+    private static final int YEAR = 10000;
 
     public int getCitationNumber(String authorName, String title) {
         String searchUrl = getSearchUrl(authorName, title);
@@ -42,6 +43,27 @@ public class GoogleScholarScraper {
             logger.log(Level.WARNING, "Couldn't get citation number for author: " + authorName + ", title: " + title);
             return 0;
         }
+    }
+    public Integer getPublicationDate(String exampleAuthor, String title){
+        String searchUrl = getSearchUrl(exampleAuthor, title);
+        if (searchUrl.equals("")) {
+            logger.log(Level.WARNING, "Couldn't get url for author: " + exampleAuthor + ", title: " + title);
+            return 0;
+        }
+        try {
+            return Integer.parseInt(Jsoup.connect(searchUrl)
+                    .userAgent(MOZILLA)
+                    .timeout(SCRAPER_TIMEOUT)
+                    .get()
+                    .select(".gs_a")
+                    .first()
+                    .text()
+                    .replaceAll(ONLY_NUMBERS, ""))%YEAR;
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Couldn't get citation number for author: " + exampleAuthor + ", title: " + title);
+            return 0;
+        }
+
     }
 
     public List<String> getRelatedTheses(String authorName, String title) {
