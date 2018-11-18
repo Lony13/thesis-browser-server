@@ -47,7 +47,7 @@ public class GoogleScholarScraper {
     public Integer getPublicationDate(String exampleAuthor, String title){
         String searchUrl = getSearchUrl(exampleAuthor, title);
         if (searchUrl.equals("")) {
-            logger.log(Level.WARNING, "Couldn't get url");
+            logger.log(Level.WARNING, "Couldn't get url for author: " + exampleAuthor + ", title: " + title);
             return 0;
         }
         try {
@@ -60,8 +60,7 @@ public class GoogleScholarScraper {
                     .text()
                     .replaceAll(ONLY_NUMBERS, ""))%YEAR;
         } catch (Exception e) {
-            logger.log(Level.WARNING, e.toString());
-            logger.log(Level.WARNING, "Couldn't get citation number");
+            logger.log(Level.WARNING, "Couldn't get citation number for author: " + exampleAuthor + ", title: " + title);
             return 0;
         }
 
