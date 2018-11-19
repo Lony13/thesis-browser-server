@@ -9,6 +9,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -77,7 +78,7 @@ public class GoogleScholarScraper {
         return relatedTheses;
     }
 
-    private List<String> getRelatedThesesTitles(String relatedArticlesPageUrl) {
+    private Set<String> getRelatedThesesTitles(String relatedArticlesPageUrl) {
         try {
             return Jsoup.connect(relatedArticlesPageUrl)
                     .userAgent(MOZILLA)
@@ -86,10 +87,10 @@ public class GoogleScholarScraper {
                     .select("h3 > a")
                     .stream()
                     .map(Element::text)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         } catch (Exception e) {
             logger.log(Level.WARNING, "Couldn't get related theses from " + relatedArticlesPageUrl);
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
     }
 
