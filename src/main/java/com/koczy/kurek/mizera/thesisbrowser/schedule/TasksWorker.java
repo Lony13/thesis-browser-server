@@ -22,7 +22,6 @@ public class TasksWorker {
     private ThesisDAO thesisDao;
     private GoogleScholarScraper googleScholarScraper;
     private static final int NEXT_THESIS_NUM = 30;
-    private int initialThesisNumber = 0;
 
     private Calendar cal = Calendar.getInstance();
 
@@ -36,7 +35,7 @@ public class TasksWorker {
     public void updateCitationNumber() {
         log.info("Started updating citation numbers");
         int numOfTheses = thesisDao.getNumTheses();
-        int currentThesisNumber = initialThesisNumber;
+        int currentThesisNumber = this.cal.get(Calendar.DAY_OF_MONTH) % NEXT_THESIS_NUM;;
 
         while (currentThesisNumber < numOfTheses) {
             Thesis currentThesis = thesisDao.getNthThesis(currentThesisNumber);
@@ -54,7 +53,6 @@ public class TasksWorker {
             }
             currentThesisNumber += NEXT_THESIS_NUM;
         }
-        initialThesisNumber = this.cal.get(Calendar.DAY_OF_MONTH) % NEXT_THESIS_NUM;
         log.info("Citation numbers updated");
     }
 
@@ -62,7 +60,7 @@ public class TasksWorker {
     public void updateRelatedTheses() {
         log.info("Started updating related theses");
         int numOfTheses = thesisDao.getNumTheses();
-        int currentThesisNumber = initialThesisNumber;
+        int currentThesisNumber = this.cal.get(Calendar.DAY_OF_MONTH) % NEXT_THESIS_NUM;
 
         while (currentThesisNumber < numOfTheses) {
             Thesis currentThesis = thesisDao.getNthThesis(currentThesisNumber);
@@ -80,7 +78,6 @@ public class TasksWorker {
             }
             currentThesisNumber += NEXT_THESIS_NUM;
         }
-        initialThesisNumber = this.cal.get(Calendar.DAY_OF_MONTH) % NEXT_THESIS_NUM;
         log.info("Related theses updated");
     }
 
