@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -21,7 +22,6 @@ public class TasksWorker {
     private ThesisDAO thesisDao;
     private GoogleScholarScraper googleScholarScraper;
     private static final int NEXT_THESIS_NUM = 30;
-    private int initialThesisNumber = 0;
 
     private Calendar cal = Calendar.getInstance();
 
@@ -35,7 +35,7 @@ public class TasksWorker {
     public void updateCitationNumber() {
         log.info("Started updating citation numbers");
         int numOfTheses = thesisDao.getNumTheses();
-        int currentThesisNumber = initialThesisNumber;
+        int currentThesisNumber = this.cal.get(Calendar.DAY_OF_MONTH) % NEXT_THESIS_NUM;;
 
         while (currentThesisNumber < numOfTheses) {
             Thesis currentThesis = thesisDao.getNthThesis(currentThesisNumber);
@@ -53,8 +53,32 @@ public class TasksWorker {
             }
             currentThesisNumber += NEXT_THESIS_NUM;
         }
-        initialThesisNumber = this.cal.get(Calendar.DAY_OF_MONTH) % NEXT_THESIS_NUM;
         log.info("Citation numbers updated");
+    }
+
+    @Scheduled(fixedRate = DAY)
+    public void updateRelatedTheses() {
+        log.info("Started updating related theses");
+        int numOfTheses = thesisDao.getNumTheses();
+        int currentThesisNumber = this.cal.get(Calendar.DAY_OF_MONTH) % NEXT_THESIS_NUM;
+
+        while (currentThesisNumber < numOfTheses) {
+            Thesis currentThesis = thesisDao.getNthThesis(currentThesisNumber);
+            if (Objects.nonNull(currentThesis.getTitle())) {
+                Object[] authors = currentThesis.getAuthors().toArray();
+                if (authors.length > 0) {
+                    Author firstAuthor = (Author) authors[0];
+                    List<String> relatedTheses = googleScholarScraper.getRelatedTheses(firstAuthor.getName(),
+                            currentThesis.getTitle());
+                    if (relatedTheses.size() > currentThesis.getRelatedTheses().size()) {
+                        currentThesis.setRelatedTheses(relatedTheses);
+                        thesisDao.saveThesis(currentThesis);
+                    }
+                }
+            }
+            currentThesisNumber += NEXT_THESIS_NUM;
+        }
+        log.info("Related theses updated");
     }
 
 }
