@@ -40,6 +40,10 @@ public class ThesisDAO implements IThesisDao {
         String sqlQuery = "SELECT * FROM thesis WHERE thesisId =:thesisId";
         List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).setParameter("thesisId", thesisId).list();
 
+        for(Thesis thesis: thesisList){
+            Hibernate.initialize(thesis.getAuthors());
+        }
+
         transaction.commit();
         session.close();
 
@@ -81,6 +85,9 @@ public class ThesisDAO implements IThesisDao {
         String sqlQuery = "SELECT * FROM thesis ORDER BY thesisId LIMIT 1 OFFSET :n";
         List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).setParameter("n", n).list();
 
+        if(thesisList.size()>0){
+            Hibernate.initialize(thesisList.get(0).getAuthors());
+        }
         session.close();
 
         return thesisList.size() > 0 ? thesisList.get(0) : null;
@@ -195,6 +202,12 @@ public class ThesisDAO implements IThesisDao {
     //TODO add filter over position in authors list
     @Override
     public List<Thesis> searchTheses(ThesisFilters thesisFilters) {
+
+        if (!anyFilters(thesisFilters)) {
+            logger.info("No filters specified. Returning empty list.");
+            return new ArrayList<>();
+        }
+
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
 
@@ -250,11 +263,6 @@ public class ThesisDAO implements IThesisDao {
     }
 
     private String createQuery(ThesisFilters filters) throws NoAuthorException {
-
-        if (!anyFilters(filters)) {
-            logger.info("No filters specified. Selecting random 10 theses.");
-            return "SELECT * FROM thesis LIMIT 10";
-        }
 
         String query = "SELECT * FROM thesis " +
                 "LEFT JOIN author_thesis on thesis.thesisId = author_thesis.thesisId " +
