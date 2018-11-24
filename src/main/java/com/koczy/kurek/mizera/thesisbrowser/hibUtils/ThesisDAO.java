@@ -40,7 +40,7 @@ public class ThesisDAO implements IThesisDao {
         String sqlQuery = "SELECT * FROM thesis WHERE thesisId =:thesisId";
         List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).setParameter("thesisId", thesisId).list();
 
-        for(Thesis thesis: thesisList){
+        for (Thesis thesis : thesisList) {
             Hibernate.initialize(thesis.getAuthors());
         }
 
@@ -85,7 +85,7 @@ public class ThesisDAO implements IThesisDao {
         String sqlQuery = "SELECT * FROM thesis ORDER BY thesisId LIMIT 1 OFFSET :n";
         List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).setParameter("n", n).list();
 
-        if(thesisList.size()>0){
+        if (thesisList.size() > 0) {
             Hibernate.initialize(thesisList.get(0).getAuthors());
         }
         session.close();
@@ -199,7 +199,6 @@ public class ThesisDAO implements IThesisDao {
         return result;
     }
 
-    //TODO add filter over position in authors list
     @Override
     public List<Thesis> searchTheses(ThesisFilters thesisFilters) {
 
@@ -236,6 +235,40 @@ public class ThesisDAO implements IThesisDao {
         }
 
         session.close();
+
+        thesisList = filterPosition(thesisFilters, thesisList);
+
+        return thesisList;
+    }
+
+    private List<Thesis> filterPosition(ThesisFilters thesisFilters, List<Thesis> thesisList) {
+        Author authorFilter = authorDao.getAuthorByName(thesisFilters.getAuthor());
+        if (Objects.isNull(authorFilter)) {
+            return thesisList;
+        }
+
+        ArrayList<Thesis> toRemove = new ArrayList<>();
+
+        String authorName = authorFilter.getName();
+        for (Thesis thesis : thesisList) {
+            Integer authorIndex = null;
+
+            for (Author author : thesis.getAuthors()) {
+                if (Objects.equals(author.getName(), authorName)) {
+                    authorIndex = thesis.getAuthors().indexOf(author) + 1;
+                    break;
+                }
+            }
+
+            if (Objects.nonNull(thesisFilters.getPositionTo()) && authorIndex > thesisFilters.getPositionTo()) {
+                toRemove.add(thesis);
+            }
+            if (Objects.nonNull(thesisFilters.getPositionFrom()) && authorIndex < thesisFilters.getPositionFrom()) {
+                toRemove.add(thesis);
+            }
+        }
+
+        thesisList.removeAll(toRemove);
 
         return thesisList;
     }
@@ -290,6 +323,8 @@ public class ThesisDAO implements IThesisDao {
                 !isBlank(filters.getKeyWords()) ||
                 !isBlank(filters.getDateFrom()) ||
                 !isBlank(filters.getDateTo()) ||
+                (!isBlank(filters.getAuthor()) && !isBlank(filters.getPositionFrom())) ||
+                (!isBlank(filters.getAuthor()) && !isBlank(filters.getPositionTo())) ||
                 !isBlank(filters.getQuotationNumber());
     }
 
