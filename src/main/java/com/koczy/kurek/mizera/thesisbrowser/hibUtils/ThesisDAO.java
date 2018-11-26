@@ -99,6 +99,18 @@ public class ThesisDAO implements IThesisDao {
     }
 
     @Override
+    public int getNumThesesWithBow() {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        String query = "SELECT count(1) FROM thesis WHERE thesisId IN (SELECT DISTINCT bow.thesisId FROM bow)";
+        int result = ((BigInteger) session.createNativeQuery(query).uniqueResult()).intValue();
+        session.close();
+
+        return result;
+    }
+
+    @Override
     public Map<Integer, Integer> getThesisBow(int id) {
         Map<Integer, Integer> result = new HashMap<>();
         if (Objects.nonNull(getThesis(id))) {
@@ -121,6 +133,25 @@ public class ThesisDAO implements IThesisDao {
         List<Integer> thesesIds = new ArrayList<>();
         for (Thesis thesis : thesisList) {
             thesesIds.add(thesis.getThesisId());
+        }
+
+        session.close();
+        return thesesIds;
+    }
+
+    @Override
+    public List<Integer> getThesesIdWithBow() {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        String sqlQuery = "SELECT * FROM thesis";
+        List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).list();
+
+        List<Integer> thesesIds = new ArrayList<>();
+        for (Thesis thesis : thesisList) {
+            if(thesis.getBow().size() > 0){
+                thesesIds.add(thesis.getThesisId());
+            }
         }
 
         session.close();

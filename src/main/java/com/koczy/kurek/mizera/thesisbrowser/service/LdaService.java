@@ -101,9 +101,9 @@ public class LdaService implements ILdaService{
                 }
             }
         }
-        return new ResponseEntity<>(similarTheses.stream()
+        return new ResponseEntity<>(new ArrayList<>(similarTheses.stream()
                                                 .map(ThesisResponse::new)
-                                                .collect(Collectors.toList()), HttpStatus.OK);
+                                                .collect(Collectors.toSet())), HttpStatus.OK);
     }
 
     private boolean isSimilarityAboveThreshold(double[] thesisSimilarityVector, int thesisId) {
