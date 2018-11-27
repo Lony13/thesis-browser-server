@@ -72,7 +72,7 @@ public class ThesisDAO implements IThesisDao {
             return thesisList.get(0);
         } else {
             logger.log(Level.INFO,
-                    "getThesisByTitle | Thesis with title:  not found.", title);
+                    "getThesisByTitle | Thesis with title: {0} not found.", title);
             return null;
         }
     }
