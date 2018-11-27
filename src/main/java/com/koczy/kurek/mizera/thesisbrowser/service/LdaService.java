@@ -32,8 +32,9 @@ public class LdaService implements ILdaService{
     @Override
     public ResponseEntity<ServerInfo> run() {
         this.lda.run();
-        lda.createSimilarityVectorForEveryThesis();
-        return new ResponseEntity<>(new ServerInfo(new Date(), "LDA completed"), HttpStatus.OK);
+        this.lda.createSimilarityVectorForEveryThesis();
+        return new ResponseEntity<>(new ServerInfo(new Date(),
+                "LDA completed for " + lda.getBow().getNumDocs()+ " papers"), HttpStatus.OK);
     }
 
     @Override
