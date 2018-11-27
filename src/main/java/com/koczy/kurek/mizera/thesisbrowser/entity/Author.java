@@ -1,23 +1,21 @@
 package com.koczy.kurek.mizera.thesisbrowser.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.internal.NotNull;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Author {
 
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "author_thesis",
             joinColumns = {@JoinColumn(name = "authorId")},
             inverseJoinColumns = {@JoinColumn(name = "thesisId")}
     )
-    Set<Thesis> theses = new HashSet<>();
+    List<Thesis> theses = new ArrayList<>();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer authorId;
@@ -49,11 +47,11 @@ public class Author {
         this.authorId = authorId;
     }
 
-    public Set<Thesis> getTheses() {
+    public List<Thesis> getTheses() {
         return theses;
     }
 
-    public void setTheses(Set<Thesis> theses) {
+    public void setTheses(ArrayList<Thesis> theses) {
         this.theses = theses;
     }
 

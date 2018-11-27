@@ -45,15 +45,14 @@ public class Thesis {
     @Column(name = "keyWords")
     private Set<String> keyWords = new HashSet<>();
 
-    @ManyToMany(mappedBy = "theses", fetch = FetchType.EAGER)
-    @OrderBy
-    private Set<Author> authors = new HashSet<>();
+    @ManyToMany(mappedBy = "theses")
+    private List<Author> authors = new ArrayList<>();
 
 
     public Thesis() {
     }
 
-    public Thesis(String title, Set<Author> authors, String linkToPDF) {
+    public Thesis(String title, List<Author> authors, String linkToPDF) {
         this.title = title;
         this.linkToPDF = linkToPDF;
         this.authors = authors;
@@ -64,7 +63,7 @@ public class Thesis {
         this.linkToPDF = linkToPDF;
     }
 
-    public Thesis(String title, Set<Author> authors, String linkToPDF, Integer citationNo,
+    public Thesis(String title, List<Author> authors, String linkToPDF, Integer citationNo,
                   Integer publicationDate, List<String> relatedTheses, Set<String> keyWords) {
         this.title = title;
         this.linkToPDF = linkToPDF;
@@ -102,11 +101,11 @@ public class Thesis {
         this.citationNo = citationNo;
     }
 
-    public Set<Author> getAuthors() {
+    public List<Author> getAuthors() {
         return authors;
     }
 
-    public void setAuthors(Set<Author> authors) {
+    public void setAuthors(List<Author> authors) {
         this.authors = authors;
     }
 

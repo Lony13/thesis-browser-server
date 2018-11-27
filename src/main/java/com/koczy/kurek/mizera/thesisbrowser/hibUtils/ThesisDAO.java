@@ -40,6 +40,10 @@ public class ThesisDAO implements IThesisDao {
         String sqlQuery = "SELECT * FROM thesis WHERE thesisId =:thesisId";
         List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).setParameter("thesisId", thesisId).list();
 
+        for (Thesis thesis : thesisList) {
+            Hibernate.initialize(thesis.getAuthors());
+        }
+
         transaction.commit();
         session.close();
 
@@ -68,7 +72,7 @@ public class ThesisDAO implements IThesisDao {
             return thesisList.get(0);
         } else {
             logger.log(Level.INFO,
-                    "getThesisByTitle | Thesis with title:  not found.", title);
+                    "getThesisByTitle | Thesis with title: {0} not found.", title);
             return null;
         }
     }
@@ -81,6 +85,9 @@ public class ThesisDAO implements IThesisDao {
         String sqlQuery = "SELECT * FROM thesis ORDER BY thesisId LIMIT 1 OFFSET :n";
         List<Thesis> thesisList = session.createNativeQuery(sqlQuery, Thesis.class).setParameter("n", n).list();
 
+        if (thesisList.size() > 0) {
+            Hibernate.initialize(thesisList.get(0).getAuthors());
+        }
         session.close();
 
         return thesisList.size() > 0 ? thesisList.get(0) : null;
@@ -223,9 +230,14 @@ public class ThesisDAO implements IThesisDao {
         return result;
     }
 
-    //TODO add filter over position in authors list
     @Override
     public List<Thesis> searchTheses(ThesisFilters thesisFilters) {
+
+        if (!anyFilters(thesisFilters)) {
+            logger.info("No filters specified. Returning empty list.");
+            return new ArrayList<>();
+        }
+
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
 
@@ -255,6 +267,40 @@ public class ThesisDAO implements IThesisDao {
 
         session.close();
 
+        thesisList = filterPosition(thesisFilters, thesisList);
+
+        return thesisList;
+    }
+
+    private List<Thesis> filterPosition(ThesisFilters thesisFilters, List<Thesis> thesisList) {
+        Author authorFilter = authorDao.getAuthorByName(thesisFilters.getAuthor());
+        if (Objects.isNull(authorFilter)) {
+            return thesisList;
+        }
+
+        ArrayList<Thesis> toRemove = new ArrayList<>();
+
+        String authorName = authorFilter.getName();
+        for (Thesis thesis : thesisList) {
+            Integer authorIndex = null;
+
+            for (Author author : thesis.getAuthors()) {
+                if (Objects.equals(author.getName(), authorName)) {
+                    authorIndex = thesis.getAuthors().indexOf(author) + 1;
+                    break;
+                }
+            }
+
+            if (Objects.nonNull(thesisFilters.getPositionTo()) && authorIndex > thesisFilters.getPositionTo()) {
+                toRemove.add(thesis);
+            }
+            if (Objects.nonNull(thesisFilters.getPositionFrom()) && authorIndex < thesisFilters.getPositionFrom()) {
+                toRemove.add(thesis);
+            }
+        }
+
+        thesisList.removeAll(toRemove);
+
         return thesisList;
     }
 
@@ -282,11 +328,6 @@ public class ThesisDAO implements IThesisDao {
 
     private String createQuery(ThesisFilters filters) throws NoAuthorException {
 
-        if (!anyFilters(filters)) {
-            logger.info("No filters specified. Selecting random 10 theses.");
-            return "SELECT * FROM thesis LIMIT 10";
-        }
-
         String query = "SELECT * FROM thesis " +
                 "LEFT JOIN author_thesis on thesis.thesisId = author_thesis.thesisId " +
                 "LEFT JOIN author on author_thesis.authorId = author.authorId " +
@@ -313,6 +354,8 @@ public class ThesisDAO implements IThesisDao {
                 !isBlank(filters.getKeyWords()) ||
                 !isBlank(filters.getDateFrom()) ||
                 !isBlank(filters.getDateTo()) ||
+                (!isBlank(filters.getAuthor()) && !isBlank(filters.getPositionFrom())) ||
+                (!isBlank(filters.getAuthor()) && !isBlank(filters.getPositionTo())) ||
                 !isBlank(filters.getQuotationNumber());
     }
 
