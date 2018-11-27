@@ -13,22 +13,23 @@ import com.koczy.kurek.mizera.thesisbrowser.hibUtils.IThesisDao;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.BagOfWordsConverter;
 import com.koczy.kurek.mizera.thesisbrowser.model.ServerInfo;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.PARSED_PDF_FILE;
+import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.PDF_SAVE_DIRECTORY;
 
 @Service
 public class DownloadService implements IDownloadService {
@@ -73,12 +74,14 @@ public class DownloadService implements IDownloadService {
 
     @Override
     public ResponseEntity<ServerInfo> downloadTheses(ThesisFilters thesisFilters) {
+        createDir(PARSED_PDF_FILE);
+        createDir(PDF_SAVE_DIRECTORY);
         Set<Thesis> theses = new HashSet<>();
         if (StringUtils.isEmpty(thesisFilters.getTitle())) {
             theses.addAll(findAllNewThesesFromAuthor(thesisFilters.getAuthor()));
         } else {
             Thesis thesis = findNewThesisByAuthorNameAndTitle(thesisFilters.getAuthor(), thesisFilters.getTitle());
-            if(Objects.nonNull(thesis))
+            if (Objects.nonNull(thesis))
                 theses.add(thesis);
         }
 
@@ -91,17 +94,36 @@ public class DownloadService implements IDownloadService {
             } else {
                 logger.info("PDF not found for given thesisFilters");
             }
-            for(Author author : thesis.getAuthors()){
+            for (Author author : thesis.getAuthors()) {
                 authorDao.saveAuthor(author);
             }
         }
+        deleteDir(PARSED_PDF_FILE);
+        deleteDir(PDF_SAVE_DIRECTORY);
+
         return new ResponseEntity<>(new ServerInfo(new Date(), "Downloading finished"), HttpStatus.OK);
+    }
+
+    private void deleteDir(String name) {
+        try {
+            FileUtils.deleteDirectory(new File(name));
+            logger.info("Deleted directory : " + name);
+        } catch (IOException e) {
+            logger.log(Level.WARNING, "Error while deleting folder : " + name);
+        }
+    }
+
+    private void createDir(String name) {
+        File file = new File(name);
+        if (!file.exists()) {
+            file.mkdir();
+        }
     }
 
     private void setThesisAttributes(ThesisFilters thesisFilters, Thesis thesis) {
         thesis.setAuthors(aghLibraryScraper.getAuthors(thesisFilters.getAuthor(),
                 thesis.getTitle()));
-        for(Author author : thesis.getAuthors()){
+        for (Author author : thesis.getAuthors()) {
             author.addThesis(thesis);
         }
         thesis.setCitationNo(googleScholarScraper.getCitationNumber(thesisFilters.getAuthor(),
@@ -127,6 +149,7 @@ public class DownloadService implements IDownloadService {
             return;
         }
         thesis.setBow(bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
+        closeStream(fileInputStream);
     }
 
     @Override
@@ -152,6 +175,7 @@ public class DownloadService implements IDownloadService {
             return;
         }
         pdfDownloader.downloadPdf(in, filename + PDF);
+        closeStream(in);
     }
 
     private void parseThesisToTxt(Thesis thesis) {
@@ -162,11 +186,12 @@ public class DownloadService implements IDownloadService {
             return;
         }
         pdfParser.parseToTxt(in, filename + TXT);
+        closeStream(in);
     }
 
     private Thesis findNewThesisByAuthorNameAndTitle(String authorName, String thesisTitle) {
         Thesis thesis = thesisDao.getThesisByTitle(thesisTitle);
-        if(Objects.nonNull(thesis)){
+        if (Objects.nonNull(thesis)) {
             logger.info("Thesis with title: " + thesisTitle + " already exists");
             return null;
         }
@@ -192,9 +217,17 @@ public class DownloadService implements IDownloadService {
         Set<Thesis> theses = new HashSet<>();
         for (String thesisTitle : publicationsSet) {
             Thesis thesis = findNewThesisByAuthorNameAndTitle(authorName, thesisTitle);
-            if(Objects.nonNull(thesis))
+            if (Objects.nonNull(thesis))
                 theses.add(thesis);
         }
         return theses;
+    }
+
+    private void closeStream(InputStream stream) {
+        try {
+            stream.close();
+        } catch (IOException e) {
+            logger.log(Level.WARNING, "Couldn't close stream: " + stream);
+        }
     }
 }
