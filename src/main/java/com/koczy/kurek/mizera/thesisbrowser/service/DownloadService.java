@@ -110,7 +110,6 @@ public class DownloadService implements IDownloadService {
             logger.info("Deleted directory : " + name);
         } catch (IOException e) {
             logger.log(Level.WARNING, "Error while deleting folder : " + name);
-            e.printStackTrace();
         }
     }
 
@@ -219,7 +218,6 @@ public class DownloadService implements IDownloadService {
             stream.close();
         } catch (IOException e) {
             logger.log(Level.WARNING, "Couldn't close stream: " + stream);
-            e.printStackTrace();
         }
     }
 }
