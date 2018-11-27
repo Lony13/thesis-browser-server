@@ -13,12 +13,13 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.koczy.kurek.mizera.thesisbrowser.model.Constants.PARSED_PDF_FILE;
+
 @Component
 public class PdfParser {
 
     private static final Logger logger = Logger.getLogger(PdfParser.class.getName());
 
-    private static final String TXT_SAVE_DIRECTORY = "parsedPDF/";
 
     public PdfParser() {
     }
@@ -40,7 +41,7 @@ public class PdfParser {
 
     private OutputStream getFileOutputStream(String txtName) {
         try {
-            return new FileOutputStream(TXT_SAVE_DIRECTORY + txtName);
+            return new FileOutputStream(PARSED_PDF_FILE + txtName);
         } catch (FileNotFoundException e) {
             logger.log(Level.WARNING, "File with name " + txtName + " was not found");
         }
