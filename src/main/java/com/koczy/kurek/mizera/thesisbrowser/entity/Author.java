@@ -1,8 +1,6 @@
 package com.koczy.kurek.mizera.thesisbrowser.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.internal.NotNull;
-import org.apache.commons.lang3.text.WordUtils;
 
 import javax.persistence.*;
 import java.util.*;
@@ -31,14 +29,14 @@ public class Author {
     }
 
     public Author(String name, Date birthDate, String academicTitle, String university) {
-        this.name = WordUtils.capitalize(name);
+        this.name = name;
         this.birthDate = birthDate;
         this.academicTitle = academicTitle;
         this.university = university;
     }
 
     public Author(String name) {
-        this.name = WordUtils.capitalize(name);
+        this.name = name;
     }
 
     public Integer getAuthorId() {
