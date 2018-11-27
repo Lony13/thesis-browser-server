@@ -24,7 +24,7 @@ public class DownloadController {
     }
 
     @RequestMapping(value = "/thesis/quotation/updates", method = RequestMethod.GET)
-    public ResponseEntity<ServerInfo> updateQuotations(@RequestParam(required = true) int thesisId) {
+    public ResponseEntity<ServerInfo> updateQuotations(@RequestParam int thesisId) {
         return downloadService.updateQuotations(thesisId);
     }
 }

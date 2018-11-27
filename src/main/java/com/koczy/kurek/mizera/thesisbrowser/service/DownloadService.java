@@ -131,7 +131,18 @@ public class DownloadService implements IDownloadService {
 
     @Override
     public ResponseEntity<ServerInfo> updateQuotations(int thesisId) {
-        return new ResponseEntity<>(new ServerInfo(new Date(), ""), HttpStatus.OK);
+        Thesis thesis = thesisDao.getThesis(thesisId);
+        if(Objects.nonNull(thesis) && thesis.getAuthors().size() > 0){
+            Author firstAuthor = (Author)thesis.getAuthors().toArray()[0];
+            thesis.setCitationNo(googleScholarScraper.getCitationNumber(firstAuthor.getName(),
+                    thesis.getTitle()));
+            thesis.setRelatedTheses(googleScholarScraper.getRelatedTheses(firstAuthor.getName(),
+                    thesis.getTitle()));
+            thesisDao.saveThesis(thesis);
+            return new ResponseEntity<>(new ServerInfo(new Date(), ""), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ServerInfo(new Date(), ""), HttpStatus.NOT_FOUND);
+        }
     }
 
     private void downloadThesis(Thesis thesis) {
