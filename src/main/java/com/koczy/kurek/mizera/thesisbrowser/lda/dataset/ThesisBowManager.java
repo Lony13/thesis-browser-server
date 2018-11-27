@@ -17,15 +17,15 @@ public class ThesisBowManager {
     @Autowired
     public ThesisBowManager(ThesisDAO thesisDAO){
         this.thesisDAO = thesisDAO;
-        this.databaseThesisId = this.thesisDAO.getThesesId();
+        this.databaseThesisId = this.thesisDAO.getThesesIdWithBow();
     }
 
     public void setupBowManager(){
-        this.databaseThesisId = this.thesisDAO.getThesesId();
+        this.databaseThesisId = this.thesisDAO.getThesesIdWithBow();
     }
 
     public int getNumDocs(){
-        return this.thesisDAO.getNumTheses();
+        return this.thesisDAO.getNumThesesWithBow();
     }
 
     public Map<Integer, Integer> getThesisBow(int BowId){
