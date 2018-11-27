@@ -30,4 +30,8 @@ public interface IThesisDao {
 
     double[] convertToPrimitives(List<Double> similarityVector);
 
+    List<Integer> getThesesIdWithBow();
+
+    int getNumThesesWithBow();
+
 }
