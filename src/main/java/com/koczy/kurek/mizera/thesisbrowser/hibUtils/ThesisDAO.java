@@ -41,6 +41,7 @@ public class ThesisDAO implements IThesisDao {
 
         for (Thesis thesis : thesisList) {
             Hibernate.initialize(thesis.getAuthors());
+            Hibernate.initialize(thesis.getSimilarityVector());
         }
 
         transaction.commit();

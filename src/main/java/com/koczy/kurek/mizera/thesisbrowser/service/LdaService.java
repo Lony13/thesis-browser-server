@@ -73,13 +73,13 @@ public class LdaService implements ILdaService{
     public ResponseEntity<List<ThesisResponse>> getSimilarThesesFromFilter(ThesisFilters thesisFilters) {
         List<Thesis> thesesFromFilterWithSimVector = thesisDao.searchTheses(thesisFilters)
                 .stream()
-                .filter(thesis -> Objects.nonNull(thesis.getSimilarityVector()))
+                .filter(thesis -> thesis.getSimilarityVector().size() > 0)
                 .collect(Collectors.toList());
 
         List<Integer> exemplaryThesesWithSimVector = thesisFilters
                 .getExemplaryTheses()
                 .stream()
-                .filter(thesisId -> Objects.nonNull(thesisDao.getThesis(thesisId).getSimilarityVector()))
+                .filter(thesisId -> thesisDao.getThesis(thesisId).getSimilarityVector().size() > 0)
                 .collect(Collectors.toList());
 
         List<Thesis> similarTheses = thesisFilters
