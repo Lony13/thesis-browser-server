@@ -85,12 +85,21 @@ public class DownloadService implements IDownloadService {
                 theses.add(thesis);
         }
 
+        if(theses.size() <= 0){
+            return new ResponseEntity<>(new ServerInfo(new Date(),
+                    "Couldn't find given papers"), HttpStatus.NOT_FOUND);
+        }
+
+        int parsedTheses = 0;
         for (Thesis thesis : theses) {
             setThesisAttributes(thesisFilters, thesis);
             if (StringUtils.hasText(thesis.getLinkToPDF())) {
                 downloadThesis(thesis);
                 parseThesisToTxt(thesis);
-                parseTxtToBow(thesis);
+                if(parseTxtToBow(thesis)){
+                    parsedTheses++;
+                }
+
             } else {
                 logger.info("PDF not found for given thesisFilters");
             }
@@ -101,7 +110,20 @@ public class DownloadService implements IDownloadService {
         deleteDir(PARSED_PDF_FILE);
         deleteDir(PDF_SAVE_DIRECTORY);
 
-        return new ResponseEntity<>(new ServerInfo(new Date(), "Downloading finished"), HttpStatus.OK);
+        if (StringUtils.isEmpty(thesisFilters.getTitle())){
+            return new ResponseEntity<>(new ServerInfo(new Date(),
+                    "Found " + theses.size() + " papers for " + thesisFilters.getAuthor()
+                            + ", downloaded: " + parsedTheses), HttpStatus.OK);
+        }
+        else {
+            if(parsedTheses == 0){
+                return new ResponseEntity<>(new ServerInfo(new Date(),
+                        "Found paper: " + thesisFilters.getTitle() + ", couldn't download it"), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new ServerInfo(new Date(),
+                        "Found and downloaded paper: " + thesisFilters.getTitle()), HttpStatus.OK);
+            }
+        }
     }
 
     private void deleteDir(String name) {
@@ -136,27 +158,29 @@ public class DownloadService implements IDownloadService {
                 thesis.getTitle()));
     }
 
-    private void parseTxtToBow(Thesis thesis) {
+    private boolean parseTxtToBow(Thesis thesis) {
         String filename = PARSED_PDF_FILE + thesis.getTitle().replaceAll(REGEX, REPLACEMENT) + TXT;
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(filename);
         } catch (FileNotFoundException e) {
             logger.warning("Couldn't find file with thesis to parse, thesis title: " + thesis.getTitle());
-            return;
+            return false;
         } catch (NullPointerException e) {
             logger.warning("Couldn't find file with thesis to parse");
-            return;
+            return false;
         }
         thesis.setBow(bagOfWordsConverter.convertTxtToBagOfWords(fileInputStream));
         closeStream(fileInputStream);
+        return true;
     }
 
     @Override
     public ResponseEntity<ServerInfo> updateQuotations(int thesisId) {
         Thesis thesis = thesisDao.getThesis(thesisId);
         if(Objects.isNull(thesis) || thesis.getAuthors().size() <= 0){
-            return new ResponseEntity<>(new ServerInfo(new Date(), ""), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ServerInfo(new Date(),
+                    "Couldn't update quotations for thesis with id: "+ thesisId), HttpStatus.NOT_FOUND);
         }
         Author firstAuthor = (Author)thesis.getAuthors().toArray()[0];
         thesis.setCitationNo(googleScholarScraper.getCitationNumber(firstAuthor.getName(),
@@ -164,7 +188,8 @@ public class DownloadService implements IDownloadService {
         thesis.setRelatedTheses(googleScholarScraper.getRelatedTheses(firstAuthor.getName(),
                 thesis.getTitle()));
         thesisDao.saveThesis(thesis);
-        return new ResponseEntity<>(new ServerInfo(new Date(), ""), HttpStatus.OK);
+        return new ResponseEntity<>(new ServerInfo(new Date(),
+                "Updated quotations for papers: " + thesis.getTitle()), HttpStatus.OK);
     }
 
     private void downloadThesis(Thesis thesis) {
