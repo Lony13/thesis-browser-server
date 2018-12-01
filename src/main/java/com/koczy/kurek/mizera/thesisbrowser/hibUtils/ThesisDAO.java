@@ -2,7 +2,6 @@ package com.koczy.kurek.mizera.thesisbrowser.hibUtils;
 
 import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
-import com.koczy.kurek.mizera.thesisbrowser.exceptions.NoAuthorException;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.Hibernate;
@@ -156,7 +155,7 @@ public class ThesisDAO implements IThesisDao {
 
         List<Integer> thesesIds = new ArrayList<>();
         for (Thesis thesis : thesisList) {
-            if(thesis.getBow().size() > 0){
+            if (thesis.getBow().size() > 0) {
                 thesesIds.add(thesis.getThesisId());
             }
         }
@@ -260,9 +259,6 @@ public class ThesisDAO implements IThesisDao {
         } catch (NullPointerException e) {
             logger.log(Level.INFO, "ThesisFilters are empty");
             thesisList = new ArrayList<>();
-        } catch (NoAuthorException e) {
-            logger.log(Level.INFO, "Couldn't find author for thesis in thesisFilters");
-            thesisList = new ArrayList<>();
         }
 
         session.close();
@@ -308,6 +304,9 @@ public class ThesisDAO implements IThesisDao {
         if (!isBlank(thesisFilters.getTitle())) {
             nativeQuery.setParameter("title", "%" + thesisFilters.getTitle() + "%");
         }
+        if (!isBlank(thesisFilters.getAuthor())) {
+            nativeQuery.setParameter("authorName", "%" + thesisFilters.getAuthor() + "%");
+        }
         if (!isBlank(thesisFilters.getInstitution())) {
             nativeQuery.setParameter("institution", "%" + thesisFilters.getInstitution() + "%");
         }
@@ -326,7 +325,7 @@ public class ThesisDAO implements IThesisDao {
         return nativeQuery;
     }
 
-    private String createQuery(ThesisFilters filters) throws NoAuthorException {
+    private String createQuery(ThesisFilters filters) {
 
         String query = "SELECT * FROM thesis " +
                 "LEFT JOIN author_thesis on thesis.thesisId = author_thesis.thesisId " +
@@ -368,15 +367,10 @@ public class ThesisDAO implements IThesisDao {
         return query;
     }
 
-    private String filterAuthor(String query, String authorName) throws NoAuthorException {
+    private String filterAuthor(String query, String authorName) {
         if (!isBlank(authorName)) {
-            Author author = authorDao.getAuthorByName(authorName);
-            if (Objects.isNull(author)) {
-                throw new NoAuthorException();
-            }
-
             query = addAndToWhere(query);
-            query = query.concat("author_thesis.authorId = " + author.getAuthorId() + " ");
+            query = query.concat("author_thesis.authorId IN (SELECT authorId FROM author WHERE name LIKE :authorName ) ");
             addAnd = true;
         }
         return query;
