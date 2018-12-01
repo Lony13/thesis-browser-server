@@ -4,6 +4,7 @@ import com.koczy.kurek.mizera.thesisbrowser.entity.Author;
 import com.koczy.kurek.mizera.thesisbrowser.entity.Thesis;
 import com.koczy.kurek.mizera.thesisbrowser.model.ThesisFilters;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -45,6 +46,8 @@ public class ThesisDAO implements IThesisDao {
 
         transaction.commit();
         session.close();
+
+        thesisList=capitalizeAuthors(thesisList);
 
         if (thesisList.size() > 0) {
             return thesisList.get(0);
@@ -265,6 +268,17 @@ public class ThesisDAO implements IThesisDao {
 
         thesisList = filterPosition(thesisFilters, thesisList);
 
+        thesisList = capitalizeAuthors(thesisList);
+
+        return thesisList;
+    }
+
+    private List<Thesis> capitalizeAuthors(List<Thesis> thesisList) {
+        for(Thesis thesis:thesisList){
+            for(Author author:thesis.getAuthors()){
+                author.setName(WordUtils.capitalizeFully(author.getName()));
+            }
+        }
         return thesisList;
     }
 
