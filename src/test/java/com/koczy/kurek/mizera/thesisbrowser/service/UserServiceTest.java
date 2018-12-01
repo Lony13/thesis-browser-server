@@ -28,7 +28,6 @@ public class UserServiceTest {
     private String username = "test user";
     private String password = "password";
     private String invalidName = "invalid name";
-    private int age = 32;
     private Set<Role> roles;
     private Set<SimpleGrantedAuthority> simpleGrantedAuthorities;
 
@@ -39,7 +38,6 @@ public class UserServiceTest {
 
         user = new User();
         user.setUsername(username);
-        user.setAge(age);
         user.setRoles(roles);
         user.setPassword(password);
 
