@@ -7,4 +7,6 @@ import java.util.List;
 public interface IServerInfoDao {
 
     List<ServerInfo> getServerInfo();
+
+    void saveServerInfo(ServerInfo serverInfo);
 }

@@ -3,6 +3,7 @@ package com.koczy.kurek.mizera.thesisbrowser.hibUtils;
 import com.koczy.kurek.mizera.thesisbrowser.model.ServerInfo;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
@@ -32,4 +33,17 @@ public class ServerInfoDAO implements IServerInfoDao {
 
         return serverInfoList;
     }
+
+    @Override
+    public void saveServerInfo(ServerInfo serverInfo) {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
+        session.save(serverInfo);
+
+        transaction.commit();
+        session.close();
+    }
 }
+
