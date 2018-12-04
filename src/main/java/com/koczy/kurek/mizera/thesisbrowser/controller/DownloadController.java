@@ -23,7 +23,7 @@ public class DownloadController {
         return downloadService.downloadTheses(thesisFilters);
     }
 
-    @RequestMapping(value = "/thesis/quotation/updates", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/thesis/quotation/updates", method = RequestMethod.GET)
     public ResponseEntity<ServerInfo> updateQuotations(@RequestParam int thesisId) {
         return downloadService.updateQuotations(thesisId);
     }
