@@ -71,8 +71,6 @@ public class UserService implements UserDetailsService, IUserService {
         User newUser = new User();
         newUser.setUsername(user.getUsername());
         newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
-        newUser.setAge(user.getAge());
-        newUser.setSalary(user.getSalary());
         return userDao.save(newUser);
     }
 }

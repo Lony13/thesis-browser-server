@@ -7,7 +7,7 @@ import java.util.Set;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column
     private String username;
@@ -15,24 +15,16 @@ public class User {
     @Column
     private String password;
 
-    @Column
-    private Integer salary;
-
-    @Column
-    private Integer age;
-
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ROLES", joinColumns = {
             @JoinColumn(name = "USER_ID")}, inverseJoinColumns = {
             @JoinColumn(name = "ROLE_ID")})
     private Set<Role> roles;
 
-    public User(Integer id, String username, String password, Integer salary, Integer age, Set<Role> roles) {
+    public User(Integer id, String username, String password, Set<Role> roles) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.salary = salary;
-        this.age = age;
         this.roles = roles;
     }
 
@@ -61,22 +53,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Integer getSalary() {
-        return salary;
-    }
-
-    public void setSalary(Integer salary) {
-        this.salary = salary;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
     }
 
     public Set<Role> getRoles() {
