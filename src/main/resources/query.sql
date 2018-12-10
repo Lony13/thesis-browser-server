@@ -4,9 +4,9 @@ INSERT INTO user (id, username, password) VALUES (2, 'user2', '$2a$04$StghL1FYVy
 INSERT INTO user (id, username, password) VALUES (3, 'user3', '$2a$04$Lk4zqXHrHd82w5/tiMy8ru9RpAXhvFfmHOuqTmFPWQcUhBD8SSJ6W');
 INSERT INTO user (id, username, password) VALUES (4, 'demo', '$2a$04$LwfYcQrBAYJVnGjfHXw7Ee6zKt3R6jjLJ/Vu2Fcr9ophrEivkoyPK');
 
-INSERT INTO role (id, description, name) VALUES (1, 'Admin role', 'ADMIN');
-INSERT INTO role (id, description, name) VALUES (2, 'User role', 'USER');
-INSERT INTO role (id, description, name) VALUES (3, 'Demo', 'DEMO');
+INSERT INTO role (id, description, name) VALUES (1, 'Admin role', 'ROLE_ADMIN');
+INSERT INTO role (id, description, name) VALUES (2, 'User role', 'ROLE_USER');
+INSERT INTO role (id, description, name) VALUES (3, 'Demo', 'ROLE_DEMO');
 
 INSERT INTO user_roles (user_id, role_id) VALUES (1, 1);
 INSERT INTO user_roles (user_id, role_id) VALUES (2, 2);
