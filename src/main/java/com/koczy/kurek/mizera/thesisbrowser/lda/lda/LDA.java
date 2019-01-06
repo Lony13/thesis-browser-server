@@ -16,6 +16,7 @@
 
 package com.koczy.kurek.mizera.thesisbrowser.lda.lda;
 
+import com.koczy.kurek.mizera.thesisbrowser.hibUtils.IAuthorDao;
 import com.koczy.kurek.mizera.thesisbrowser.lda.dataset.*;
 import com.koczy.kurek.mizera.thesisbrowser.lda.lda.inference.Inference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +32,21 @@ public class LDA {
     private static final Logger logger = Logger.getLogger(LDA.class.getName());
 
     private Hyperparameters hyperparameters;
-    private final int numTopics;
+    private int numTopics;
     private Dataset dataset;
     private final Inference inference;
     private boolean trained;
+    private IAuthorDao authorDao;
 
     @Autowired
-    public LDA(Inference inference, Dataset dataset, Hyperparameters hyperparameters, @Value("${lda.numTopics}") int numTopics) {
+    public LDA(Inference inference,
+               Dataset dataset,
+               Hyperparameters hyperparameters,
+               @Value("${lda.numTopics}") int numTopics,
+               IAuthorDao authorDao) {
+        this.authorDao       = authorDao;
         this.hyperparameters = hyperparameters;
-        this.numTopics       = numTopics;
+        this.numTopics       = (numTopics == 0)?authorDao.getAuthorsNum():numTopics;
         this.dataset         = dataset;
         this.inference       = inference;
         this.trained         = false;
@@ -54,6 +61,7 @@ public class LDA {
     }
 
     public void run() {
+        this.numTopics = (numTopics == 0)?authorDao.getAuthorsNum():numTopics;
         dataset.getBow().setupBow();
         inference.setUp(this);
         inference.run();
