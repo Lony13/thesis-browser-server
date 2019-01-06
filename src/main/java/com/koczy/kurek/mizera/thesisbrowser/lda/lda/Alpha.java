@@ -16,21 +16,24 @@
 
 package com.koczy.kurek.mizera.thesisbrowser.lda.lda;
 
+import com.koczy.kurek.mizera.thesisbrowser.hibUtils.IAuthorDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
 class Alpha {
     private List<Double> alphas;
+    private IAuthorDao authorDao;
 
     @Autowired
-    Alpha(@Value("${lda.alpha}") double alpha, @Value("${lda.numTopics}") int numTopics) {
+    Alpha(@Value("${lda.alpha}") double alpha, @Value("${lda.numTopics}") int numTopics, IAuthorDao authorDao) {
+        this.authorDao = authorDao;
+        numTopics = (numTopics == 0)?authorDao.getAuthorsNum():numTopics;
         this.alphas = Stream.generate(() -> alpha)
                             .limit(numTopics)
                             .collect(Collectors.toList());

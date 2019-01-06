@@ -5,6 +5,7 @@ import org.hibernate.*;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityExistsException;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,5 +74,17 @@ public class AuthorDAO implements IAuthorDao {
             logger.log(Level.INFO, "Thesis already connected with author: {0}.", author.getName());
         }
         session.close();
+    }
+
+    @Override
+    public int getAuthorsNum() {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        String query = "SELECT count(1) FROM author";
+        int result = ((BigInteger) session.createNativeQuery(query).uniqueResult()).intValue();
+        session.close();
+
+        return result;
     }
 }

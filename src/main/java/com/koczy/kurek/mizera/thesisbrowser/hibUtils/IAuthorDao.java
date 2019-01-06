@@ -10,4 +10,6 @@ public interface IAuthorDao {
 
     void saveAuthor(Author author);
 
+    int getAuthorsNum();
+
 }
